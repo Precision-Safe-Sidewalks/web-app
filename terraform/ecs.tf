@@ -77,12 +77,13 @@ resource "aws_ecs_task_definition" "default" {
 }
 
 resource "aws_ecs_service" "default" {
-  name                 = "${local.project}-${local.env}"
-  cluster              = aws_ecs_cluster.default.id
-  task_definition      = aws_ecs_task_definition.default.id
-  desired_count        = var.backend_desired_count
-  launch_type          = "FARGATE"
-  force_new_deployment = true
+  name                   = "${local.project}-${local.env}"
+  cluster                = aws_ecs_cluster.default.id
+  task_definition        = aws_ecs_task_definition.default.id
+  desired_count          = var.backend_desired_count
+  launch_type            = "FARGATE"
+  force_new_deployment   = true
+  enable_execute_command = true
 
   load_balancer {
     target_group_arn = aws_lb_target_group.default.arn
