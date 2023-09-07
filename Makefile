@@ -1,7 +1,7 @@
 APP := app
 PROJECT := pss
 ECR_REPOSITORY := 292181225895.dkr.ecr.us-east-1.amazonaws.com
-GIT_HASH := dev #FIXME: configure git hash
+GIT_HASH := $(shell git rev-parse --short HEAD)
 
 network:
 	@docker network create ${PROJECT}-dev || true
