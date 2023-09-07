@@ -1,0 +1,159 @@
+/* Primary */
+$primary: #006a67;
+$on-primary: #ffffff;
+$primary-container: #70f7f1;
+$on-primary-container: #00201f;
+
+/* Secondary */
+$secondary: #4a6361;
+$on-secondary: #ffffff;
+$secondary-container: #cce8e6;
+$on-secondary-container: #051f1e;
+
+/* Tertiary */
+$tertiary: #49607b;
+$on-tertiary: #ffffff;
+$tertiary-container: #d1e4ff;
+$on-tertiary-container: #021d35;
+
+/* Error */
+$error: #ba1a1a;
+$error-container: #ffdad6;
+$on-error: #ffffff;
+$on-error-container: #410002;
+
+/* Background */
+$background: #fafdfb;
+$on-background: #191c1c;
+
+/* Surface */
+$surface: #fafdfb;
+$on-surface: #191c1c;
+$surface-variant: #dae5e3;
+$on-surface-variant: #3f4948;
+
+// TODO: add colors
+//$surface-dim: #DED8E1;
+//$surface-bright: #FEF7FF;
+//$surface-container-lowest: #FFFFFF;
+//$surface-container-low: #F7F2FA;
+//$surface-container: #F3EDF7;
+//$surface-container-high: #ECE6F0;
+//$surface-container-highest: #E6E0E9;
+
+/* Inverse */
+$inverse-on-surface: #eff1f0;
+$inverse-surface: #2d3131;
+$inverse-primary: #4edad5;
+
+/* Effects */
+$shadow: #000000;
+$surface-tint: #006a67;
+$outline: #6f7978;
+$outline-variant: #bec9c7;
+$scrim: #000000;
+
+/* Reference palette - Primary */
+$ref-primary0: #000000;
+$ref-primary10: #00201f;
+$ref-primary20: #003735;
+$ref-primary30: #00504d;
+$ref-primary40: #006a67;
+$ref-primary50: #008581;
+$ref-primary60: #00a29d;
+$ref-primary70: #21beb9;
+$ref-primary80: #4edad5;
+$ref-primary90: #70f7f1;
+$ref-primary95: #affffa;
+$ref-primary99: #f2fffd;
+$ref-primary100: #ffffff;
+
+/* Reference palette - Secondary */
+$ref-secondary0: #000000;
+$ref-secondary10: #051f1e;
+$ref-secondary20: #1b3533;
+$ref-secondary30: #324b4a;
+$ref-secondary40: #4a6361;
+$ref-secondary50: #627c7a;
+$ref-secondary60: #7b9694;
+$ref-secondary70: #95b1ae;
+$ref-secondary80: #b0ccca;
+$ref-secondary90: #cce8e6;
+$ref-secondary95: #daf6f4;
+$ref-secondary99: #f2fffd;
+$ref-secondary100: #ffffff;
+
+/* Reference palette - Tertiary */
+$ref-tertiary0: #000000;
+$ref-tertiary10: #021d35;
+$ref-tertiary20: #1a324b;
+$ref-tertiary30: #314862;
+$ref-tertiary40: #49607b;
+$ref-tertiary50: #627995;
+$ref-tertiary60: #7c93b0;
+$ref-tertiary70: #96adcb;
+$ref-tertiary80: #b1c8e8;
+$ref-tertiary90: #d1e4ff;
+$ref-tertiary95: #e9f1ff;
+$ref-tertiary99: #fdfcff;
+$ref-tertiary100: #ffffff;
+
+/* Reference palette - Neutral */
+$ref-neutral0: #000000;
+$ref-neutral10: #191c1c;
+$ref-neutral20: #2d3131;
+$ref-neutral30: #444747;
+$ref-neutral40: #5b5f5e;
+$ref-neutral50: #747877;
+$ref-neutral60: #8e9190;
+$ref-neutral70: #a9acab;
+$ref-neutral80: #c4c7c6;
+$ref-neutral90: #e0e3e2;
+$ref-neutral95: #eff1f0;
+$ref-neutral99: #fafdfb;
+$ref-neutral100: #ffffff;
+
+/* Reference palette - Neutral variant */
+$ref-neutral-variant0: #000000;
+$ref-neutral-variant10: #141d1d;
+$ref-neutral-variant20: #293231;
+$ref-neutral-variant30: #3f4948;
+$ref-neutral-variant40: #56605f;
+$ref-neutral-variant50: #6f7978;
+$ref-neutral-variant60: #889392;
+$ref-neutral-variant70: #a3adac;
+$ref-neutral-variant80: #bec9c7;
+$ref-neutral-variant90: #dae5e3;
+$ref-neutral-variant95: #e8f3f1;
+$ref-neutral-variant99: #f4fefd;
+$ref-neutral-variant100: #ffffff;
+
+/* Reference palette - Error */
+$ref-error0: #000000;
+$ref-error10: #410002;
+$ref-error20: #690005;
+$ref-error30: #93000a;
+$ref-error40: #ba1a1a;
+$ref-error50: #de3730;
+$ref-error60: #ff5449;
+$ref-error70: #ff897d;
+$ref-error80: #ffb4ab;
+$ref-error90: #ffdad6;
+$ref-error95: #ffedea;
+$ref-error99: #fffbff;
+$ref-error100: #ffffff;
+
+/* Success */
+$success: #459B64;
+$on-success: #ffffff;
+
+/* Warning */
+$warning: #E6A03A;
+$on-warning: #ffffff;
+
+/* Error */
+$error: #B43236;
+$on-error: #ffffff;
+
+/* Text default */
+$text-default: #111111;

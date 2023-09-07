@@ -1,6 +1,0 @@
-{% extends "base.html" %}
-
-{% block content %}
-<p>Welcome {{ request.user.full_name }}</p>
-<a class="btn--filled" href="{% url 'logout' %}">Logout</a>
-{% endblock %}

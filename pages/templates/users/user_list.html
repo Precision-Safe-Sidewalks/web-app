@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="flex align-items-center justify-content-between">
+  <h2>Users</h2>
+  <a class="btn--tonal" href="{% url 'user-create' %}">
+    New user
+  </a>
+</div>
+
+<div class="my-12">
+  <div id="users-table"></div>
+</div>
+
+<script>
+  $(document).ready(() => {
+    new DataTable("users-table", {
+      columns: [
+        "Name",
+        "Email",
+        "Is Active",
+        "Is Staff",
+        "Created",
+        "Last Login (UTC)",
+      ],
+      url: "/api/tables/users/",
+      perPage: 10,
+    })
+  })
+</script>
+{% endblock %}

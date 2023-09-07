@@ -1,0 +1,23 @@
+// FIXME: refactor into a mixin
+
+.grid {
+  display: grid;
+
+  &--col-1 {
+    @extend .grid;
+
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+
+  &--col-2 {
+    @extend .grid;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  &--col-3 {
+    @extend .grid;
+
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

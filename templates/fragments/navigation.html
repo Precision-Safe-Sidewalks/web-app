@@ -1,0 +1,66 @@
+<nav class="nav-rail" id="nav-rail">
+  <a class="nav-item" href="{% url 'index' %}">
+    <div class="nav-item-icon">
+      <span class="icon">leaderboard</span>
+    </div>
+    <div class="nav-item-label">
+      Dashboard
+    </div>
+  </a>
+
+  <a class="nav-item" href="{% url 'customer-list' %}">
+    <div class="nav-item-icon">
+      <span class="icon">account_balance</span>
+    </div>
+    <div class="nav-item-label">
+      Customers
+    </div>
+  </a>
+
+  <a class="nav-item" href="{% url 'project-list' %}">
+    <div class="nav-item-icon">
+      <span class="icon">straighten</span>
+    </div>
+    <div class="nav-item-label">
+      Projects
+    </div>
+  </a>
+
+  <a class="nav-item" href="{% url 'map' %}">
+    <div class="nav-item-icon">
+      <span class="icon">map</span>
+    </div>
+    <div class="nav-item-label">
+      Map
+    </div>
+  </a>
+
+  {% if user.is_staff %}
+  <a class="nav-item" href="{% url 'user-list' %}">
+    <div class="nav-item-icon">
+      <span class="icon">person</span>
+    </div>
+    <div class="nav-item-label">
+      Users
+    </div>
+  </a>
+
+  <a class="nav-item" href="/admin/">
+    <div class="nav-item-icon">
+      <span class="icon">admin_panel_settings</span>
+    </div>
+    <div class="nav-item-label">
+      Admin
+    </div>
+  </a>
+  {% endif %}
+
+  <a class="nav-item--end" href="{% url 'logout' %}">
+    <div class="nav-item-icon">
+      <span class="icon">logout</span>
+    </div>
+    <div class="nav-item-label">
+      Logout
+    </div>
+  </a>
+</nav>

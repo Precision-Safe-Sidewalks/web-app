@@ -13,6 +13,7 @@ With Docker installed and Microsoft Active Directory configured, use the followi
 - `docker compose up` to start the development server and initialize the database if it doesn't exist
   * This may take ~10s to start the web server because it depends on the database
   * If the server fails to start because of a bad database connection, restart `docker compose up`
+- `make migrate_db` to run any database migrations
 - The web server should be available at `http://localhost:8000`
 
 ### Development commands

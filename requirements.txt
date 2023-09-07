@@ -1,11 +1,16 @@
+boto3==1.28.39
 django==4.2.4
 djangorestframework==3.14.0
+djangorestframework-gis==1.0
 django-compressor==4.4
 django-extensions==3.2.3
+django-filter==23.2
 django-libsass==0.9
 django-microsoft-auth==3.0.1
 gunicorn==21.2.0
 ipython==8.14.0
+pydantic==2.3.0
+python-dateutil==2.8.2
 psycopg==3.1.10
 tzdata==2023.3
 whitenoise[brotli]==6.5.0

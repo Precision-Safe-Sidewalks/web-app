@@ -1,0 +1,50 @@
+@import "../theme/colors.scss";
+@import "../theme/typography.scss";
+
+.dialog {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba($scrim, 0.38);
+  z-index: 9000;
+  display: none;
+
+  &.open {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .dialog-content {
+    background-color: $surface;
+    border-radius: 28px;
+    min-width: 280px;
+    max-width: 560px;
+    padding: 24px;
+  }
+
+  .dialog-title {
+    @extend .text--headline-sm;
+
+    display: block;
+    text-align: start;
+  }
+
+  .dialog-body {
+    @extend .text--body-md;
+
+    display: block;
+    margin-top: 16px;
+    text-align: start;
+  }
+
+  .dialog-actions {
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+  }
+}

@@ -1,0 +1,64 @@
+@import "../theme/colors.scss";
+@import "../theme/typography.scss";
+@import "../theme/states.scss";
+
+.nav-rail {
+  height: 100vh;
+  width: 80px;
+  background-color: $surface;
+  position: fixed;
+  left: 0;
+  top: 0;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 4px;
+  padding-right: 4px;
+  text-align: center !important;
+  border-right: 1px solid rgba($outline, 0.16);
+
+  + .nav-drawer {
+    margin-left: 88px;
+  }
+
+  .nav-item {
+    height: 56px;
+    margin-bottom: 16px;
+    cursor: pointer;
+    color: $on-surface;
+    display: block;
+    text-decoration: none !important;
+
+    &--end {
+      @extend .nav-item;
+
+      position: absolute;
+      left: 4px;
+      bottom: 36px;
+    }
+
+    &:hover .nav-item-icon {
+      @include manualStateLayer($on-surface, $hoverOpacity);
+    }
+
+    &.active .nav-item-icon {
+      @include manualStateLayer($on-surface, $focusOpacity);
+    }
+  }
+
+  .nav-item-icon {
+    margin-left: 12px;
+    margin-right: 12px;
+    margin-bottom: 4px;
+    height: 32px;
+    width: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+    color: $on-secondary-container;
+  }
+
+  .nav-item-label {
+    @extend .text--label-sm;
+  }
+}

@@ -5,14 +5,61 @@
 <html lang="en">
   <head>
     {% compress css %}
-      <link rel="stylesheet" type="text/x-scss" href="{% static 'css/core.scss' %}" media="screen">
+      <link rel="stylesheet" type="text/x-scss" href="{% static 'css/styles.scss' %}" media="screen">
     {% endcompress %}
 
+    <!-- Mapbox GL -->
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css' rel='stylesheet' />
+
+    <!-- Turf.js -->
+    <script src='https://unpkg.com/@turf/turf@6/turf.min.js'></script>
+
+    <!-- Google Fonts (Material Icons) -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- JQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+    <!-- JS helpers -->
+    <script src="{% static 'js/datatables.js' %}"></script>
+    <script src="{% static 'js/dialogs.js' %}"></script>
+    <script src="{% static 'js/navigation.js' %}"></script>
+    <script src="{% static 'js/maps.js' %}"></script>
+    <script src="{% static 'js/snackbar.js' %}"></script>
+
     {% block head %}
-      <title>Django App</title>
     {% endblock %}
+    
+    <title>
+    {% block title %}Precision Safe Sidewalks{% endblock %}
+    </title>
   </head>
   <body>
-    {% block content %}{% endblock %}
+  {% block body %}
+    {% block nav %}
+      {% include "fragments/navigation.html" %}
+    {% endblock %}
+
+    <main class="nav-drawer">
+      <div class="mx-16 my-16">
+      {% block content %}{% endblock %}
+      </div>
+    </main>
+  {% endblock %}
+
+  {% block snackbar %}
+    {% if error %}
+    <div class="snackbar">
+      <div class="snackbar-content">
+        <div class="snackbar-text">{{ error }}</div>
+        <button class="btn--icon" id="snackbar-close">
+          <span class="icon">close</span>
+        </button>
+      </div>
+    </div>
+    {% endif %}
+  {% endblock %}
   </body>
 </html>

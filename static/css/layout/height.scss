@@ -1,0 +1,9 @@
+@import "../theme/variables.scss";
+
+.h-screen {
+  height: 100vh;
+}
+
+.h-16 {
+  height: $spacing * 16;
+}

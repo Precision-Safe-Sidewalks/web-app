@@ -1,0 +1,447 @@
+@import "../theme/variables.scss";
+
+
+/* Margin top only */
+.mt-auto {
+  margin-top: auto;
+}
+
+.mt-1 {
+  margin-top: $spacing;
+}
+
+.mt-2 {
+  margin-top: $spacing * 2;
+}
+
+.mt-3 {
+  margin-top: $spacing * 3;
+}
+
+.mt-4 {
+  margin-top: $spacing * 4;
+}
+
+.mt-5 {
+  margin-top: $spacing * 5;
+}
+
+.mt-6 {
+  margin-top: $spacing * 6;
+}
+
+.mt-7 {
+  margin-top: $spacing * 7;
+}
+
+.mt-8 {
+  margin-top: $spacing * 8;
+}
+
+.mt-12 {
+  margin-top: $spacing * 12;
+}
+
+.mt-16 {
+  margin-top: $spacing * 16;
+}
+
+.mt-20 {
+  margin-top: $spacing * 20;
+}
+
+.mt-24 {
+  margin-top: $spacing * 24;
+}
+
+.mt-32 {
+  margin-top: $spacing * 32;
+}
+
+.mt-48 {
+  margin-top: $spacing * 48;
+}
+
+/* Margin bottom only */
+.mb-1 {
+  margin-bottom: $spacing;
+}
+
+.mb-2 {
+  margin-bottom: $spacing * 2;
+}
+
+.mb-3 {
+  margin-bottom: $spacing * 3;
+}
+
+.mb-4 {
+  margin-bottom: $spacing * 4;
+}
+
+.mb-5 {
+  margin-bottom: $spacing * 5;
+}
+
+.mb-6 {
+  margin-bottom: $spacing * 6;
+}
+
+.mb-7 {
+  margin-bottom: $spacing * 7;
+}
+
+.mb-8 {
+  margin-bottom: $spacing * 8;
+}
+
+.mb-12 {
+  margin-bottom: $spacing * 12;
+}
+
+.mb-16 {
+  margin-bottom: $spacing * 16;
+}
+
+.mb-20 {
+  margin-bottom: $spacing * 20;
+}
+
+.mb-24 {
+  margin-bottom: $spacing * 24;
+}
+
+.mb-32 {
+  margin-bottom: $spacing * 32;
+}
+
+.mb-48 {
+  margin-bottom: $spacing * 48;
+}
+
+/* Margin left only */
+.ml-1 {
+  margin-left: $spacing;
+}
+
+.ml-2 {
+  margin-left: $spacing * 2;
+}
+
+.ml-3 {
+  margin-left: $spacing * 3;
+}
+
+.ml-4 {
+  margin-left: $spacing * 4;
+}
+
+.ml-5 {
+  margin-left: $spacing * 5;
+}
+
+.ml-6 {
+  margin-left: $spacing * 6;
+}
+
+.ml-7 {
+  margin-left: $spacing * 7;
+}
+
+.ml-8 {
+  margin-left: $spacing * 8;
+}
+
+.ml-12 {
+  margin-left: $spacing * 12;
+}
+
+.ml-16 {
+  margin-left: $spacing * 16;
+}
+
+.ml-20 {
+  margin-left: $spacing * 20;
+}
+
+.ml-24 {
+  margin-left: $spacing * 24;
+}
+
+.ml-32 {
+  margin-left: $spacing * 32;
+}
+
+.ml-48 {
+  margin-left: $spacing * 48;
+}
+
+/* Margin right only */
+.mr-1 {
+  margin-right: $spacing;
+}
+
+.mr-2 {
+  margin-right: $spacing * 2;
+}
+
+.mr-3 {
+  margin-right: $spacing * 3;
+}
+
+.mr-4 {
+  margin-right: $spacing * 4;
+}
+
+.mr-5 {
+  margin-right: $spacing * 5;
+}
+
+.mr-6 {
+  margin-right: $spacing * 6;
+}
+
+.mr-7 {
+  margin-right: $spacing * 7;
+}
+
+.mr-8 {
+  margin-right: $spacing * 8;
+}
+
+.mr-12 {
+  margin-right: $spacing * 12;
+}
+
+.mr-16 {
+  margin-right: $spacing * 16;
+}
+
+.mr-20 {
+  margin-right: $spacing * 20;
+}
+
+.mr-24 {
+  margin-right: $spacing * 24;
+}
+
+.mr-32 {
+  margin-right: $spacing * 32;
+}
+
+.mr-48 {
+  margin-right: $spacing * 48;
+}
+
+/* Margin y-axis only (top and bottom) */
+.my-1 {
+  @extend .mt-1;
+  @extend .mb-1;
+}
+
+.my-2 {
+  @extend .mt-2;
+  @extend .mb-2;
+}
+
+.my-3 {
+  @extend .mt-3;
+  @extend .mb-3;
+}
+
+.my-4 {
+  @extend .mt-4;
+  @extend .mb-4;
+}
+
+.my-5 {
+  @extend .mt-5;
+  @extend .mb-5;
+}
+
+.my-6 {
+  @extend .mt-6;
+  @extend .mb-6;
+}
+
+.my-7 {
+  @extend .mt-7;
+  @extend .mb-7;
+}
+
+.my-8 {
+  @extend .mt-8;
+  @extend .mb-8;
+}
+
+.my-12 {
+  @extend .mt-12;
+  @extend .mb-12;
+}
+
+.my-16 {
+  @extend .mt-16;
+  @extend .mb-16;
+}
+
+.my-20 {
+  @extend .mt-20;
+  @extend .mb-20;
+}
+
+.my-24 {
+  @extend .mt-24;
+  @extend .mb-24;
+}
+
+.my-32 {
+  @extend .mt-32;
+  @extend .mb-32;
+}
+
+.my-48 {
+  @extend .mt-48;
+  @extend .mb-48;
+}
+
+/* Margin x-axis only (left and right) */
+.mx-1 {
+  @extend .ml-1;
+  @extend .mr-1;
+}
+
+.mx-2 {
+  @extend .ml-2;
+  @extend .mr-2;
+}
+
+.mx-3 {
+  @extend .ml-3;
+  @extend .mr-3;
+}
+
+.mx-4 {
+  @extend .ml-4;
+  @extend .mr-4;
+}
+
+.mx-5 {
+  @extend .ml-5;
+  @extend .mr-5;
+}
+
+.mx-6 {
+  @extend .ml-6;
+  @extend .mr-6;
+}
+
+.mx-7 {
+  @extend .ml-7;
+  @extend .mr-7;
+}
+
+.mx-8 {
+  @extend .ml-8;
+  @extend .mr-8;
+}
+
+.mx-12 {
+  @extend .ml-12;
+  @extend .mr-12;
+}
+
+.mx-16 {
+  @extend .ml-16;
+  @extend .mr-16;
+}
+
+.mx-20 {
+  @extend .ml-20;
+  @extend .mr-20;
+}
+
+.mx-24 {
+  @extend .ml-24;
+  @extend .mr-24;
+}
+
+.mx-32 {
+  @extend .ml-32;
+  @extend .mr-32;
+}
+
+.mx-48 {
+  @extend .ml-48;
+  @extend .mr-48;
+}
+
+/* Margin on all sides */
+.m-1 {
+  @extend .mx-1;
+  @extend .my-1;
+}
+
+.m-2 {
+  @extend .mx-2;
+  @extend .my-2;
+}
+
+.m-3 {
+  @extend .mx-3;
+  @extend .my-3;
+}
+
+.m-4 {
+  @extend .mx-4;
+  @extend .my-4;
+}
+
+.m-5 {
+  @extend .mx-5;
+  @extend .my-5;
+}
+
+.m-6 {
+  @extend .mx-6;
+  @extend .my-6;
+}
+
+.m-7 {
+  @extend .mx-7;
+  @extend .my-7;
+}
+
+.m-8 {
+  @extend .mx-8;
+  @extend .my-8;
+}
+
+.m-12 {
+  @extend .mx-12;
+  @extend .my-12;
+}
+
+.m-16 {
+  @extend .mx-16;
+  @extend .my-16;
+}
+
+.m-20 {
+  @extend .mx-20;
+  @extend .my-20;
+}
+
+.m-24 {
+  @extend .mx-24;
+  @extend .my-24;
+}
+
+.m-32 {
+  @extend .mx-32;
+  @extend .my-32;
+}
+
+.m-48 {
+  @extend .mx-48;
+  @extend .my-48;
+}

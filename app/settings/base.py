@@ -3,7 +3,9 @@ import os
 from pathlib import Path
 
 from app.settings.auth import *
+from app.settings.aws import *
 from app.settings.db import *
+from app.settings.drf import *
 from app.settings.storage import *
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -29,10 +31,17 @@ INSTALLED_APPS = [
     "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
     "django.contrib.sites",
+    "django.contrib.gis",
     "django_extensions",
     "compressor",
     "microsoft_auth",
+    "rest_framework",
+    "rest_framework_gis",
+    "django_filters",
     "accounts",
+    "pages",
+    "pss",
+    "repairs",
 ]
 
 
@@ -54,7 +63,10 @@ MIDDLEWARE = [
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],
+        "DIRS": [
+            BASE_DIR / "templates",
+            BASE_DIR / "templates/fragments",
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [

@@ -1,0 +1,90 @@
+$hoverOpacity: 8%;
+$focusOpacity: 12%;
+$pressOpacity: 12%;
+$dragOpacity: 16%;
+$disabledOpacity: 12%;
+
+@mixin _stateLayer($layerColor, $layerOpacity) {
+  &:after {
+    background-color: rgba($layerColor, $layerOpacity / 100%);
+    content: "";
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: inherit;
+  }
+}
+
+@mixin hoverStateLayer($layerColor) {
+  position: relative;
+
+  &:hover:not([disabled]) {
+    @include _stateLayer($layerColor, $hoverOpacity);
+  }
+}
+
+@mixin focusStateLayer($layerColor) {
+  position: relative;
+
+  &:focus:not([disabled]), [active]:not([disabled]) {
+    @include _stateLayer($layerColor, $focusOpacity);
+  }
+}
+
+@mixin pressStateLayer($layerColor) {
+  position: relative;
+
+  &:active:not([disabled]) {
+    @include _stateLayer($layerColor, $pressOpacity);
+  }
+}
+
+@mixin dragStateLayer($layerColor) {
+  position: relative;
+
+  &:target:not([disabled]) {
+    @include _stateLayer($layerColor, $dragOpacity);
+  }
+}
+
+@mixin disabledStateLayer($layerColor, $transparent: false) {
+  position: relative;
+
+  &[disabled] {
+    @if not $transparent {
+      @include _stateLayer($layerColor, $disabledOpacity);
+    }
+
+    opacity: 38%;
+  }
+}
+
+@mixin stateLayers($layerColor, $hover: true, $focus: true, $press: true, $drag: true, $disabled: true) {
+  @if $hover {
+    @include hoverStateLayer($layerColor);
+  }
+
+  @if $focus {
+    @include focusStateLayer($layerColor);
+  }
+
+  @if $press {
+    @include pressStateLayer($layerColor);
+  }
+
+  @if $drag {
+    @include dragStateLayer($layerColor);
+  }
+
+  @if $disabled {
+    @include disabledStateLayer($layerColor);
+  }
+}
+
+@mixin manualStateLayer($layerColor, $layerOpacity) {
+  position: relative;
+
+  @include _stateLayer($layerColor, $layerOpacity);
+}

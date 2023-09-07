@@ -1,0 +1,47 @@
+@import "../theme/typography.scss";
+@import "../theme/colors.scss";
+
+
+.text-field {
+  position: relative;
+
+  &--filled {
+    @extend .text-field;
+
+    background-color: $surface-variant;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: $on-surface-variant;
+    height: 56px;
+
+    label {
+      @extend .text--body-sm;
+
+      position: absolute;
+      left: 16px;
+      top: 8px;
+    }
+
+    input, select {
+      @extend .text--body-md;
+
+      background-color: inherit;
+      border-width: 0;
+      outline: none;
+      position: absolute;
+      left: 16px;
+      bottom: 8px;
+      width: calc(100% - 32px);
+    }
+
+    select {
+      margin-left: -4px;
+    }
+  }
+
+  &--outlined {
+    @extend .text-field;
+  }
+}

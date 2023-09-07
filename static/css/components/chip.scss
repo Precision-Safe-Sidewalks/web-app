@@ -1,0 +1,35 @@
+@import "../theme/typography.scss";
+@import "../theme/colors.scss";
+@import "../layout/flex.scss";
+
+.chip {
+  @extend .flex;
+  @extend .justify-content-start;
+  @extend .align-items-center;
+  @extend .text--label-md;
+
+  height: 28px;
+  padding-left: 16px;
+  padding-right: 16px;
+  border-color: rgba($outline, 0.16);
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 8px;
+  width: fit-content;
+
+  &--success {
+    @extend .chip;
+
+    background-color: $success;
+    border: none;
+    color: $on-success !important;
+  }
+
+  &--error {
+    @extend .chip;
+
+    background-color: $error;
+    border: none;
+    color: $on-error !important;
+  }
+}

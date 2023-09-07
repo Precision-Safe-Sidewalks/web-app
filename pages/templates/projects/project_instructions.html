@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Project Instructions</h2>
+<h6 class="mt-2">
+  <a href="{% url 'project-detail' pk=project.pk %}">{{ project.name }}</a>
+</h6>
+{% endblock %}

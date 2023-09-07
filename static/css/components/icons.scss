@@ -1,0 +1,37 @@
+@import "../theme/colors.scss";
+
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;  /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+}
+
+.icon {
+  @extend .material-symbols-outlined;
+
+  &--success {
+    color: $success;
+  }
+
+  &--warning {
+    color: $warning;
+  }
+
+  &--error {
+    color: $error;
+  }
+
+  &--filled {
+    @extend .icon;
+
+    font-family: "Material Icons";
+  }
+}

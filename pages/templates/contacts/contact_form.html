@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>{% if contact %}{{ contact.name}}{% else %}New contact{% endif %}</h2>
+<h6 class="mt-2">
+  <a href="{% url 'customer-detail' pk=customer.pk %}">{{ customer.name }}</a>
+</h6>
+
+<div class="mt-16 w-128">
+  <form method="POST">
+    {% csrf_token %}
+
+    {{ form.customer }}
+
+    <div class="text-field--filled">
+      <label for="{{ form.name.id_for_label }}">Name</label>
+      {{ form.name }} 
+    </div>
+    
+    <div class="text-field--filled mt-4">
+      <label for="{{ form.email.id_for_label }}">Email</label>
+      {{ form.email }} 
+    </div>
+
+    <div class="text-field--filled mt-4">
+      <label for="{{ form.phone_number.id_for_label }}">Phone Number</label>
+      {{ form.phone_number }} 
+    </div>
+    
+    <div class="text-field--filled mt-4">
+      <label for="{{ form.extension.id_for_label }}">Extension</label>
+      {{ form.extension }}
+    </div>
+
+    <div class="mt-4">
+      <button class="btn--filled" type="submit">
+        {% if customer %}Save{% else %}Create{% endif %}
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}

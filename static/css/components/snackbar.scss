@@ -1,0 +1,38 @@
+@import "../theme/colors.scss";
+@import "../theme/elevation.scss";
+@import "../theme/typography.scss";
+@import "../layout/flex.scss";
+
+.snackbar {
+  position: fixed;
+  left: 0;
+  bottom: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+
+  .snackbar-content {
+    @extend .flex;
+    @extend .align-items-center;
+    @extend .justify-content-between;
+    @extend .elevation-3;
+
+    height: 48px;
+    padding-left: 16px;
+    padding-right: 12px;
+    border-radius: 4px;
+    background-color: $inverse-surface;
+    width: 360px;
+  }
+
+  .snackbar-text {
+    @extend .text--body-md;
+    
+    color: $inverse-on-surface !important;
+  }
+
+  .btn--icon {
+    color: $inverse-on-surface !important;
+  }
+}

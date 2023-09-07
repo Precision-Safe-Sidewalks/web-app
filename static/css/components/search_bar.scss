@@ -1,0 +1,21 @@
+@import "../theme/colors.scss";
+@import "../theme/typography.scss";
+
+.search-bar {
+  border-bottom: 1px solid rgba($outline, 0.38);
+  padding-bottom: 4px;
+  min-width: 360px;
+  display: flex;
+  align-items: center;
+
+  input {
+    @extend .text--body-md;
+
+    background-color: inherit;
+    border: none;
+    color: $on-surface-variant !important;
+    outline: none !important;
+    width: 100%;
+    padding-left: 8px;
+  }
+}

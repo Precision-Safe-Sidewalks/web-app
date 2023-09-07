@@ -1,0 +1,58 @@
+@import "../theme/typography.scss";
+@import "../theme/states.scss";
+@import "../theme/colors.scss";
+@import "../layout/padding.scss";
+@import "../layout/flex.scss";
+
+.table {
+  @extend .text--body-md;
+
+  width: 100%;
+  text-align: left;
+  border-collapse: separate;
+  border-spacing: 0px;
+  border: 1px solid rgba($outline, 0.24);
+  border-radius: 4px;
+
+  th, td {
+    padding: 12px;
+  }
+
+  td {
+    border-top: 1px solid rgba($outline, 0.24);
+  }
+
+  thead tr {
+    background-color: $surface-variant;
+  }
+
+  tbody tr {
+    &:hover {
+      background-color: rgba($scrim, $hoverOpacity / 100%);
+    }
+  }
+
+  td a:not(.btn) {
+    color: $primary;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.table-actions {
+  @extend .text--body-md;
+  @extend .flex;
+  @extend .align-items-center;
+  @extend .justify-content-between;
+  @extend .mb-2;
+
+  .table-pagination {
+    @extend .flex;
+    @extend .align-items-center;
+  }
+
+  .table-search {
+  }
+}

@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="flex align-items-center justify-content-between">
+  <h2>{{ customer.name }}</h2>
+
+  <a class="btn--filled" href="{% url 'customer-update' pk=customer.pk %}">
+    Edit
+  </a>
+</div>
+
+<div class="mt-16">
+  <div class="flex align-items-center justify-content-between">
+    <h5>Active Projects</h5>
+
+    <a href="{% url 'customer-project-create' pk=customer.pk %}" class="btn--tonal">
+      Add project
+    </a>
+  </div>
+
+  <div class="mt-4">
+    <div id="active-projects-table"></div>
+  </div>
+</div>
+
+<div class="mt-16">
+  <h5>Completed Projects</h5>
+  
+  <div class="mt-4">
+    <div id="completed-projects-table"></div>
+  </div>
+</div>
+
+<div class="mt-16">
+  <div class="flex align-items-center justify-content-between">
+    <h5>Contacts</h5>
+
+    <a href="{% url 'customer-contact-create' pk=customer.pk %}" class="btn--tonal">
+      Add contact
+    </a>
+  </div>
+
+  <div class="mt-4">
+    <div id="contacts-table"></div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(() => {
+    // Create the active projects data table
+    new DataTable("active-projects-table", {
+      columns: [
+        "Name",
+        "BD",
+        "BDA",
+        "Territory",
+        "Primary Contact",
+        "Created",
+      ],
+      url: "/api/tables/projects/?customer={{ customer.pk }}&status=S&status=I",
+      perPage: 10,
+    })
+
+    // Create the completed projects data table
+    new DataTable("completed-projects-table", {
+      columns: [
+        "Name",
+        "BD",
+        "BDA",
+        "Territory",
+        "Primary Contact",
+        "Created",
+      ],
+      url: "/api/tables/projects/?customer={{ customer.pk }}&status=C",
+      perPage: 10,
+    })
+
+    // Create the contacts data table
+    new DataTable("contacts-table", {
+      columns: [
+        "Name",
+        "Email",
+        "Phone Number",
+        "Extension",
+      ],
+      url: "/api/tables/contacts/?customer={{ customer.pk }}",
+      perPage: 10,
+    })
+  })
+</script>
+{% endblock %}

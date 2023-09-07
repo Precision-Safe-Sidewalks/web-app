@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Import {{ stage }} measurements</h2>
+<h6 class="mt-2">
+  <a href="{% url 'project-detail' pk=project.pk %}">
+    {{ project.name }}
+  </a>
+</h6>
+
+<div class="mt-16 w-128">
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="text-field--filled">
+      <label for="{{ form.file.id_for_label }}">CSV file</label>
+      {{ form.file }} 
+    </div>
+
+    {% if is_replace %}
+    <div class="my-2">
+      <p class="text--body-md">Importing new measurements will replace the existing measurements.</p>
+    </div>
+    {% endif %}
+
+    <div class="mt-4">
+      <button class="btn--filled" type="submit">Import</button>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

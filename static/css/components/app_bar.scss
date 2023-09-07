@@ -1,0 +1,9 @@
+@import "../layout/padding.scss";
+@import "../layout/height.scss";
+@import "../layout/flex.scss";
+
+.app-bar {
+  @extend .flex;
+  @extend .h-16;
+  @extend .px-4;
+}

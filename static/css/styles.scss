@@ -1,0 +1,83 @@
+@import "./theme/typography.scss";
+@import "./theme/colors.scss";
+@import "./layout/padding.scss";
+@import "./layout/margins.scss";
+@import "./layout/flex.scss";
+@import "./layout/grid.scss";
+@import "./layout/width.scss";
+@import "./layout/height.scss";
+@import "./components/app_bar.scss";
+@import "./components/buttons.scss";
+@import "./components/chip.scss";
+@import "./components/dialog.scss";
+@import "./components/icons.scss";
+@import "./components/map.scss";
+@import "./components/nav_rail.scss";
+@import "./components/search_bar.scss";
+@import "./components/snackbar.scss";
+@import "./components/table.scss";
+@import "./components/text_field.scss";
+
+body {
+  margin: 0;
+  background-color: $background;
+  color: $on-background;
+}
+
+a {
+  text-decoration: none;
+  
+  &:not(.btn) {
+    color: $primary !important;
+  }
+
+  &:hover:not(.btn) {
+    text-decoration: underline;
+  }
+
+  &:visited:not(.btn) {
+    color: inherit;
+  }
+}
+
+h1 {
+  @extend .text--display-lg;
+  
+  margin: 0;
+}
+
+h2 {
+  @extend .text--display-md;
+
+  margin: 0;
+}
+
+h3 {
+  @extend .text--headline-lg;
+  
+  margin: 0;
+}
+
+h4 {
+  @extend .text--headline-md;
+  
+  margin: 0;
+}
+
+h5 {
+  @extend .text--title-lg;
+  
+  margin: 0;
+}
+
+h6 {
+  @extend .text--title-md;
+  
+  margin: 0;
+}
+
+p {
+  @extend .text--body-md;
+
+  margin: 0;
+}

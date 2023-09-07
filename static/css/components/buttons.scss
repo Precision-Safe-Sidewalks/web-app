@@ -1,7 +1,7 @@
-@use "sass:color" as color;
-
-@import "../mds/colors.scss";
-@import "../mds/typography.scss";
+@import "../theme/colors.scss";
+@import "../theme/states.scss";
+@import "../theme/typography.scss";
+@import "../theme/elevation.scss";
 
 
 .btn {
@@ -9,11 +9,12 @@
 
   align-items: center;
   border-color: transparent;
-  border-radius: 0px;
+  border-radius: 20px;
   border-style: solid;
   border-width: 0;
+  cursor: pointer;
   display: flex;
-  height: 40px;
+  height: 38px;
   justify-content: center;
   padding-left: 24px;
   padding-right: 24px;
@@ -23,13 +24,59 @@
 
   &--filled {
     @extend .btn;
+    @include stateLayers($primary);
 
     background-color: $primary;
-    color: $on-primary;
+    color: $on-primary !important;
 
     &:hover {
-      background-color: darken($primary, 8%);
+      @extend .elevation-1;
     }
+  }
+
+  &--tonal {
+    @extend .btn;
+    @include stateLayers($on-secondary-container);
+
+    background-color: $secondary-container;
+    color: $on-secondary-container !important;
+  }
+
+  &--text {
+    @extend .btn;
+    @include stateLayers($primary, $disabled: false)
+    @include disabledStateLayer($on-surface, true);
+
+    background-color: transparent;
+    color: $primary !important;
+  }
+
+  &--text-error {
+    @extend .btn;
+    @include stateLayers($error, $disabled: false)
+    @include disabledStateLayer($on-surface, true);
+
+    background-color: transparent;
+    color: $error !important;
+  }
+
+  &--icon {
+    @extend .btn;
+    @include stateLayers($primary, $disabled: false);
+    @include disabledStateLayer($on-surface, true);
+
+    background-color: transparent;
+    color: $on-surface-variant;
+    height: 40px;
+    width: 40px;
+    padding: 0;
+  }
+
+  &--icon-sm {
+    @extend .btn--icon;
+
+    height: 32px;
+    width: 32px;
   }
 
   &--microsoft {
