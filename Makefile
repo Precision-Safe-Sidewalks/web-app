@@ -1,6 +1,6 @@
 APP := app
-PROJECT := aprecisioncompany
-ECR_REPOSITORY := 121854965079.dkr.ecr.us-east-1.amazonaws.com
+PROJECT := pss
+ECR_REPOSITORY := 292181225895.dkr.ecr.us-east-1.amazonaws.com
 GIT_HASH := dev #FIXME: configure git hash
 
 network:
@@ -10,11 +10,11 @@ image:
 	@docker compose build ${APP}
 
 release: ecr_login
-	@docker tag ${PROJECT}-${APP} ${ECR_REPOSITORY}/${PROJECT}:${GIT_HASH} 
+	@docker tag ${PROJECT}:latest ${ECR_REPOSITORY}/${PROJECT}:${GIT_HASH} 
 	@docker push ${ECR_REPOSITORY}/${PROJECT}:${GIT_HASH}
 
 ecr_login:
-	@aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${ECR_REPOSITORY}
+	@aws --profile pss ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${ECR_REPOSITORY}
 
 shell:
 	@docker compose exec ${APP} /bin/bash
