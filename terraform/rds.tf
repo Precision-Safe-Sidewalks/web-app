@@ -9,7 +9,7 @@ resource "aws_db_instance" "primary" {
   multi_az                     = false
   username                     = local.secrets.DB_USER
   password                     = local.secrets.DB_PASSWORD
-  deletion_protection          = false # FIXME: set to true in production
+  deletion_protection          = true
   performance_insights_enabled = true
   backup_retention_period      = 7
   db_subnet_group_name         = aws_db_subnet_group.public.name

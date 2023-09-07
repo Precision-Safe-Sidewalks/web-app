@@ -1,7 +1,7 @@
 variable "project" {
   type        = string
   description = "Name of the project for the infrastructure"
-  default     = "aprecisioncompany"
+  default     = "pss"
 }
 
 variable "app_version" {
@@ -25,7 +25,7 @@ variable "availability_zones" {
 variable "cidr_block" {
   type        = string
   description = "VPC CIDR block"
-  default     = "10.1.0.0/16"
+  default     = "10.0.0.0/16"
 }
 
 variable "backend_port" {

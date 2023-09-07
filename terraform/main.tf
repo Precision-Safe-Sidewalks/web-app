@@ -9,15 +9,14 @@ terraform {
   }
 
   backend "s3" {
-    bucket = "ajcurley"
-    key    = "infrastructure/upwork/aprecisioncompany.tfstate"
+    bucket = "precision-safe-sidewalks"
+    key    = "infrastructure/web-app/pss.tfstate"
     region = "us-east-1"
   }
 }
 
 provider "aws" {
-  region  = "us-east-1"
-  profile = "ci"
+  region = "us-east-1"
 }
 
 locals {
