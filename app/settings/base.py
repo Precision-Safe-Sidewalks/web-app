@@ -18,7 +18,6 @@ ALLOWED_HOSTS = ["*"]
 ROOT_URLCONF = "app.urls"
 WSGI_APPLICATION = "app.wsgi.application"
 APPEND_SLASH = True
-SITE_ID = 1
 
 
 # Application definition
