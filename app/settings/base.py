@@ -18,6 +18,7 @@ ALLOWED_HOSTS = ["*"]
 ROOT_URLCONF = "app.urls"
 WSGI_APPLICATION = "app.wsgi.application"
 APPEND_SLASH = True
+SITE_ID = 1
 
 
 # Application definition
@@ -29,7 +30,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
-    #"django.contrib.sites",
+    "django.contrib.sites",
     "django.contrib.gis",
     "django_extensions",
     "compressor",
