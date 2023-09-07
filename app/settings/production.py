@@ -1,7 +1,7 @@
 # ruff: noqa
 from app.settings.base import *
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     "*", # FIXME: replace with production IPs
