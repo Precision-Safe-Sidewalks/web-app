@@ -106,3 +106,6 @@ COMPRESS_PRECOMPILERS = [
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# FIXME: disable once using HTTPS
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None
