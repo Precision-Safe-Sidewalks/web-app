@@ -97,6 +97,43 @@ jobs:
         run: |
           make pull_image
 
+      - name: Check migrations
+        run: |
+          make ci_check_migrations
+
       - name: Run tests
         run: |
           make ci_test
+
+  deploy:
+    #if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs: [test]
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::292181225895:role/github-actions
+          role-session-name: github-actions
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Set build version
+        run: echo "app_version=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+      - name: Terraform init
+        run: terraform init
+
+      - name: Terraform validate
+        run: terraform validate -no-color
+
+      - name: Terraform workspace
+        run: terraform workspace select production
+
+      - name: Terraform plan
+        run: terraform plan -var app_version=app_version -out="plan-${app_version}"

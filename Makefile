@@ -57,7 +57,22 @@ ci_check_standards:
 	@ruff .
 	@black --check .
 
+ci_check_migrations:
+	@docker run --env-file docker/env.ci \
+		--add-host host.docker.internal:host-gateway \
+		--rm ${IMAGE_URI} bash -c 'python3 manage.py makemigrations --check'
+
 ci_test:
 	@docker run --env-file docker/env.ci \
 		--add-host host.docker.internal:host-gateway \
 		--rm ${IMAGE_URI} bash -c 'python3 manage.py test --parallel --failfast --keepdb'
+
+ci_run_migrations:
+	@docker run \
+		-e DJANGO_SETTINGS_MODULE=app.settings.development \
+		-e DJANGO_SECRET_KEY=fake \
+		-e DB_HOST=${DB_HOST} \
+		-e DB_USER=${DB_USER} \
+		-e DB_PASSWORD=${DB_PASSWORD} \
+		-e DB_NAME=${DB_NAME} \
+		--rm ${IMAGE_URI} bash -c 'python3 manage.py migrate'
