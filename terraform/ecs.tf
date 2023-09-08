@@ -66,7 +66,7 @@ resource "aws_ecs_task_definition" "default" {
 
   runtime_platform {
     operating_system_family = "LINUX"
-    cpu_architecture        = "ARM64"
+    cpu_architecture        = "AMD64"
   }
 
   tags = {
