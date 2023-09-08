@@ -12,6 +12,7 @@ volumes:
 
 services:
   app:
+    image: pss:latest
     build:
       context: .
       dockerfile: docker/Dockerfile.app
