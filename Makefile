@@ -9,7 +9,7 @@ network:
 image:
 	@docker compose build ${APP}
 
-release: ecr_login
+release_image:
 	@docker tag ${PROJECT}:latest ${ECR_REPOSITORY}/${PROJECT}:${GIT_HASH} 
 	@docker push ${ECR_REPOSITORY}/${PROJECT}:${GIT_HASH}
 
