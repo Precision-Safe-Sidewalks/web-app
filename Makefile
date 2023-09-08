@@ -8,7 +8,8 @@ ECR_REPOSITORY := 292181225895.dkr.ecr.us-east-1.amazonaws.com
 GIT_HASH := $(shell git rev-parse --short HEAD)
 
 # Published image URI
-IMAGE_URI := ${ECR_REPOSITORY}/${PROJECT}:${GIT_HASH}
+#IMAGE_URI := ${ECR_REPOSITORY}/${PROJECT}:${GIT_HASH}
+IMAGE_URI := pss:latest
 
 network:
 	@docker network create ${PROJECT}-dev || true
@@ -59,8 +60,9 @@ ci_check_standards:
 
 ci_check_migrations:
 	@docker run --env-file docker/env.ci \
+		--volume ${PWD}:/code \
 		--add-host host.docker.internal:host-gateway \
-		--rm ${IMAGE_URI} bash -c 'python3 manage.py makemigrations --check'
+		--rm ${IMAGE_URI} bash -c 'scripts/check_migrations.sh'
 
 ci_test:
 	@docker run --env-file docker/env.ci \

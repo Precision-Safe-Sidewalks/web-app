@@ -97,6 +97,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Pull Docker image
+        run: |
+          make pull_image
+
       - name: Check migrations
         run: |
           make ci_check_migrations
