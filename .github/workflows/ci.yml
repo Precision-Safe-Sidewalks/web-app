@@ -1,9 +1,19 @@
-name: ci
+name: build-deploy
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: us-east-1
 
 jobs:
   check_standards:
@@ -11,15 +21,161 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.10"
+          cache: "pip"
+
       - name: Install Python dependencies
         run: |
-          pip install -r requirements.txt
           pip install -r requirements.dev.txt
+
       - name: Check code standards
         run: |
-          make lint
-          make check_fmt
+          make ci_check_standards
+
+  build:
+    runs-on: ubuntu-latest
+    needs: [check_standards]
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::292181225895:role/github-actions
+          role-session-name: github-actions
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to AWS ECR
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          mask-password: 'true'
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Build Docker image
+        run: |
+          touch docker/env.secrets # dummy environment file
+          make image
+
+      - name: Release Docker image
+        run: |
+          make release_image
+
+  test:
+    runs-on: ubuntu-latest
+    needs: [build]
+    services:
+      db:
+        image: postgis/postgis:14-3.4
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: pss_dev
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::292181225895:role/github-actions
+          role-session-name: github-actions
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to AWS ECR
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          mask-password: 'true'
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Pull Docker image
+        run: |
+          make pull_image
+
+      - name: Check migrations
+        run: |
+          make ci_check_migrations
+
+      - name: Run tests
+        run: |
+          make ci_test
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: [test]
+    runs-on: ubuntu-latest
+    env:
+      working-directory: ./terraform
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::292181225895:role/github-actions
+          role-session-name: github-actions
+          aws-region: ${{ env.AWS_REGION }}
+      
+      - name: Login to AWS ECR
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          mask-password: 'true'
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Set build version
+        run: |
+          echo "app_version=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+      - name: Terraform init
+        working-directory: ${{ env.working-directory }}
+        run: |
+          terraform init
+
+      - name: Terraform validate
+        working-directory: ${{ env.working-directory }}
+        run: |
+          terraform validate -no-color
+
+      - name: Terraform workspace
+        working-directory: ${{ env.working-directory }}
+        run: |
+          terraform workspace select -or-create=true production
+
+      - name: Terraform plan
+        working-directory: ${{ env.working-directory }}
+        run: |
+          terraform plan -var app_version=$app_version -out "plan-${app_version}"
+
+      - name: Terraform apply
+        working-directory: ${{ env.working-directory }}
+        run: |
+          terraform apply "plan-${app_version}"
+
+      # FIXME: implement status check once using production domain
+      #- name: Wait for deploy
+      #  uses: mydea/action-wait-for@v1
+      #  with:
+      #    url: https://app.<>.com/status/
+      #    expected-response-field: "version"
+      #    expected-response-field-value: $app_version
+
+      - name: Run migrations
+        env:
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+        run: |
+          make ci_run_migrations
