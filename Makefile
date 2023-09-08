@@ -8,8 +8,7 @@ ECR_REPOSITORY := 292181225895.dkr.ecr.us-east-1.amazonaws.com
 GIT_HASH := $(shell git rev-parse --short HEAD)
 
 # Published image URI
-#IMAGE_URI := ${ECR_REPOSITORY}/${PROJECT}:${GIT_HASH}
-IMAGE_URI := pss:latest
+IMAGE_URI := ${ECR_REPOSITORY}/${PROJECT}:${GIT_HASH}
 
 network:
 	@docker network create ${PROJECT}-dev || true
