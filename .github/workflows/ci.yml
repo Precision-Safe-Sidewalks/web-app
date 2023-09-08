@@ -14,6 +14,7 @@ permissions:
 
 env:
   AWS_REGION: us-east-1
+  TF_WOR
 
 jobs:
   check_standards:
@@ -111,8 +112,10 @@ jobs:
 
   deploy:
     #if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
     needs: [test]
+    runs-on: ubuntu-latest
+    env:
+      working-direction: ./terraform
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -132,22 +135,27 @@ jobs:
           echo "app_version=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
       - name: Terraform init
+        working-directory: ${{ env.working-directory }}
         run: |
           terraform init
 
       - name: Terraform validate
+        working-directory: ${{ env.working-directory }}
         run: |
           terraform validate -no-color
 
       - name: Terraform workspace
+        working-directory: ${{ env.working-directory }}
         run: |
           terraform workspace select production
 
       - name: Terraform plan
+        working-directory: ${{ env.working-directory }}
         run: |
           terraform plan -var app_version=$app_version -out "plan-${app_version}"
 
       #- name: Terraform apply
+      #  working-directory: ${{ env.working-directory }}
       #  run: |
       #    terraform apply "plan-${app_version}"
 
