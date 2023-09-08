@@ -146,7 +146,7 @@ jobs:
       - name: Terraform workspace
         working-directory: ${{ env.working-directory }}
         run: |
-          terraform workspace select production
+          terraform workspace select --or-create production
 
       - name: Terraform plan
         working-directory: ${{ env.working-directory }}
