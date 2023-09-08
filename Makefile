@@ -12,6 +12,9 @@ image:
 release_image:
 	@docker tag ${PROJECT}:latest ${ECR_REPOSITORY}/${PROJECT}:${GIT_HASH} 
 	@docker push ${ECR_REPOSITORY}/${PROJECT}:${GIT_HASH}
+	
+pull_image:
+	@docker push ${ECR_REPOSITORY}/${PROJECT}:${GIT_HASH}
 
 ecr_login:
 	@aws --profile pss ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${ECR_REPOSITORY}
