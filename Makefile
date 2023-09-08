@@ -1,7 +1,14 @@
 APP := app
 PROJECT := pss
+
+# AWS settings
 ECR_REPOSITORY := 292181225895.dkr.ecr.us-east-1.amazonaws.com
+
+# Git settings
 GIT_HASH := $(shell git rev-parse --short HEAD)
+
+# Published image URI
+IMAGE_URI := ${ECR_REPOSITORY}/${PROJECT}:${GIT_HASH}
 
 network:
 	@docker network create ${PROJECT}-dev || true
@@ -10,14 +17,11 @@ image:
 	@docker compose build ${APP}
 
 release_image:
-	@docker tag ${PROJECT}:latest ${ECR_REPOSITORY}/${PROJECT}:${GIT_HASH} 
-	@docker push ${ECR_REPOSITORY}/${PROJECT}:${GIT_HASH}
+	@docker tag ${PROJECT}:latest ${IMAGE_URI}
+	@docker push ${IMAGE_URI}
 	
 pull_image:
-	@docker push ${ECR_REPOSITORY}/${PROJECT}:${GIT_HASH}
-
-ecr_login:
-	@aws --profile pss ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${ECR_REPOSITORY}
+	@docker pull ${IMAGE_URI}
 
 shell:
 	@docker compose exec ${APP} /bin/bash
@@ -52,3 +56,8 @@ isort:
 ci_check_standards:
 	@ruff .
 	@black --check .
+
+ci_test:
+	@docker run --env-file docker/env.ci \
+		--add-host host.docker.internal:host-gateway \
+		--rm ${IMAGE_URI} bash -c 'python3 manage.py test --parallel --failfast --keepdb'
