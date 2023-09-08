@@ -153,16 +153,16 @@ jobs:
         run: |
           terraform plan -var app_version=$app_version -out "plan-${app_version}"
 
-      #- name: Terraform apply
-      #  working-directory: ${{ env.working-directory }}
-      #  run: |
-      #    terraform apply "plan-${app_version}"
+      - name: Terraform apply
+        working-directory: ${{ env.working-directory }}
+        run: |
+          terraform apply "plan-${app_version}"
 
-      #- name: Run migrations
-      #  env:
-      #    DB_HOST: ${{ secrets.DB_HOST }}
-      #    DB_USER: ${{ secrets.DB_USER }}
-      #    DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      #    DB_NAME: ${{ secrets.DB_NAME }}
-      #  run: |
-      #    make ci_run_migrations
+      - name: Run migrations
+        env:
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+        run: |
+          make ci_run_migrations
