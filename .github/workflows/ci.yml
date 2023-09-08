@@ -14,7 +14,6 @@ permissions:
 
 env:
   AWS_REGION: us-east-1
-  TF_WOR
 
 jobs:
   check_standards:
