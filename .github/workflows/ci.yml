@@ -21,14 +21,17 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.10"
           cache: "pip"
+
       - name: Install Python dependencies
         run: |
           pip install -r requirements.dev.txt
+
       - name: Check code standards
         run: |
           make ci_check_standards
@@ -36,6 +39,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     needs: [check_standards]
+    outputs:
+      GIT_HASH: ${{ steps.set-git-hash.outputs.git_hash }}
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -43,15 +48,27 @@ jobs:
           role-to-assume: arn:aws:iam::292181225895:role/github-actions
           role-session-name: github-actions
           aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to AWS ECR
+        uses: aws-actions/amazon-ecr-login@v1
+
       - name: Checkout repository
         uses: actions/checkout@v3
+
       - name: Build Docker image
         run: |
+          touch docker/env.secrets # dummy environment file
           make image
+
       - name: Release Docker image
         run: |
           make release_image
           
+      - name: Set git hash
+        id: set-git-hash
+        run: |
+          echo "git_hash=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
   #test:
   #  runs-on: ubuntu-latest
   #  needs: [build]
