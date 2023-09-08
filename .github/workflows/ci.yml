@@ -24,5 +24,4 @@ jobs:
           pip install -r requirements.dev.txt
       - name: Check code standards
         run: |
-          make lint
-          make check_fmt
+          make ci_check_standards

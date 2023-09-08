@@ -45,3 +45,7 @@ lint:
 
 isort:
 	@docker compose run --rm ${APP} bash -c "isort ."
+
+ci_check_standards:
+	@ruff .
+	@black --check .
