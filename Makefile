@@ -26,10 +26,10 @@ repl:
 	@docker compose exec ${APP} bash -c "python3 manage.py shell_plus -- -i scripts/repl.py"
 
 migrate_db:
-	@docker compose exec ${APP} bash -c "python3 manage.py migrate"
+	@docker compose run --rm ${APP} bash -c "python3 manage.py migrate"
 
 check_migrations:
-	@docker compose exec ${APP} bash -c "python3 manage.py makemigrations --check"
+	@docker compose run --rm ${APP} bash -c "python3 manage.py makemigrations --check"
 
 test:
 	@docker compose run --rm ${APP} bash -c "python3 manage.py test --parallel"
