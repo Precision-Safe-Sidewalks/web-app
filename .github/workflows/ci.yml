@@ -1,8 +1,5 @@
 name: build-deploy
 
-env:
-  AWS_REGION: us-east-1
-
 on:
   push:
     branches:
@@ -10,6 +7,13 @@ on:
   pull_request:
     branches:
       - main
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: us-east-1
 
 jobs:
   check_standards:
