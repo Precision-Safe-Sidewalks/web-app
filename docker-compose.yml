@@ -2,7 +2,7 @@ version: "3"
 
 networks:
   default:
-    name: aprecisioncompany-dev
+    name: pss-dev
     external: true
 
 volumes:

@@ -14,7 +14,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # General settings
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 DEBUG = True
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 ROOT_URLCONF = "app.urls"
 WSGI_APPLICATION = "app.wsgi.application"
 APPEND_SLASH = True
@@ -106,3 +106,6 @@ COMPRESS_PRECOMPILERS = [
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# FIXME: disable once using HTTPS
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None
