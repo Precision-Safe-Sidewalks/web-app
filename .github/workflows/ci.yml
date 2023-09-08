@@ -122,6 +122,11 @@ jobs:
           role-to-assume: arn:aws:iam::292181225895:role/github-actions
           role-session-name: github-actions
           aws-region: ${{ env.AWS_REGION }}
+      
+      - name: Login to AWS ECR
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          mask-password: true
 
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -157,6 +162,14 @@ jobs:
         working-directory: ${{ env.working-directory }}
         run: |
           terraform apply "plan-${app_version}"
+
+      # FIXME: implement status check once using production domain
+      #- name: Wait for deploy
+      #  uses: mydea/action-wait-for@v1
+      #  with:
+      #    url: https://app.<>.com/status/
+      #    expected-response-field: "version"
+      #    expected-response-field-value: $app_version
 
       - name: Run migrations
         env:
