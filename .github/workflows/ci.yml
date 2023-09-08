@@ -114,7 +114,7 @@ jobs:
     needs: [test]
     runs-on: ubuntu-latest
     env:
-      working-direction: ./terraform
+      working-directory: ./terraform
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
