@@ -1,6 +1,6 @@
 from django.db import models
 
-from lib.models.constants import States
+from core.models.constants import States
 
 
 class Customer(models.Model):
