@@ -1,3 +1,4 @@
+import csv
 import json
 
 import boto3
@@ -5,17 +6,13 @@ from django.conf import settings
 from django.contrib.gis.db.models.fields import PointField
 from django.db import models, transaction
 
-from repairs.models.constants import QuickDescription, SpecialCase
+from repairs.models.constants import QuickDescription, SpecialCase, Stage
 from repairs.models.projects import Project
-from repairs.parsers import ProductionMeasurement, SurveyMeasurement
+from repairs.parsers import get_parser_class
 
 
 class Measurement(models.Model):
     """Survey measurement GIS data and metadata"""
-
-    class Stage(models.TextChoices):
-        SURVEY = ("SURVEY", "Survey")
-        PRODUCTION = ("PRODUCTION", "Production")
 
     project = models.ForeignKey(
         Project, on_delete=models.CASCADE, related_name="measurements"
@@ -53,11 +50,7 @@ class Measurement(models.Model):
     def import_from_csv(file_obj, project, stage):
         """Import the Measurements from CSV (replaces any existing)"""
         file_obj.seek(0)
-
-        if stage == Measurement.Stage.SURVEY:
-            parser_cls = SurveyMeasurement
-        else:
-            parser_cls = ProductionMeasurement
+        parser_cls = get_parser_class(stage)
 
         with transaction.atomic():
             Measurement.objects.filter(project=project, stage=stage).delete()
@@ -66,6 +59,7 @@ class Measurement(models.Model):
                 kwargs = data.model_dump()
                 Measurement.objects.create(project=project, stage=stage, **kwargs)
 
+        # FIXME: move this to its own function
         # Trigger the Lambda function to reverse geocode the addresses
         # based on the coordinates by adding the (project_id, stage) to
         # the SQS queue
@@ -77,6 +71,55 @@ class Measurement(models.Model):
             sqs.send_message(QueueUrl=queue_url, MessageBody=payload)
 
         return Measurement.objects.filter(project=project, stage=stage)
+
+    @staticmethod
+    def export_to_csv(file_obj, project, stage):
+        """Export the Measurements to CSV"""
+        parser_cls = get_parser_class(stage)
+        columns = list(parser_cls.model_fields)
+        columns.remove("coordinate")
+        aliases = {key: field.alias for key, field in parser_cls.model_fields.items()}
+
+        measurements = list(
+            Measurement.objects.filter(project=project, stage=stage)
+            .annotate(
+                x=models.ExpressionWrapper(
+                    models.Func("coordinate", function="ST_X"),
+                    output_field=models.FloatField(),
+                )
+            )
+            .annotate(
+                y=models.ExpressionWrapper(
+                    models.Func("coordinate", function="ST_Y"),
+                    output_field=models.FloatField(),
+                )
+            )
+            .order_by("object_id")
+            .values(*columns)
+        )
+
+        encoders = {
+            "special_case": SpecialCase,
+            "quick_description": QuickDescription,
+        }
+
+        for measurement in measurements:
+            for column, encoding in encoders.items():
+                value = measurement[column]
+
+                if value and column in measurement:
+                    measurement[column] = encoding(value).label
+
+            for column in list(measurement):
+                if column in aliases:
+                    alias = aliases[column]
+                    measurement[alias] = measurement.pop(column)
+
+        fieldnames = list(aliases.values())
+        writer = csv.DictWriter(file_obj, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(measurements)
+        file_obj.seek(0)
 
 
 class MeasurementImage(models.Model):

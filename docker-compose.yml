@@ -39,8 +39,7 @@ services:
       timeout: 5s
       retries: 3
     depends_on:
-      db:
-        condition: service_healthy
+      - db
 
   db:
     image: postgis/postgis:14-3.4

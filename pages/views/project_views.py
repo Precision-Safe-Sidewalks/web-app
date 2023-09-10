@@ -1,9 +1,7 @@
-import csv
 import io
 import json
 import logging
 
-from django.db.models import ExpressionWrapper, FloatField, Func
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, reverse
 from django.utils.text import slugify
@@ -134,55 +132,13 @@ class ProjectMeasurementsImportView(FormView):
 class ProjectMeasurementsExportView(View):
     """Download the project measurements CSV"""
 
-    _columns = (
-        "object_id",
-        "global_id",
-        "length",
-        "width",
-        "x",
-        "y",
-        "special_case",
-        "quick_description",
-        "h1",
-        "h2",
-        "linear_feet",
-        "inch_feet",
-        "slope",
-        "curb_length",
-        "survey_address",
-        "surveyor",
-        "note",
-        "geocoded_address",
-        "measured_at",
-        "created_at",
-    )
-
     def get(self, request, pk, stage):
         project = get_object_or_404(Project, pk=pk)
         filename = f"{slugify(project.name)}_measurements_{stage}.csv"
 
-        measurements = list(
-            project.measurements.filter(stage=stage.upper())
-            .order_by("object_id")
-            .annotate(
-                x=ExpressionWrapper(
-                    Func("coordinate", function="ST_X"), output_field=FloatField()
-                )
-            )
-            .annotate(
-                y=ExpressionWrapper(
-                    Func("coordinate", function="ST_Y"), output_field=FloatField()
-                )
-            )
-            .values(*self._columns),
-        )
-
         with io.StringIO() as f:
-            writer = csv.DictWriter(f, fieldnames=self._columns)
-            writer.writeheader()
-            writer.writerows(measurements)
+            Measurement.export_to_csv(f, project, stage.upper())
 
-            f.seek(0)
             resp = HttpResponse(f, content_type="text/csv")
             resp["Content-Disposition"] = f'attachment; filename="{filename}"'
             return resp

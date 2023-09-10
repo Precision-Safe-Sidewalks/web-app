@@ -3,6 +3,7 @@ from django.contrib.gis.db.models.aggregates import Union
 from django.db import models, transaction
 
 from pss.models import Contact, Customer, Territory
+from repairs.models.constants import Stage
 
 User = get_user_model()
 
@@ -87,10 +88,7 @@ class Project(models.Model):
 
     def get_survey_measurements(self):
         """Return the survey measurements queryset"""
-        from repairs.models.measurements import Measurement
-
-        stage = Measurement.Stage.SURVEY
-        return self.measurements.filter(stage=stage)
+        return self.measurements.filter(stage=Stage.SURVEY).order_by("object_id")
 
     @property
     def has_survey_measurements(self):
@@ -99,10 +97,7 @@ class Project(models.Model):
 
     def get_production_measurements(self):
         """Return the production measurements queryset"""
-        from repairs.models.measurements import Measurement
-
-        stage = Measurement.Stage.PRODUCTION
-        return self.measurements.filter(stage=stage)
+        return self.measurements.filter(stage=Stage.PRODUCTION).order_by("object_id")
 
     @property
     def has_production_measurements(self):
