@@ -1,6 +1,11 @@
 from django.db import models
 
 
+class Stage(models.TextChoices):
+    SURVEY = ("SURVEY", "Survey")
+    PRODUCTION = ("PRODUCTION", "Production")
+
+
 class SpecialCase(models.TextChoices):
     """Special case type choices"""
 

@@ -5,17 +5,13 @@ from django.conf import settings
 from django.contrib.gis.db.models.fields import PointField
 from django.db import models, transaction
 
-from repairs.models.constants import QuickDescription, SpecialCase
+from repairs.models.constants import Stage, QuickDescription, SpecialCase
 from repairs.models.projects import Project
 from repairs.parsers import ProductionMeasurement, SurveyMeasurement
 
 
 class Measurement(models.Model):
     """Survey measurement GIS data and metadata"""
-
-    class Stage(models.TextChoices):
-        SURVEY = ("SURVEY", "Survey")
-        PRODUCTION = ("PRODUCTION", "Production")
 
     project = models.ForeignKey(
         Project, on_delete=models.CASCADE, related_name="measurements"
@@ -54,7 +50,7 @@ class Measurement(models.Model):
         """Import the Measurements from CSV (replaces any existing)"""
         file_obj.seek(0)
 
-        if stage == Measurement.Stage.SURVEY:
+        if stage == Stage.SURVEY:
             parser_cls = SurveyMeasurement
         else:
             parser_cls = ProductionMeasurement
