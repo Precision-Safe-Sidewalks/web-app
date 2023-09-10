@@ -1,6 +1,7 @@
 from lib.test_helpers import IntegrationTestBase
 from repairs.factories import ProjectFactory
 from repairs.models import Measurement
+from repairs.models.constants import Stage
 
 
 class TestMeasurement(IntegrationTestBase):
@@ -10,7 +11,7 @@ class TestMeasurement(IntegrationTestBase):
         """Test importing the survey measurements from CSV"""
 
         project = ProjectFactory()
-        stage = Measurement.Stage.SURVEY
+        stage = Stage.SURVEY
 
         filename = "repairs/tests/fixtures/survey_template.csv"
 
@@ -22,7 +23,7 @@ class TestMeasurement(IntegrationTestBase):
         """Test importint the production measurements from CSV"""
 
         project = ProjectFactory()
-        stage = Measurement.Stage.PRODUCTION
+        stage = Stage.PRODUCTION
 
         filename = "repairs/tests/fixtures/production_template.csv"
 
