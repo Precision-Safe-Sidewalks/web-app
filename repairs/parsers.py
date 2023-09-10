@@ -7,7 +7,7 @@ from dateutil.parser import parse as parse_dt
 from django.contrib.gis.geos import Point
 from pydantic import BaseModel, Field, validator
 
-from repairs.models.constants import QuickDescription, SpecialCase
+from repairs.models.constants import QuickDescription, SpecialCase, Stage
 
 
 class BaseMeasurement(BaseModel):
@@ -101,3 +101,14 @@ class ProductionMeasurement(BaseMeasurement):
     inch_feet: float = Field(alias="Inch Feet")
     linear_feet: Optional[float] = Field(alias="Linear Feet")
     slope: Optional[str] = Field(alias="Slope")
+
+
+def get_parser_class(stage):
+    """Return the parser class for the stage"""
+    if stage == Stage.SURVEY:
+        return SurveyMeasurement
+
+    if stage == Stage.PRODUCTION:
+        return ProductionMeasurement
+
+    raise ValueError(f"No parser for stage: {stage}")
