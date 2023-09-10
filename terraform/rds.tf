@@ -4,7 +4,8 @@ resource "aws_db_instance" "primary" {
   max_allocated_storage        = 500
   db_name                      = "pss"
   engine                       = "postgres"
-  engine_version               = "14.3"
+  engine_version               = "14.7"
+  auto_minor_version_upgrade   = false
   instance_class               = "db.t3.micro"
   multi_az                     = false
   username                     = local.secrets.DB_USER
