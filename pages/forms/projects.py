@@ -43,7 +43,6 @@ class ProjectForm(forms.ModelForm):
             "territory",
             "primary_contact",
             "secondary_contact",
-            "status",
         )
         widgets = {
             "customer": forms.HiddenInput(),

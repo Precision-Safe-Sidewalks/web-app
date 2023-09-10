@@ -9,6 +9,7 @@
 <div class="mt-16 w-128">
   <form method="POST">
     {% csrf_token %}
+    {{ form.errors }}
 
     {{ form.customer }}
 

@@ -5,7 +5,7 @@ from django.conf import settings
 from django.contrib.gis.db.models.fields import PointField
 from django.db import models, transaction
 
-from repairs.models.constants import Stage, QuickDescription, SpecialCase
+from repairs.models.constants import QuickDescription, SpecialCase, Stage
 from repairs.models.projects import Project
 from repairs.parsers import ProductionMeasurement, SurveyMeasurement
 
