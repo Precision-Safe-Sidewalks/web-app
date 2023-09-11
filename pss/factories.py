@@ -1,14 +1,7 @@
 import factory
+import factory.fuzzy
 
-from pss.models import Contact, Customer, Territory
-
-
-class TerritoryFactory(factory.django.DjangoModelFactory):
-    name = factory.fuzzy.FuzzyText(length=10)
-    label = factory.fuzzy.FuzzyText(length=5)
-
-    class Meta:
-        model = Territory
+from pss.models import Contact, Customer
 
 
 class CustomerFactory(factory.django.DjangoModelFactory):

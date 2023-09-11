@@ -1,4 +1,5 @@
 import factory
+import factory.fuzzy
 from django.contrib.auth import get_user_model
 
 
