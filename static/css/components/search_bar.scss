@@ -3,6 +3,7 @@
 
 .search-bar {
   border-bottom: 1px solid rgba($outline, 0.38);
+  padding-top: 4px;
   padding-bottom: 4px;
   min-width: 360px;
   display: flex;
@@ -11,7 +12,7 @@
   input {
     @extend .text--body-md;
 
-    background-color: inherit;
+    background-color: transparent;
     border: none;
     color: $on-surface-variant !important;
     outline: none !important;

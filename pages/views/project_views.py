@@ -6,17 +6,23 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, reverse
 from django.utils.text import slugify
 from django.views import View
-from django.views.generic import CreateView, DetailView, FormView, ListView, UpdateView
+from django.views.generic import (
+    CreateView,
+    DetailView,
+    FormView,
+    ListView,
+    TemplateView,
+    UpdateView,
+)
 from pydantic import ValidationError
 
 from customers.models import Customer
 from pages.forms.projects import (
     ProjectForm,
-    ProjectInstructionsForm,
     ProjectMeasurementsForm,
-    SurveyInstructionsForm,
 )
 from repairs.models import Measurement, Project
+from repairs.models.constants import DRSpecification, Hazard, SpecialCase
 
 LOGGER = logging.getLogger(__name__)
 
@@ -153,18 +159,47 @@ class ProjectMeasurementsClearView(View):
         return redirect(redirect_url)
 
 
-class SurveyInstructionsView(FormView):
-    form_class = SurveyInstructionsForm
+class SurveyInstructionsView(TemplateView):
     template_name = "projects/survey_instructions.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["project"] = get_object_or_404(Project, pk=self.kwargs["pk"])
+        context["hazards"] = Hazard.choices
+        context["special_cases"] = SpecialCase.choices
+        context["dr_specifications"] = DRSpecification.choices
         return context
 
+    def post(self, request, pk):
+        project = get_object_or_404(Project, pk=pk)
 
-class ProjectInstructionsView(FormView):
-    form_class = ProjectInstructionsForm
+        hazards = []
+        special_cases = []
+        dr_specs = []
+
+        for key in request.POST:
+            if key.startswith("hazard-state"):
+                value = key.split("-")[-1]
+                hazards.append(value)
+
+            if key.startswith("special-case-state"):
+                value = key.split("-")[-1]
+                note = request.POST.get(f"special-case-note-{value}").strip()
+                special_cases.append((value, note if note != "" else None))
+
+            if key.startswith("dr-state"):
+                value = key.split("-")[-1]
+                dr_specs.append(value)
+
+        print(hazards)
+        print(special_cases)
+        print(dr_specs)
+
+        redirect_url = reverse("project-detail", kwargs={"pk": pk})
+        return redirect(redirect_url)
+
+
+class ProjectInstructionsView(TemplateView):
     template_name = "projects/project_instructions.html"
 
     def get_context_data(self, **kwargs):

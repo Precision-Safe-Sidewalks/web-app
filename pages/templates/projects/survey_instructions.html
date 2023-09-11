@@ -1,8 +1,118 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Survey Instructions</h2>
-<h6 class="mt-2">
-  <a href="{% url 'project-detail' pk=project.pk %}">{{ project.name }}</a>
-</h6>
+<div class="pane">
+  <h2>Survey Instructions</h2>
+  <h5 class="mt-2">
+    <a href="{% url 'project-detail' pk=project.pk %}">{{ project.name }}</a>
+  </h5>
+</div>
+
+<div class="pane mt-6">
+  <form method="POST">
+    {% csrf_token %}
+
+    <!-- Hazards -->
+    <div class="mb-12">
+      <h4 class="mb-1">Hazards</h4>
+      <h6 class="text--body-md text--muted">
+        Select all that apply
+      </h6>
+      <div class="mt-4 flex">
+      {% for hazard in hazards %}
+        <div class="chip--filter mr-3" onclick="onToggleChip(event)">
+          {{ hazard.1 }}
+          <input type="checkbox" name="hazard-state-{{ hazard.0 }}" hidden>
+        </div>
+      {% endfor %}
+      </div>
+    </div>
+
+    <!-- Special cases -->
+    <div class="my-12">
+      <h4 class="mb-1">Special cases</h4>
+      <h6 class="text--body-md text--muted">
+        Select all that apply. Optionally, include a note for additional context or instructions.
+      </h6>
+
+      <div class="mt-4" style="display: grid; grid-template-columns: 196px auto; row-gap: 12px; column-gap: 24px; align-items: center">
+      {% for special_case in special_cases %}
+        <div class="chip--filter" onclick="onToggleSpecialCaseChip(event)">
+          {{ special_case.1 }}
+          <input type="checkbox" name="special-case-state-{{ special_case.0 }}" hidden>
+        </div>
+        <div class="form-control">
+          <input type="text" name="special-case-note-{{ special_case.0 }}" placeholder="Add a note" hidden>
+        </div>
+      {% endfor %}
+      </div>
+    </div>
+
+    <!-- Method -->
+    <div class="mb-12">
+      <h4>Survey method</h4>
+      <p>TBD</p>
+    </div>
+    
+    <!-- Standard D & R specifications -->
+    <div class="mb-12">
+      <h4 class="mb-1">Standard D&amp;R specifications</h4>
+      <h6 class="text--body-md text--muted">
+        Select all that apply
+      </h6>
+      <div class="mt-4" style="display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 12px;">
+      {% for spec in dr_specifications%}
+        <div class="chip--filter mr-2" onclick="onToggleChip(event)">
+          {{ spec.1 }}
+          <input type="checkbox" name="dr-state-{{ spec.0 }}" hidden>
+        </div>
+      {% endfor %}
+      </div>
+    </div>
+    
+    <!-- Pictures -->
+    <div class="mb-12">
+      <h4>Pictures</h4>
+      <p>TBD</p>
+    </div>
+    
+    <!-- Notes & special instructions -->
+    <div class="mb-12">
+      <h4>Notes and special instructions</h4>
+      <p>TBD</p>
+    </div>
+
+    <!-- Save button -->
+    <button type="submit" class="btn--filled">
+      Save
+    </button>
+
+  </form>
+</div>
+
+<script>
+
+  /// Toggle handler for a chip filter
+  const onToggleChip = (event) => {
+    const chip = $(event.target)
+    const checkbox = $(chip).children(`input[type="checkbox"]`)
+    const checked = $(checkbox).prop("checked")
+  
+    $(chip).attr("data-active", !checked)
+    $(checkbox).prop("checked", !checked)
+
+    return !checked
+  }
+
+  /// Toggle handler for a special case chip filter
+  const onToggleSpecialCaseChip = (event) => {
+    const checked = onToggleChip(event)
+
+    const formControl = $(event.target).next()
+    const input = $(formControl).children(`input[type="text"]`)
+    $(input).attr("hidden", !checked)
+  }
+
+</script>
+
 {% endblock %}

@@ -1,0 +1,16 @@
+@import "../theme/typography.scss";
+@import "../theme/colors.scss";
+
+.form-control {
+
+  input[type="text"] {
+    @extend .text--body-md;
+
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid rgba($outline, 0.38);
+    outline: none;
+    padding: 4px 8px;
+    width: 100%;
+  }
+}

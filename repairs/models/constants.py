@@ -32,6 +32,14 @@ class QuickDescription(models.TextChoices):
     LARGE = ("L", "Large")
 
 
+class Hazard(models.TextChoices):
+    """Hazard type choices"""
+
+    LEAST_SEVERE = ("LS", 'Least Severe 1/4" to 1/2"')
+    SEVERE = ("S", 'Severe 1/2" to 1"')
+    MOST_SEVERE = ("MS", 'Most Severe 1" to 1 1/2"')
+
+
 class DRSpecification(models.TextChoices):
     """Standard D&R specification type choices"""
 

@@ -142,4 +142,8 @@
     line-height: 1rem;
     letter-spacing: 0.025rem;
   }
+
+  &--muted {
+    color: rgba(0, 0, 0, 0.6);
+  }
 }
