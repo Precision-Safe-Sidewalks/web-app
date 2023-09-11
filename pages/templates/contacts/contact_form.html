@@ -21,11 +21,21 @@
       <label for="{{ form.email.id_for_label }}">Email</label>
       {{ form.email }} 
     </div>
+    {% if form.email.errors %}
+    <div class="mt-2 text--body-sm text--error">
+      {{ form.email.errors.0 }}
+    </div>
+    {% endif %}
 
     <div class="text-field--filled mt-4">
       <label for="{{ form.phone_number.id_for_label }}">Phone Number</label>
       {{ form.phone_number }} 
     </div>
+    {% if form.phone_number.errors %}
+    <div class="mt-2 text--body-sm text--error">
+      {{ form.phone_number.errors.0 }}
+    </div>
+    {% endif %}
     
     <div class="text-field--filled mt-4">
       <label for="{{ form.extension.id_for_label }}">Extension</label>

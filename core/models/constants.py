@@ -1,8 +1,4 @@
-import re
-
 from django.db import models
-
-RE_PHONE = re.compile("^(\+\d{1,2}\s?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$")
 
 
 class States(models.TextChoices):
