@@ -30,3 +30,14 @@ class QuickDescription(models.TextChoices):
     SMALL = ("S", "Small")
     MEDIUM = ("M", "Medium")
     LARGE = ("L", "Large")
+
+
+class DRSpecification(models.TextChoices):
+    """Standard D&R specification type choices"""
+
+    NON_REPAIRABLE = ("NR", "Non-repairable")
+    UNSTABLE = ("U", "Unstable, shifting sections, void")
+    EXCESSIVE_CRACKING = ("EC", "Excessive cracking >2 cracks")
+    SIGNIFICANT_SPALLING = ("SS", "Significant spalling")
+    LARGE_GAPS = ("LG", 'Large gaps >1"')
+    SEVERE_CROSS_SLOPES = ("SCS", "Severe cross slopes >2.2%")

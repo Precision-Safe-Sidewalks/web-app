@@ -17,6 +17,7 @@ class Instruction(models.Model):
     # TODO: survey method (SI only)
     # TODO: required number of images + sizes
     # TODO: cuts (PI only)
+    # TODO: bidboss production, NTE/no survey, only pins, GD streets link (PI only)
 
 
 class InstructionSpecification(models.Model):
