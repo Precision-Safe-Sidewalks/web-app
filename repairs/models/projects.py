@@ -2,7 +2,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.gis.db.models.aggregates import Union
 from django.db import models, transaction
 
-from pss.models import Contact, Customer, Territory
+from core.models import Territory
+from pss.models import Contact, Customer
 from repairs.models.constants import Stage
 
 User = get_user_model()

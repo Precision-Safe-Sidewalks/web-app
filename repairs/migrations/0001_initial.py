@@ -179,7 +179,7 @@ class Migration(migrations.Migration):
             model_name="project",
             name="territory",
             field=models.ForeignKey(
-                on_delete=django.db.models.deletion.CASCADE, to="pss.territory"
+                on_delete=django.db.models.deletion.CASCADE, to="core.territory"
             ),
         ),
         migrations.CreateModel(

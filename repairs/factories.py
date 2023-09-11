@@ -1,7 +1,9 @@
 import factory
+import factory.fuzzy
 
 from accounts.factories import UserFactory
-from pss.factories import CustomerFactory, TerritoryFactory
+from core.factories import TerritoryFactory
+from pss.factories import CustomerFactory
 from repairs.models import Project
 
 
