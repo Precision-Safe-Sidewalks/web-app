@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.gis.db.models.aggregates import Union
 from django.db import models, transaction
 
-from core.models import Territory
+# from core.models import Territory
 from pss.models import Contact, Customer
 from repairs.models.constants import Stage
 
@@ -42,7 +42,7 @@ class Project(models.Model):
         null=True,
         related_name="bda_projects",
     )
-    territory = models.ForeignKey(Territory, on_delete=models.CASCADE)
+    territory = models.ForeignKey("core.Territory", on_delete=models.CASCADE)
     contacts = models.ManyToManyField(
         Contact, through="ProjectContact", through_fields=("project", "contact")
     )
