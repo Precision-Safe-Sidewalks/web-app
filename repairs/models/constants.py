@@ -9,19 +9,19 @@ class Stage(models.TextChoices):
 class SpecialCase(models.TextChoices):
     """Special case type choices"""
 
-    APRONS = ("AP", "Aprons")
-    ASPHALT = ("AS", "Asphalt")
-    BOTTOM_HC = ("BHC", "Bottom HC")
-    C2B = ("C2B", "C2B")
-    CATCH_BASIN = ("CB", "Catch Basin")
+    REPLACE = ("R", "Replace (D&R)")
     CURB = ("C", "Curb")
-    DRIVEWAY = ("D", "Driveway")
+    BOTTOM_HC = ("BHC", "Bottom HC")
     GUTTER_PAN = ("GP", "Gutter Pan")
-    LEADWALK = ("L", "Leadwalk")
-    METERS = ("ME", "Meters")
-    MISSED = ("MI", "Missed")
-    REPLACE = ("R", "Replace")
+    CATCH_BASIN = ("CB", "Catch Basin")
     SW2C = ("SW2C", "SW2C")
+    C2B = ("C2B", "C2B")
+    ASPHALT = ("AS", "Asphalt")
+    DRIVEWAY = ("D", "Driveway")
+    APRONS = ("AP", "Aprons")
+    LEADWALK = ("L", "Leadwalk")
+    RECUTS = ("RC", "Recuts")
+    METERES = ("MM", "Meters/Manholes")
 
 
 class QuickDescription(models.TextChoices):

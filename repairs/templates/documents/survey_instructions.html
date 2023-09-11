@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  </head>
+  <body>
+    <table class="table">
+      <tbody>
+        <!-- General information -->
+        <tr>
+          <td align="left" colspan="12" class="bg-blue bold">
+            SURVEY INSTRUCTIONS
+          </td>
+        </tr>
+        <tr>
+          <td align="center" colspan="12">
+            {{ project.name }}
+          </td>
+        </tr>
+        <tr>
+          <td align="center" colspan="12">
+            {{ project.address }}
+          </td>
+        </tr>
+        <tr>
+          <td align="center" colspan="12">
+            {{ project.description }}
+          </td>
+        </tr>
+        
+        <!-- Contacts -->
+        <tr>
+          <td align="left" colspan="12" class="bg-blue bold">
+            CONTACTS
+          </td>
+        </tr>
+        <tr>
+          <td align="left" colspan="2" class="bg-lightgrey">
+            On Site
+          </td>
+          <td align="left" colspan="4" class="bg-lightgrey">
+            Name, title
+          </td>
+          <td align="left" colspan="3" class="bg-lightgrey">
+            W: 
+          </td>
+          <td align="left" colspan="3" class="bg-lightgrey">
+            C: 
+          </td>
+        </tr>
+          <td align="left" colspan="6" class="bg-lightgrey">
+            Email
+          </td>
+          <td align="left" colspan="6" class="bg-lightgrey">
+            Contact notes
+          </td>
+        </tr>
+        <tr>
+          <td align="left" colspan="2">
+            2nd
+          </td>
+          <td align="left" colspan="4">
+            Name, title
+          </td>
+          <td align="left" colspan="3">
+            W: 
+          </td>
+          <td align="left" colspan="3">
+            C: 
+          </td>
+        </tr>
+          <td align="left" colspan="6">
+            Email
+          </td>
+          <td align="left" colspan="6">
+            Contact notes
+          </td>
+        </tr>
+
+        <!-- Survey specifications -->
+        <tr>
+          <td colspan="12" class="bg-blue bold center">
+            SURVEY SPECIFICATIONS
+          </td>
+        </tr>
+        <tr>
+          <td colspan="1">
+            HAZARDS
+          </td>
+          <td colspan="2" class="bg-grey bold center">
+            LEAST SEVERE
+          </td>
+          <td colspan="2" class="bg-grey bold center">
+            SEVERE
+          </td>
+          <td colspan="2" class="bg-grey bold center">
+            MOST SEVERE
+          </td>
+          <td colspan="5" class="bg-grey bold center">
+            SURVEY METHOD
+          </td>
+        </tr>
+        <tr>
+          <td colspan="1">
+            Size
+          </td>
+          <td colspan="2" class="bg-grey bold center">
+            1/4" to 1/2"
+          </td>
+          <td colspan="2" class="bg-grey bold center">
+            1/2" to 1"
+          </td>
+          <td colspan="2" class="bg-grey bold center">
+            1" to 1 1/2"
+          </td>
+          <td colspan="5" class="bg-grey bold center italic">
+            If less than 30 hazards - H1, H2, Sqft for ALL
+          </td>
+        </tr>
+        <tr>
+          <td colspan="1">
+            Survey
+          </td>
+          <td colspan="2" class="bg-yellow bold center">
+          </td>
+          <td colspan="2" class="bg-yellow bold center">
+          </td>
+          <td colspan="2" class="bg-yellow bold center">
+          </td>
+          <td colspan="5" class="bg-yellow bold center italic">
+          </td>
+        </tr>
+        <tr>
+          <td colspan="1">
+            Sq. Feet
+          </td>
+          <td colspan="2" class="bg-yellow bold center">
+          </td>
+          <td colspan="2" class="bg-yellow bold center">
+          </td>
+          <td colspan="2" class="bg-yellow bold center">
+          </td>
+          <td colspan="5" class="bg-yellow bold center italic">
+          </td>
+        </tr>
+
+        {% for special_case in special_cases %}
+        <tr>
+          <td colspan="1"></td>
+          <td colspan="2" data-special-case="{{ special_case.0 }}">{{ special_case.1 }}</td>
+          <td colspan="9"></td>
+        </tr>
+        {% endfor %}
+
+        <!-- Standard D&R specifications -->
+        <tr>
+          <td colspan="12" class="bg-blue bold">
+            STANDARD D&amp;R SPECIFICATIONS - See notes if additional specs are requested by customer
+          </td>
+        </tr>
+        <tr>
+          <td colspan="4" class="bg-lightgrey">Non-repairable</td>
+          <td colspan="4" class="bg-lightgrey">Unstable, shifting sections, void</td>
+          <td colspan="4" class="bg-lightgrey">Excessive cracking &gt;2 cracks</td>
+        </tr>
+        <tr>
+          <td colspan="4" class="bg-lightgrey">Significant spalling</td>
+          <td colspan="4" class="bg-lightgrey"></td>
+          <td colspan="4" class="bg-lightgrey">Severe cross slopes &gt;2.2%</td>
+        </tr>
+
+        <!-- Pictures -->
+        <tr>
+          <td colspan="12" class="bg-yellow">
+            <strong>PICTURES</strong> - Pictures of Everything <span class="text-red">&lt;?&gt; minimum for ESTIMATE; different streets and types, curbs if any. Size:</span>
+          </td>
+        </tr>
+
+        <!-- Notes -->
+        <tr>
+          <td colspan="12" class="bg-blue bold">NOTES &amp; SPECIAL INSTRUCTIONS</td>
+        </tr>
+        
+        <tr>
+          <td colspan="12"></td>
+        </tr>
+        <tr>
+          <td colspan="12"></td>
+        </tr>
+        <tr>
+          <td colspan="12"></td>
+        </tr>
+        <tr>
+          <td colspan="12"></td>
+        </tr>
+        <tr>
+          <td colspan="12"></td>
+        </tr>
+        <tr>
+          <td colspan="12"></td>
+        </tr>
+        <tr>
+          <td colspan="12"></td>
+        </tr>
+        <tr>
+          <td colspan="12"></td>
+        </tr>
+        <tr>
+          <td colspan="12"></td>
+        </tr>
+        <tr>
+          <td colspan="12"></td>
+        </tr>
+        <tr>
+          <td colspan="12"></td>
+        </tr>
+
+      </tbody>
+    </table>
+  </body>
+</html>

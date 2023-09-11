@@ -13,4 +13,5 @@ pydantic==2.3.0
 python-dateutil==2.8.2
 psycopg==3.1.10
 tzdata==2023.3
+weasyprint==59.0
 whitenoise[brotli]==6.5.0

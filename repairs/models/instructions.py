@@ -1,9 +1,8 @@
-from django.db import models
 from django.contrib.auth import get_user_model
+from django.db import models
 
 from repairs.models.constants import Stage
 from repairs.models.projects import Project
-
 
 User = get_user_model()
 
