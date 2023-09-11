@@ -142,4 +142,16 @@
     line-height: 1rem;
     letter-spacing: 0.025rem;
   }
+
+  &--error {
+    color: $error;
+  }
+
+  &--warning {
+    color: $warning;
+  }
+
+  &--success {
+    color: $success;
+  }
 }
