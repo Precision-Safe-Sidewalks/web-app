@@ -40,8 +40,8 @@ INSTALLED_APPS = [
     "django_filters",
     "accounts",
     "core",
+    "customers",
     "pages",
-    "pss",
     "repairs",
 ]
 

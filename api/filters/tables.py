@@ -2,7 +2,7 @@ import django_filters
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 
-from pss.models import Contact, Customer
+from customers.models import Contact, Customer
 from repairs.models import Project
 
 User = get_user_model()

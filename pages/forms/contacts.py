@@ -1,6 +1,6 @@
 from django import forms
 
-from pss.models import Contact
+from customers.models import Contact
 
 
 class ContactForm(forms.ModelForm):

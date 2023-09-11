@@ -9,13 +9,13 @@ from django.views import View
 from django.views.generic import CreateView, DetailView, FormView, ListView, UpdateView
 from pydantic import ValidationError
 
+from customers.models import Customer
 from pages.forms.projects import (
     ProjectForm,
     ProjectInstructionsForm,
     ProjectMeasurementsForm,
     SurveyInstructionsForm,
 )
-from pss.models import Customer
 from repairs.models import Measurement, Project
 
 LOGGER = logging.getLogger(__name__)

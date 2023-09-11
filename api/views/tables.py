@@ -13,7 +13,7 @@ from api.serializers.tables import (
     ProjectTableSerializer,
     UserTableSerializer,
 )
-from pss.models import Contact, Customer
+from customers.models import Contact, Customer
 from repairs.models import Project
 
 User = get_user_model()

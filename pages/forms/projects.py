@@ -1,6 +1,6 @@
 from django import forms
 
-from pss.models import Contact, Customer
+from customers.models import Contact, Customer
 from repairs.models import Project
 
 

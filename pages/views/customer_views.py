@@ -2,7 +2,7 @@ from django.shortcuts import reverse
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, UpdateView
 
-from pss.models import Customer
+from customers.models import Customer
 
 
 class CustomerListView(ListView):

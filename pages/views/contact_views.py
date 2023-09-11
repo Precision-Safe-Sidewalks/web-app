@@ -1,8 +1,8 @@
 from django.shortcuts import get_object_or_404, reverse
 from django.views.generic import CreateView, UpdateView
 
+from customers.models import Contact, Customer
 from pages.forms.contacts import ContactForm
-from pss.models import Contact, Customer
 
 
 class ContactCreateView(CreateView):

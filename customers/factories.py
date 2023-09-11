@@ -1,7 +1,7 @@
 import factory
 import factory.fuzzy
 
-from pss.models import Contact, Customer
+from customers.models import Contact, Customer
 
 
 class CustomerFactory(factory.django.DjangoModelFactory):

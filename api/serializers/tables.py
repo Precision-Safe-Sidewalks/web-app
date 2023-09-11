@@ -3,7 +3,7 @@ from django.shortcuts import reverse
 from django.utils.html import mark_safe
 from rest_framework import serializers
 
-from pss.models import Contact, Customer
+from customers.models import Contact, Customer
 from repairs.models import Project
 
 User = get_user_model()
