@@ -1,7 +1,11 @@
 from django.db import models
+from django.contrib.auth import get_user_model
 
 from repairs.models.constants import Stage
 from repairs.models.projects import Project
+
+
+User = get_user_model()
 
 
 class Instruction(models.Model):
@@ -11,9 +15,17 @@ class Instruction(models.Model):
         Project, on_delete=models.CASCADE, related_name="instructions"
     )
     stage = models.CharField(max_length=25, choices=Stage.choices)
+    surveyed_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="instructions_surveyed",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    # TODO: survey needed by (project or instruction level)
     # TODO: survey method (SI only)
     # TODO: required number of images + sizes
     # TODO: cuts (PI only)
