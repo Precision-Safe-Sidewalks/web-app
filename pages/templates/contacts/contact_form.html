@@ -1,69 +1,71 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>{% if contact %}{{ contact.name}}{% else %}New contact{% endif %}</h2>
-<h6 class="mt-2">
-  <a href="{% url 'customer-detail' pk=customer.pk %}">{{ customer.name }}</a>
-</h6>
+<div class="pane pane--full-height">
+  <h2>{% if contact %}{{ contact.name}}{% else %}New contact{% endif %}</h2>
+  <h6 class="mt-2">
+    <a href="{% url 'customer-detail' pk=customer.pk %}">{{ customer.name }}</a>
+  </h6>
 
-<div class="mt-16 w-128">
-  <form method="POST">
-    {% csrf_token %}
+  <div class="mt-16 w-128">
+    <form method="POST">
+      {% csrf_token %}
 
-    {{ form.customer }}
+      {{ form.customer }}
 
-    <div class="text-field--filled">
-      <label for="{{ form.name.id_for_label }}">Name</label>
-      {{ form.name }} 
-    </div>
-    
-    <div class="text-field--filled mt-4">
-      <label for="{{ form.email.id_for_label }}">Email</label>
-      {{ form.email }} 
-    </div>
-    {% if form.email.errors %}
-    <div class="mt-2 text--body-sm text--error">
-      {{ form.email.errors.0 }}
-    </div>
-    {% endif %}
-
-    <div class="mt-4 grid" style="grid-template-columns: calc(75% - 24px) 25%;">
       <div class="text-field--filled">
-        <label for="{{ form.phone_work.id_for_label }}">Work Phone</label>
-        {{ form.phone_work }} 
+        <label for="{{ form.name.id_for_label }}">Name</label>
+        {{ form.name }} 
       </div>
-      <div class="text-field--filled">
-        <label for="{{ form.phone_work_ext.id_for_label }}">Extension</label>
-        {{ form.phone_work_ext }}
+      
+      <div class="text-field--filled mt-4">
+        <label for="{{ form.email.id_for_label }}">Email</label>
+        {{ form.email }} 
       </div>
-    </div>
-    {% if form.phone_work.errors %}
-    <div class="mt-2 text--body-sm text--error">
-      {{ form.phone_work.errors.0 }}
-    </div>
-    {% endif %}
-    
-    <div class="mt-4 grid" style="grid-template-columns: calc(75% - 24px) 25%;">
-      <div class="text-field--filled">
-        <label for="{{ form.phone_cell.id_for_label }}">Cell Phone</label>
-        {{ form.phone_cell }} 
+      {% if form.email.errors %}
+      <div class="mt-2 text--body-sm text--error">
+        {{ form.email.errors.0 }}
       </div>
-      <div class="text-field--filled">
-        <label for="{{ form.phone_cell_ext.id_for_label }}">Extension</label>
-        {{ form.phone_cell_ext }}
-      </div>
-    </div>
-    {% if form.phone_cell.errors %}
-    <div class="mt-2 text--body-sm text--error">
-      {{ form.phone_cell.errors.0 }}
-    </div>
-    {% endif %}
+      {% endif %}
 
-    <div class="mt-4">
-      <button class="btn--filled" type="submit">
-        {% if customer %}Save{% else %}Create{% endif %}
-      </button>
-    </div>
-  </form>
+      <div class="mt-4 grid" style="grid-template-columns: calc(75% - 24px) 25%;">
+        <div class="text-field--filled">
+          <label for="{{ form.phone_work.id_for_label }}">Work Phone</label>
+          {{ form.phone_work }} 
+        </div>
+        <div class="text-field--filled">
+          <label for="{{ form.phone_work_ext.id_for_label }}">Extension</label>
+          {{ form.phone_work_ext }}
+        </div>
+      </div>
+      {% if form.phone_work.errors %}
+      <div class="mt-2 text--body-sm text--error">
+        {{ form.phone_work.errors.0 }}
+      </div>
+      {% endif %}
+      
+      <div class="mt-4 grid" style="grid-template-columns: calc(75% - 24px) 25%;">
+        <div class="text-field--filled">
+          <label for="{{ form.phone_cell.id_for_label }}">Cell Phone</label>
+          {{ form.phone_cell }} 
+        </div>
+        <div class="text-field--filled">
+          <label for="{{ form.phone_cell_ext.id_for_label }}">Extension</label>
+          {{ form.phone_cell_ext }}
+        </div>
+      </div>
+      {% if form.phone_cell.errors %}
+      <div class="mt-2 text--body-sm text--error">
+        {{ form.phone_cell.errors.0 }}
+      </div>
+      {% endif %}
+
+      <div class="mt-4">
+        <button class="btn--filled" type="submit">
+          {% if customer %}Save{% else %}Create{% endif %}
+        </button>
+      </div>
+    </form>
+  </div>
 </div>
 {% endblock %}

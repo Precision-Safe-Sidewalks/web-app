@@ -14,7 +14,7 @@ class ContactForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        if self.instance:
+        if self.instance.pk:
             if phone_work := self.instance.get_work_phone():
                 self.fields["phone_work"].initial = phone_work.phone_number
                 self.fields["phone_work_ext"].initial = phone_work.extension

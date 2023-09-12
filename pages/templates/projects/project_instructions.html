@@ -1,8 +1,25 @@
 {% extends "base.html" %}
+{% load project_tags %}
 
 {% block content %}
-<h2>Project Instructions</h2>
-<h6 class="mt-2">
-  <a href="{% url 'project-detail' pk=project.pk %}">{{ project.name }}</a>
-</h6>
+<div class="pane pane--full-height">
+  <div class="mb-12">
+    <h2>Project Instructions</h2>
+    <h5 class="mt-2">
+      <a href="{% url 'project-detail' pk=instruction.project.pk %}">
+        {{ instruction.project.name }}
+      </a>
+    </h5>
+  </div>
+
+  <form method="POST">
+    {% csrf_token %}
+
+    <!-- Save button -->
+    <button type="submit" class="btn--filled">
+      Save
+    </button>
+
+  </form>
+</div>
 {% endblock %}

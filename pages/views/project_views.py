@@ -250,6 +250,13 @@ class ProjectInstructionsView(TemplateView):
     template_name = "projects/project_instructions.html"
 
     def get_context_data(self, **kwargs):
+        project = get_object_or_404(Project, pk=self.kwargs["pk"])
         context = super().get_context_data(**kwargs)
-        context["project"] = get_object_or_404(Project, pk=self.kwargs["pk"])
+        context["instruction"] = project.instructions.get(stage=Stage.SURVEY)
+        context["hazards"] = Hazard.choices
+        context["special_cases"] = SpecialCase.choices
+        context["dr_specifications"] = DRSpecification.choices
+        context["pricing_models"] = InstructionSpecification.PricingModel.choices
+        context["surveyors"] = User.surveyors.all()
+        context["error"] = self.request.GET.get("error")
         return context

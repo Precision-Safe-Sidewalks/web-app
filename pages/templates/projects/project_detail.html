@@ -2,284 +2,286 @@
 {% load project_tags %}
 
 {% block content %}
-<div class="flex align-items-center justify-content-between">
-  <div>
-    <h2>{{ project.name }}</h2>
-    <h6 class="mt-2">
-      <a href="{% url 'customer-detail' pk=project.customer.pk %}">
-        {{ project.customer.name }}
-      </a>
-      &#8212; {{ project.territory.name }} ({{ project.territory.label }})
-    </h6>
+<div class="pane pane--full-height">
+  <div class="flex align-items-center justify-content-between">
+    <div>
+      <h2>{{ project.name }}</h2>
+      <h6 class="mt-2">
+        <a href="{% url 'customer-detail' pk=project.customer.pk %}">
+          {{ project.customer.name }}
+        </a>
+        &#8212; {{ project.territory.name }} ({{ project.territory.label }})
+      </h6>
+    </div>
+    <div>
+      <a class="btn--filled" href="{% url 'project-update' pk=project.pk %}">Edit</a>
+    </div>
   </div>
-  <div>
-    <a class="btn--filled" href="{% url 'project-update' pk=project.pk %}">Edit</a>
+
+  <div class="mt-12">
+    <h4>Contacts</h4>
+    <table class="table mt-2">
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone Number</th>
+          <th>Extension</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Primary contact -->
+        {% with primary=project.primary_contact %}
+        <tr>
+          <td>Primary</td>
+          <td>
+          {% if primary %}
+            <a href="{% url 'contact-update' pk=primary.pk %}">
+              {{ primary.name|default:"---" }}
+            </a>
+          {% else %}
+            ---
+          {% endif %}
+          </td>
+          <td>{{ primary.email|default:"---" }}</td>
+          <td>{{ primary.phone_number|default:"---" }}</td>
+          <td>{{ primary.extension|default:"---" }}</td>
+        </tr>
+        {% endwith %}
+        
+        <!-- Secondary contact -->
+        {% with secondary=project.secondary_contact %}
+        <tr>
+          <td>Secondary</td>
+          <td>
+          {% if secondary %}
+            <a href="{% url 'contact-update' pk=secondary.pk %}">
+              {{ secondary.name|default:"---" }}
+            </a>
+          {% else %}
+            ---
+          {% endif %}
+          </td>
+          <td>{{ secondary.email|default:"---" }}</td>
+          <td>{{ secondary.phone_number|default:"---" }}</td>
+          <td>{{ secondary.extension|default:"---" }}</td>
+        </tr>
+        {% endwith %}
+      </tbody>
+    </table>
   </div>
-</div>
 
-<div class="mt-12">
-  <h4>Contacts</h4>
-  <table class="table mt-2">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Phone Number</th>
-        <th>Extension</th>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- Primary contact -->
-      {% with primary=project.primary_contact %}
-      <tr>
-        <td>Primary</td>
-        <td>
-        {% if primary %}
-          <a href="{% url 'contact-update' pk=primary.pk %}">
-            {{ primary.name|default:"---" }}
-          </a>
-        {% else %}
-          ---
-        {% endif %}
-        </td>
-        <td>{{ primary.email|default:"---" }}</td>
-        <td>{{ primary.phone_number|default:"---" }}</td>
-        <td>{{ primary.extension|default:"---" }}</td>
-      </tr>
-      {% endwith %}
-      
-      <!-- Secondary contact -->
-      {% with secondary=project.secondary_contact %}
-      <tr>
-        <td>Secondary</td>
-        <td>
-        {% if secondary %}
-          <a href="{% url 'contact-update' pk=secondary.pk %}">
-            {{ secondary.name|default:"---" }}
-          </a>
-        {% else %}
-          ---
-        {% endif %}
-        </td>
-        <td>{{ secondary.email|default:"---" }}</td>
-        <td>{{ secondary.phone_number|default:"---" }}</td>
-        <td>{{ secondary.extension|default:"---" }}</td>
-      </tr>
-      {% endwith %}
-    </tbody>
-  </table>
-</div>
+  <div class="mt-12">
+    <h4>Documents</h4>
+    <table class="table mt-2">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th align="center">Status</th>
+          <th align="center">Last Edit At</th>
+          <th align="center">Last Edit By</th>
+          <th align="center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Survey instructions -->
+        {% with exists=project.has_survey_instructions %}
+        <tr>
+          <td>Survey instructions</td>
+          <td align="center">{{ exists|status_icon }}</td>
+          <td align="center">---</td>
+          <td align="center">---</td>
+          <td>
+            <div class="flex--center">
+              <a href="{% url 'project-si' pk=project.pk %}" class="btn--icon-sm">
+                <span class="icon">edit</span>
+              </a>
+              {% if exists %}
+              <a href="{% url 'documents-survey-instructions' pk=si.pk %}" class="btn--icon-sm ml-1">
+                <span class="icon">download</span>
+              </a>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% endwith %}
 
-<div class="mt-12">
-  <h4>Documents</h4>
-  <table class="table mt-2">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th align="center">Status</th>
-        <th align="center">Last Edit At</th>
-        <th align="center">Last Edit By</th>
-        <th align="center">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- Survey measurements -->
-      {% with exists=project.has_survey_measurements %}
-      <tr>
-        <td>Survey measurements</td>
-        <td align="center">{{ exists|status_icon }}</td>
-        <td align="center">---</td>
-        <td align="center">---</td>
-        <td align="center">
-          <div class="flex--center">
-            <a href="{% url 'project-measurements-import' pk=project.pk stage='survey' %}" class="btn--icon-sm">
-              <span class="icon">upload_file</span>
-            </a>
-            {% if exists %}
-            <a href="{% url 'project-measurements-export' pk=project.pk stage='survey' %}" class="btn--icon-sm ml-1">
-              <span class="icon">download</span>
-            </a>
+        <!-- Survey measurements -->
+        {% with exists=project.has_survey_measurements %}
+        <tr>
+          <td>Survey measurements</td>
+          <td align="center">{{ exists|status_icon }}</td>
+          <td align="center">---</td>
+          <td align="center">---</td>
+          <td align="center">
+            <div class="flex--center">
+              <a href="{% url 'project-measurements-import' pk=project.pk stage='survey' %}" class="btn--icon-sm">
+                <span class="icon">upload_file</span>
+              </a>
+              {% if exists %}
+              <a href="{% url 'project-measurements-export' pk=project.pk stage='survey' %}" class="btn--icon-sm ml-1">
+                <span class="icon">download</span>
+              </a>
 
-            <!-- Clear survey measurements (modal) -->
-            <button class="btn--icon-sm ml-1" id="btn-clear-survey-measurements">
-              <span class="icon">delete</span>
-            </button>
+              <!-- Clear survey measurements (modal) -->
+              <button class="btn--icon-sm ml-1" id="btn-clear-survey-measurements">
+                <span class="icon">delete</span>
+              </button>
 
-            <div class="dialog" data-control="btn-clear-survey-measurements">
-              <div class="dialog-content">
-                <div class="dialog-title">
-                  Remove survey measurements
-                </div>
+              <div class="dialog" data-control="btn-clear-survey-measurements">
+                <div class="dialog-content">
+                  <div class="dialog-title">
+                    Remove survey measurements
+                  </div>
 
-                <div class="dialog-body">
-                  Are you sure you want to remove all survey measurements?
-                </div>
+                  <div class="dialog-body">
+                    Are you sure you want to remove all survey measurements?
+                  </div>
 
-                <div class="dialog-actions">
-                  <form method="POST" action="{% url 'project-measurements-clear' pk=project.pk stage='survey' %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn--text-error">Remove</button>
-                  </form>
+                  <div class="dialog-actions">
+                    <form method="POST" action="{% url 'project-measurements-clear' pk=project.pk stage='survey' %}">
+                      {% csrf_token %}
+                      <button type="submit" class="btn--text-error">Remove</button>
+                    </form>
+                  </div>
                 </div>
               </div>
+              {% endif %}
             </div>
-            {% endif %}
-          </div>
-        </td>
-      </tr>
-      {% endwith %}
+          </td>
+        </tr>
+        {% endwith %}
 
-      <!-- Survey instructions -->
-      {% with exists=project.has_survey_instructions %}
-      <tr>
-        <td>Survey instructions</td>
-        <td align="center">{{ exists|status_icon }}</td>
-        <td align="center">---</td>
-        <td align="center">---</td>
-        <td>
-          <div class="flex--center">
-            <a href="{% url 'project-si' pk=project.pk %}" class="btn--icon-sm">
-              <span class="icon">edit</span>
-            </a>
-            {% if exists %}
-            <a href="{% url 'documents-survey-instructions' pk=si.pk %}" class="btn--icon-sm ml-1">
-              <span class="icon">download</span>
-            </a>
-            {% endif %}
-          </div>
-        </td>
-      </tr>
-      {% endwith %}
+        <!-- Pricing sheet -->
+        <tr>
+          <td>Pricing sheet</td>
+          <td align="center">{{ project.has_pricing_sheet|status_icon }}</td>
+          <td align="center">---</td>
+          <td align="center">---</td>
+          <td></td>
+        </tr>
+        <tr>
 
-      <!-- Pricing sheet -->
-      <tr>
-        <td>Pricing sheet</td>
-        <td align="center">{{ project.has_pricing_sheet|status_icon }}</td>
-        <td align="center">---</td>
-        <td align="center">---</td>
-        <td></td>
-      </tr>
-      <tr>
+        <!-- Production measurements -->
+        {% with exists=project.has_production_measurements %}
+        <tr>
+          <td>Production measurements</td>
+          <td align="center">{{ exists|status_icon }}</td>
+          <td align="center">---</td>
+          <td align="center">---</td>
+          <td>
+            <div class="flex--center">
+              <a href="{% url 'project-measurements-import' pk=project.pk stage='production' %}" class="btn--icon-sm">
+                <span class="icon">upload_file</span>
+              </a>
+              {% if exists %}
+              <a href="{% url 'project-measurements-export' pk=project.pk stage='production' %}" class="btn--icon-sm ml-1">
+                <span class="icon">download</span>
+              </a>
 
-      <!-- Production measurements -->
-      {% with exists=project.has_production_measurements %}
-      <tr>
-        <td>Production measurements</td>
-        <td align="center">{{ exists|status_icon }}</td>
-        <td align="center">---</td>
-        <td align="center">---</td>
-        <td>
-          <div class="flex--center">
-            <a href="{% url 'project-measurements-import' pk=project.pk stage='production' %}" class="btn--icon-sm">
-              <span class="icon">upload_file</span>
-            </a>
-            {% if exists %}
-            <a href="{% url 'project-measurements-export' pk=project.pk stage='production' %}" class="btn--icon-sm ml-1">
-              <span class="icon">download</span>
-            </a>
+              <!-- Clear production measurements (modal) -->
+              <button class="btn--icon-sm ml-1" id="btn-clear-production-measurements">
+                <span class="icon">delete</span>
+              </button>
 
-            <!-- Clear production measurements (modal) -->
-            <button class="btn--icon-sm ml-1" id="btn-clear-production-measurements">
-              <span class="icon">delete</span>
-            </button>
+              <div class="dialog" data-control="btn-clear-production-measurements">
+                <div class="dialog-content">
+                  <div class="dialog-title">
+                    Remove production measurements
+                  </div>
 
-            <div class="dialog" data-control="btn-clear-production-measurements">
-              <div class="dialog-content">
-                <div class="dialog-title">
-                  Remove production measurements
-                </div>
+                  <div class="dialog-body">
+                    Are you sure you want to remove all production measurements?
+                  </div>
 
-                <div class="dialog-body">
-                  Are you sure you want to remove all production measurements?
-                </div>
-
-                <div class="dialog-actions">
-                  <form method="POST" action="{% url 'project-measurements-clear' pk=project.pk stage='production' %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn--text-error">Remove</button>
-                  </form>
+                  <div class="dialog-actions">
+                    <form method="POST" action="{% url 'project-measurements-clear' pk=project.pk stage='production' %}">
+                      {% csrf_token %}
+                      <button type="submit" class="btn--text-error">Remove</button>
+                    </form>
+                  </div>
                 </div>
               </div>
+              {% endif %}
             </div>
-            {% endif %}
-          </div>
-        </td>
-      </tr>
-      {% endwith %}
+          </td>
+        </tr>
+        {% endwith %}
 
-      <!-- Project instructions -->
-      {% with exists=project.has_project_instructions %}
-      <tr>
-        <td>Project instructions</td>
-        <td align="center">{{ exists|status_icon }}</td>
-        <td align="center">---</td>
-        <td align="center">---</td>
-        <td>
-          <div class="flex--center">
-            <a href="{% url 'project-pi' pk=project.pk %}" class="btn--icon-sm">
-              <span class="icon">edit</span>
-            </a>
-            {% if exists %}
-            <a href="#" class="btn--icon-sm ml-1">
-              <span class="icon">download</span>
-            </a>
-            {% endif %}
-          </div>
-        </td>
-      </tr>
-      {% endwith %}
+        <!-- Project instructions -->
+        {% with exists=project.has_project_instructions %}
+        <tr>
+          <td>Project instructions</td>
+          <td align="center">{{ exists|status_icon }}</td>
+          <td align="center">---</td>
+          <td align="center">---</td>
+          <td>
+            <div class="flex--center">
+              <a href="{% url 'project-pi' pk=project.pk %}" class="btn--icon-sm">
+                <span class="icon">edit</span>
+              </a>
+              {% if exists %}
+              <a href="#" class="btn--icon-sm ml-1">
+                <span class="icon">download</span>
+              </a>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% endwith %}
 
-      <!-- Project summary -->
-      {% with exists=projext.has_project_summary %}
-      <tr>
-        <td>Project summary</td>
-        <td align="center">{{ exists|status_icon }}</td>
-        <td align="center">---</td>
-        <td align="center">---</td>
-        <td>
-          <div class="flex--center">
-            {% if exists %}
-            <a href="#" class="btn--icon-sm ml-1">
-              <span class="icon">download</span>
-            </a>
-            {% endif %}
-          </div>
-        </td>
-      </tr>
-      {% endwith %}
+        <!-- Project summary -->
+        {% with exists=projext.has_project_summary %}
+        <tr>
+          <td>Project summary</td>
+          <td align="center">{{ exists|status_icon }}</td>
+          <td align="center">---</td>
+          <td align="center">---</td>
+          <td>
+            <div class="flex--center">
+              {% if exists %}
+              <a href="#" class="btn--icon-sm ml-1">
+                <span class="icon">download</span>
+              </a>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% endwith %}
 
-      <!-- Post-project review -->
-      {% with exists=project.has_post_project_review %}
-      <tr>
-        <td>Post-project review</td>
-        <td align="center">{{ exists|status_icon }}</td>
-        <td align="center">---</td>
-        <td align="center">---</td>
-        <td>
-          <div class="flex--center">
-            {% if exists %}
-            <a href="#" class="btn--icon-sm ml-1">
-              <span class="icon">download</span>
-            </a>
-            {% endif %}
-          </div>
-        </td>
-      </tr>
-      {% endwith %}
+        <!-- Post-project review -->
+        {% with exists=project.has_post_project_review %}
+        <tr>
+          <td>Post-project review</td>
+          <td align="center">{{ exists|status_icon }}</td>
+          <td align="center">---</td>
+          <td align="center">---</td>
+          <td>
+            <div class="flex--center">
+              {% if exists %}
+              <a href="#" class="btn--icon-sm ml-1">
+                <span class="icon">download</span>
+              </a>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% endwith %}
 
-    </tbody>
-  </table>
-</div>
+      </tbody>
+    </table>
+  </div>
 
-<div class="mt-12">
-  <h4>Map</h4>
-  <div class="my-2">
-  {% if project.measurements.exists %}
-    <div id="map" class="map"></div>
-  {% else %}
-    <p>No measurements to display</p>
-  {% endif %}
+  <div class="mt-12">
+    <h4>Map</h4>
+    <div class="my-2">
+    {% if project.measurements.exists %}
+      <div id="map" class="map"></div>
+    {% else %}
+      <p>No measurements to display</p>
+    {% endif %}
+    </div>
   </div>
 </div>
 
