@@ -2,6 +2,7 @@ import io
 import json
 import logging
 
+from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, reverse
@@ -26,6 +27,8 @@ from repairs.models import Measurement, Project, Instruction, InstructionSpecifi
 from repairs.models.constants import DRSpecification, Hazard, SpecialCase, Stage
 
 LOGGER = logging.getLogger(__name__)
+
+User = get_user_model()
 
 
 class ProjectListView(ListView):
@@ -171,6 +174,7 @@ class SurveyInstructionsView(TemplateView):
         context["special_cases"] = SpecialCase.choices
         context["dr_specifications"] = DRSpecification.choices
         context["pricing_models"] = InstructionSpecification.PricingModel.choices
+        context["surveyors"] = User.surveyors.all()
         return context
 
     def post(self, request, pk):

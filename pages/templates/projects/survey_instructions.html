@@ -15,6 +15,34 @@
   <form method="POST">
     {% csrf_token %}
 
+    <!-- Details -->
+    <div class="mb-12">
+      <h4 class="mb-1">Details</h4>
+      <h6 class="text--body-md text--muted">
+        Provide details about the survey.
+      </h6>
+
+      <div class="mt-4 grid" style="grid-template-columns: 256px auto;">
+        <div class="text--body-md">
+          Surveyor
+        </div>
+        <div class="form-control w-64" data-active="true">
+          <select name="surveyor">
+            <option value="">---</option>
+            {% for surveyor in surveyors %}
+            <option value="{{ surveyor.id }}">{{ surveyor.full_name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        
+        <div class="text--body-md">
+          Needed by</div>
+        <div class="form-control w-64">
+          <input type="text" name="needed-by" placeholder="dd/mm/yyyy" {% if instruction.needed_by %}{{ instruction.needed_by }}{% endif %}>
+        </div>
+      </div>
+    </div>
+
     <!-- Hazards -->
     <div class="mb-12">
       <h4 class="mb-1">Hazards</h4>
@@ -22,7 +50,7 @@
         Select all that apply. Optionally, select the pricing model (defaults to standard).
       </h6>
 
-      <div class="mt-4 flex" style="display: grid; grid-template-columns: 256px auto; row-gap: 12px; column-gap: 24px; align-items: center">
+      <div class="mt-4 grid" style="grid-template-columns: 256px auto;">
       {% for hazard in hazards %}
         {% get_spec "H" hazard.0 as spec %}
         <div class="chip--filter mr-3" onclick="onToggleHazardChip(event)" {% if spec %}data-active="true"{% endif %}>
@@ -34,7 +62,7 @@
             hidden>
         </div>
 
-        <div class="menu" {% if spec %}data-active="true"{% endif %}>
+        <div class="form-control w-64" {% if spec %}data-active="true"{% endif %}>
           <select name="hazard-pricing-model-{{ hazard.0 }}">
           {% for pricing_model in pricing_models %}
             <option value="{{ pricing_model.0 }}"
@@ -61,7 +89,7 @@
         Select all that apply. Optionally, include a note for additional context or instructions.
       </h6>
 
-      <div class="mt-4" style="display: grid; grid-template-columns: 196px auto; row-gap: 12px; column-gap: 24px; align-items: center">
+      <div class="mt-4 grid" style="grid-template-columns: 256px auto;">
       {% for special_case in special_cases %}
         {% get_spec "SC" special_case.0 as spec %}
 
@@ -95,7 +123,7 @@
       <h6 class="text--body-md text--muted">
         Select all that apply
       </h6>
-      <div class="mt-4" style="display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 12px;">
+      <div class="mt-4 grid--col-3">
       {% for dr_spec in dr_specifications %}
         {% get_spec "DR" dr_spec.0 as spec %}
         <div class="chip--filter mr-2" onclick="onToggleChip(event)" {% if spec %}data-active="true"{% endif %}>

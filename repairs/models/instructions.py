@@ -21,10 +21,10 @@ class Instruction(models.Model):
         null=True,
         related_name="instructions_surveyed",
     )
+    needed_by = models.DateField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    # TODO: survey needed by (project or instruction level)
     # TODO: survey method (SI only)
     # TODO: required number of images + sizes
     # TODO: cuts (PI only)

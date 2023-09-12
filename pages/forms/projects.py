@@ -1,10 +1,20 @@
 from django import forms
+from django.contrib.auth import get_user_model
 
 from customers.models import Contact, Customer
 from repairs.models import Project
 
 
+User = get_user_model()
+
+
 class ProjectForm(forms.ModelForm):
+    business_developmenet_manager = forms.ModelChoiceField(
+        queryset=User.bdm.order_by("full_name")
+    )
+    business_developmenet_administrator = forms.ModelChoiceField(
+        queryset=User.bda.order_by("full_name"), required=False
+    )
     primary_contact = forms.ModelChoiceField(queryset=Contact.objects.order_by("name"))
     secondary_contact = forms.ModelChoiceField(
         queryset=Contact.objects.order_by("name"), required=False
