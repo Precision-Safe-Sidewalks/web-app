@@ -3,6 +3,7 @@ from django.shortcuts import reverse
 from django.views.generic import CreateView, ListView, UpdateView
 
 from pages.forms.users import UserForm
+from accounts.models import UserRole
 
 User = get_user_model()
 
@@ -18,6 +19,11 @@ class UserCreateView(CreateView):
     form_class = UserForm
     template_name = "users/user_form.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["roles"] = UserRole.Role.choices
+        return context
+
     def get_success_url(self):
         return reverse("user-list")
 
@@ -27,6 +33,11 @@ class UserUpdateView(UpdateView):
     form_class = UserForm
     template_name = "users/user_form.html"
     context_object_name = "target_user"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["roles"] = UserRole.Role.choices
+        return context
 
     def get_success_url(self):
         return reverse("user-list")

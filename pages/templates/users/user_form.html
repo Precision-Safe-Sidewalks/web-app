@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load user_tags %}
 
 {% block content %}
 <div class="pane pane--full-height">
@@ -33,7 +34,29 @@
         <label for="{{ form.is_staff.id_for_label }}">Is Staff (Admin)</label>
       </div>
 
-      <div class="mt-4">
+      <div class="mt-6">
+        <h4>Roles</h4>
+        <h6 class="text--body-md text--muted">Select all that apply.</h6>
+
+        <div>
+          <div style="visibility: hidden; height: 0">
+            {{ form.roles }}
+          </div>
+
+          {% for role in roles %}
+            {% has_role user role.0 as is_selected %}
+            <div class="chip--filter mt-2" 
+              id="role-{{ role.0 }}" 
+              data-active="{{ is_selected|lower }}"
+              onclick="onToggleRole(event, '{{ role.0 }}')"
+            >
+            {{ role.1 }}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="mt-6">
         <button class="btn--filled" type="submit">
           {% if target_user %}Save{% else %}Create{% endif %}
         </button>
@@ -41,4 +64,16 @@
     </form>
   </div>
 </div>
+
+<script>
+  const onToggleRole = (event, role) => {
+    const chip = $(`#role-${role}`)
+    const select = $("#id_roles")
+    const option = $(select).children(`option[value="${role}"]`)
+    const selected = option.prop("selected")
+    
+    $(option).prop("selected", !selected)
+    $(chip).attr("data-active", !selected)
+  }
+</script>
 {% endblock %}
