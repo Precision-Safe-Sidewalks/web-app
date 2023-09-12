@@ -44,6 +44,9 @@ class ProjectDetailView(DetailView):
         project = self.get_object()
         context = super().get_context_data(**kwargs)
 
+        context["si"] = project.instructions.filter(stage=Stage.SURVEY).first()
+        context["pi"] = project.instructions.filter(stage=Stage.PRODUCTION).first()
+
         markers = project.get_measurements_geojson()
         context["measurements"] = json.dumps(markers, default=str)
 

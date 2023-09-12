@@ -1,8 +1,10 @@
+from django.urls import path
 from rest_framework.routers import DefaultRouter
 
-from api.views import measurements, tables
+from api.views import measurements, repairs, tables
 
 router = DefaultRouter()
+
 router.register(
     "measurements", measurements.MeasurementViewSet, basename="measurements"
 )
@@ -25,5 +27,10 @@ router.register(
     basename="tables-users",
 )
 
-
-urlpatterns = router.urls
+urlpatterns = router.urls + [
+    path(
+        "documents/instructions/survey/<int:pk>/",
+        repairs.SurveyInstructionsAPIView.as_view(),
+        name="documents-survey-instructions",
+    ),
+]
