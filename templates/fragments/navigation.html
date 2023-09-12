@@ -26,16 +26,7 @@
     </div>
   </a>
 
-  <a class="nav-item" href="{% url 'map' %}">
-    <div class="nav-item-icon">
-      <span class="icon">map</span>
-    </div>
-    <div class="nav-item-label">
-      Map
-    </div>
-  </a>
-
-  {% if user.is_staff %}
+  {% if user.is_staff or user.is_superuser %}
   <a class="nav-item" href="{% url 'user-list' %}">
     <div class="nav-item-icon">
       <span class="icon">person</span>
