@@ -39,7 +39,7 @@ check_migrations:
 	@docker compose run --rm ${APP} bash -c "python3 manage.py makemigrations --check"
 
 test:
-	@docker compose run --rm ${APP} bash -c "python3 manage.py test --parallel"
+	@docker compose run --rm ${APP} bash -c "python3 manage.py test"
 
 fmt:
 	@docker compose run --rm ${APP} bash -c "black ."
