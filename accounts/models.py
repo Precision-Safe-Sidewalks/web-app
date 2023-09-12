@@ -8,7 +8,6 @@ class User(AbstractUser):
     full_name = models.CharField(max_length=255, blank=True, null=True)
     is_active = models.BooleanField(default=False)
 
-    objects = models.Manager()
     bdm = BDMManager()
     bda = BDAManager()
     surveyors = SurveyorManager()

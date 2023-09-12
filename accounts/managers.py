@@ -2,6 +2,8 @@ from django.db import models
 
 
 class SurveyorManager(models.Manager):
+    use_in_migrations = False
+
     def get_queryset(self):
         from accounts.models import UserRole
 
@@ -9,6 +11,8 @@ class SurveyorManager(models.Manager):
 
 
 class BDMManager(models.Manager):
+    use_in_migrations = False
+
     def get_queryset(self):
         from accounts.models import UserRole
 
@@ -16,6 +20,8 @@ class BDMManager(models.Manager):
 
 
 class BDAManager(models.Manager):
+    use_in_migrations = False
+
     def get_queryset(self):
         from accounts.models import UserRole
 
