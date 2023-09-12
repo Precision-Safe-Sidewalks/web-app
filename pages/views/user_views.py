@@ -2,8 +2,8 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import reverse
 from django.views.generic import CreateView, ListView, UpdateView
 
-from pages.forms.users import UserForm
 from accounts.models import UserRole
+from pages.forms.users import UserForm
 
 User = get_user_model()
 

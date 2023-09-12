@@ -4,7 +4,6 @@ from django.db import transaction
 
 from accounts.models import UserRole
 
-
 User = get_user_model()
 
 
