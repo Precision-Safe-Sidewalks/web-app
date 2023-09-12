@@ -19,7 +19,7 @@ class ContactTableSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Contact
-        fields = ("name", "email", "phone_number", "extension")
+        fields = ("name", "email")
 
 
 class CustomerTableSerializer(serializers.ModelSerializer):

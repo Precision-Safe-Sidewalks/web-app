@@ -19,7 +19,7 @@ class PhoneNumberValidator:
             number = phonenumbers.parse(value, "US")
 
             if not phonenumbers.is_valid_number(number):
-                raise NumberParseException
+                raise NumberParseException("", "")
 
         except NumberParseException:
             if raise_exception:
@@ -29,9 +29,9 @@ class PhoneNumberValidator:
         return True
 
     @staticmethod
-    def format(value):
+    def format(value, raise_exception=False):
         """Return the formatted phone number"""
-        if PhoneNumberValidator.validate(value, raise_exception=False):
+        if PhoneNumberValidator.validate(value, raise_exception=raise_exception):
             number = phonenumbers.parse(value, "US")
             value = str(number.national_number)
-            return f"({value[:3]}) {value[3:6]}-{value[6:]}"
+            return f"{value[:3]}-{value[3:6]}-{value[6:]}"
