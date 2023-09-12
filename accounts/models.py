@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, UserManager
 from django.db import models
 
 from accounts.managers import BDAManager, BDMManager, SurveyorManager
@@ -8,6 +8,7 @@ class User(AbstractUser):
     full_name = models.CharField(max_length=255, blank=True, null=True)
     is_active = models.BooleanField(default=False)
 
+    objects = UserManager()
     bdm = BDMManager()
     bda = BDAManager()
     surveyors = SurveyorManager()
