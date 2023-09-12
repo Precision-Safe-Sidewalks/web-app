@@ -9,19 +9,19 @@ class Stage(models.TextChoices):
 class SpecialCase(models.TextChoices):
     """Special case type choices"""
 
-    APRONS = ("AP", "Aprons")
-    ASPHALT = ("AS", "Asphalt")
-    BOTTOM_HC = ("BHC", "Bottom HC")
-    C2B = ("C2B", "C2B")
-    CATCH_BASIN = ("CB", "Catch Basin")
-    CURB = ("C", "Curb")
-    DRIVEWAY = ("D", "Driveway")
-    GUTTER_PAN = ("GP", "Gutter Pan")
-    LEADWALK = ("L", "Leadwalk")
-    METERS = ("ME", "Meters")
-    MISSED = ("MI", "Missed")
     REPLACE = ("R", "Replace")
+    CURB = ("C", "Curb")
+    BOTTOM_HC = ("BHC", "Bottom HC")
+    GUTTER_PAN = ("GP", "Gutter Pan")
+    CATCH_BASIN = ("CB", "Catch Basin")
     SW2C = ("SW2C", "SW2C")
+    C2B = ("C2B", "C2B")
+    ASPHALT = ("AS", "Asphalt")
+    DRIVEWAY = ("D", "Driveway")
+    APRONS = ("AP", "Aprons")
+    LEADWALK = ("L", "Leadwalk")
+    RECUTS = ("RC", "Recuts")
+    METERES = ("MM", "Meters/Manholes")
 
 
 class QuickDescription(models.TextChoices):
@@ -30,3 +30,22 @@ class QuickDescription(models.TextChoices):
     SMALL = ("S", "Small")
     MEDIUM = ("M", "Medium")
     LARGE = ("L", "Large")
+
+
+class Hazard(models.TextChoices):
+    """Hazard type choices"""
+
+    LEAST_SEVERE = ("LS", 'Least Severe 1/4" to 1/2"')
+    SEVERE = ("S", 'Severe 1/2" to 1"')
+    MOST_SEVERE = ("MS", 'Most Severe 1" to 1 1/2"')
+
+
+class DRSpecification(models.TextChoices):
+    """Standard D&R specification type choices"""
+
+    NON_REPAIRABLE = ("NR", "Non-repairable")
+    UNSTABLE = ("U", "Unstable, shifting sections, void")
+    EXCESSIVE_CRACKING = ("EC", "Excessive cracking >2 cracks")
+    SIGNIFICANT_SPALLING = ("SS", "Significant spalling")
+    LARGE_GAPS = ("LG", 'Large gaps >1"')
+    SEVERE_CROSS_SLOPES = ("SCS", "Severe cross slopes >2.2%")

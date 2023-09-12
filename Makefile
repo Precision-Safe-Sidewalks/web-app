@@ -36,10 +36,10 @@ migrate_db:
 	@docker compose run --rm ${APP} bash -c "python3 manage.py migrate"
 
 check_migrations:
-	@docker compose run --rm ${APP} bash -c "python3 manage.py makemigrations --check"
+	@docker compose run --rm ${APP} bash -c "scripts/check_migrations.sh"
 
 test:
-	@docker compose run --rm ${APP} bash -c "python3 manage.py test --parallel"
+	@docker compose run --rm ${APP} bash -c "python3 manage.py test"
 
 fmt:
 	@docker compose run --rm ${APP} bash -c "black ."

@@ -21,3 +21,13 @@ def status_icon(value):
     """
 
     return mark_safe(element)
+
+
+@register.simple_tag(takes_context=True)
+def get_spec(context, spec_type, spec):
+    """Return the InstructionSpecification object if it exists"""
+    return (
+        context["instruction"]
+        .specifications.filter(specification_type=spec_type, specification=spec)
+        .first()
+    )

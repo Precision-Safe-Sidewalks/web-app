@@ -48,6 +48,9 @@ class Project(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    # TODO: address
+    # TODO: PO/PA number (PI only)
+
     def __str__(self):
         return self.name
 
@@ -107,8 +110,8 @@ class Project(models.Model):
     @property
     def has_survey_instructions(self):
         """Return True if the survey instructions exist"""
-        # TODO: define logic
-        return False
+        # TODO: check if it's filled out
+        return self.instructions.filter(stage=Stage.SURVEY).exists()
 
     @property
     def has_project_instructions(self):

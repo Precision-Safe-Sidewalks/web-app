@@ -1,0 +1,95 @@
+:root {
+  --color-blue: #d9e2f2;
+  --color-grey: #d8d8d8;
+  --color-lightgrey: #F2F2F2;
+  --color-green: #92D050;
+  --color-yellow: #FFFF04;
+  --color-pink: #FF66FF;
+  --color-red: #FF0000;
+}
+
+@page {
+  size: letter;
+  margin: 0.25in 0.25in 0.25in 0.25in;
+}
+
+@media print {
+
+  /* Table formatting */
+  .table {
+    border-collapse: collapse;
+    font-family: sans-serif;
+    font-size: 10px;
+    width: 100%;
+    table-layout: fixed;
+  }
+
+  .table td {
+    border-color: black;
+    border-style: solid;
+    border-width: 1px;
+    height: 20px;
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+
+  .table-cell-center {
+    text-align: center;
+  }
+
+  /* Background colors */
+  .bg-blue {
+    background-color: var(--color-blue);
+  }
+
+  .bg-grey {
+    background-color: var(--color-grey);
+  }
+
+  .bg-lightgrey {
+    background-color: var(--color-lightgrey);
+  }
+
+  .bg-green {
+    background-color: var(--color-green);
+  }
+
+  .bg-yellow {
+    background-color: var(--color-yellow);
+  }
+
+  .bg-pink {
+    background-color: var(--color-pink);
+  }
+
+  /* Font color */
+  .text-red {
+    color: var(--color-red) !important;
+  }
+
+  /* Font formatting */
+  .bold {
+    font-weight: bold;
+  }
+
+  .italic {
+    font-style: italic;
+  }
+
+  .center {
+    text-align: center;
+  }
+
+  /* Special formatting */
+  td[data-special-case="R"] {
+    background-color: var(--color-green);
+  }
+
+  td[data-special-case="C"] {
+    background-color: var(--color-pink);
+  }
+
+  td[data-highlight="true"] {
+    background-color: var(--color-green);
+  }
+}

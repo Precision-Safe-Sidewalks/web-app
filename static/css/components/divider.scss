@@ -1,0 +1,10 @@
+@import "../theme/colors.scss";
+
+.divider {
+  width: 100%;
+  border-top-color: rgba($outline, 0.24);
+  border-top-width: 1px;
+  border-top-style: solid;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}

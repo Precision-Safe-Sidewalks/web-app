@@ -1,24 +1,32 @@
 import io
 import json
 import logging
+from datetime import datetime
 
+from django.contrib.auth import get_user_model
+from django.db import transaction
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, reverse
 from django.utils.text import slugify
 from django.views import View
-from django.views.generic import CreateView, DetailView, FormView, ListView, UpdateView
+from django.views.generic import (
+    CreateView,
+    DetailView,
+    FormView,
+    ListView,
+    TemplateView,
+    UpdateView,
+)
 from pydantic import ValidationError
 
 from customers.models import Customer
-from pages.forms.projects import (
-    ProjectForm,
-    ProjectInstructionsForm,
-    ProjectMeasurementsForm,
-    SurveyInstructionsForm,
-)
-from repairs.models import Measurement, Project
+from pages.forms.projects import ProjectForm, ProjectMeasurementsForm
+from repairs.models import InstructionSpecification, Measurement, Project
+from repairs.models.constants import DRSpecification, Hazard, SpecialCase, Stage
 
 LOGGER = logging.getLogger(__name__)
+
+User = get_user_model()
 
 
 class ProjectListView(ListView):
@@ -35,6 +43,9 @@ class ProjectDetailView(DetailView):
     def get_context_data(self, **kwargs):
         project = self.get_object()
         context = super().get_context_data(**kwargs)
+
+        context["si"] = project.instructions.filter(stage=Stage.SURVEY).first()
+        context["pi"] = project.instructions.filter(stage=Stage.PRODUCTION).first()
 
         markers = project.get_measurements_geojson()
         context["measurements"] = json.dumps(markers, default=str)
@@ -153,18 +164,89 @@ class ProjectMeasurementsClearView(View):
         return redirect(redirect_url)
 
 
-class SurveyInstructionsView(FormView):
-    form_class = SurveyInstructionsForm
+class SurveyInstructionsView(TemplateView):
     template_name = "projects/survey_instructions.html"
 
     def get_context_data(self, **kwargs):
+        project = get_object_or_404(Project, pk=self.kwargs["pk"])
         context = super().get_context_data(**kwargs)
-        context["project"] = get_object_or_404(Project, pk=self.kwargs["pk"])
+        context["instruction"] = project.instructions.get(stage=Stage.SURVEY)
+        context["hazards"] = Hazard.choices
+        context["special_cases"] = SpecialCase.choices
+        context["dr_specifications"] = DRSpecification.choices
+        context["pricing_models"] = InstructionSpecification.PricingModel.choices
+        context["surveyors"] = User.surveyors.all()
+        context["error"] = self.request.GET.get("error")
         return context
 
+    def post(self, request, pk):
+        project = get_object_or_404(Project, pk=pk)
+        instruction = project.instructions.get(project=project, stage=Stage.SURVEY)
+        SpecificationType = InstructionSpecification.SpecificationType
 
-class ProjectInstructionsView(FormView):
-    form_class = ProjectInstructionsForm
+        keep = []
+
+        with transaction.atomic():
+            if surveyor := request.POST.get("surveyor"):
+                instruction.surveyed_by_id = int(surveyor)
+            else:
+                instruction.surveyed_by_id = None
+
+            if needed_by := request.POST.get("needed-by"):
+                needed_by = needed_by.strip().upper()
+
+                if needed_by == "ASAP":
+                    instruction.needed_asap = True
+                    instruction.needed_by = None
+                else:
+                    try:
+                        needed_by = datetime.strptime(needed_by, "%m/%d/%Y")
+                        instruction.needed_by = needed_by.date()
+                    except ValueError:
+                        redirect_url = request.path + "?error=Invalid needed by date"
+                        return redirect(redirect_url)
+
+            instruction.save()
+
+            for key in request.POST:
+                spec_type = None
+                spec = None
+                defaults = {}
+
+                if key.startswith("hazard-state"):
+                    spec_type = SpecificationType.HAZARD
+                    spec = key.split("-")[-1]
+                    pricing_model = request.POST.get(f"hazard-pricing-model-{spec}")
+                    defaults["pricing_model"] = pricing_model
+
+                elif key.startswith("special-case-state"):
+                    spec_type = SpecificationType.SPECIAL_CASE
+                    spec = key.split("-")[-1]
+                    note = request.POST.get(f"special-case-note-{spec}").strip()
+                    defaults["note"] = note if note != "" else None
+
+                elif key.startswith("dr-state"):
+                    spec_type = SpecificationType.DR
+                    spec = key.split("-")[-1]
+
+                if spec_type and spec:
+                    obj, _ = InstructionSpecification.objects.update_or_create(
+                        instruction=instruction,
+                        specification_type=spec_type,
+                        specification=spec,
+                        defaults=defaults,
+                    )
+                    keep.append(obj.id)
+
+            InstructionSpecification.objects.exclude(
+                instruction=instruction, id__in=keep
+            ).delete()
+
+        redirect_url = reverse("project-detail", kwargs={"pk": pk})
+        return redirect(redirect_url)
+
+
+class ProjectInstructionsView(TemplateView):
     template_name = "projects/project_instructions.html"
 
     def get_context_data(self, **kwargs):

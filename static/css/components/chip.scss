@@ -1,14 +1,15 @@
 @import "../theme/typography.scss";
 @import "../theme/colors.scss";
 @import "../layout/flex.scss";
+@import "../theme/states.scss";
 
 .chip {
   @extend .flex;
   @extend .justify-content-start;
   @extend .align-items-center;
-  @extend .text--label-md;
+  @extend .text--label-lg;
 
-  height: 28px;
+  height: 30px;
   padding-left: 16px;
   padding-right: 16px;
   border-color: rgba($outline, 0.16);
@@ -31,5 +32,21 @@
     background-color: $error;
     border: none;
     color: $on-error !important;
+  }
+
+  &--filter {
+    @extend .chip;
+    @include stateLayers($on-surface-variant, $focus: false);
+
+    &[data-active="true"] {
+      @include manualStateLayer($success, 30%);
+
+      border: none;
+      height: 32px;
+      padding-left: 17px;
+      padding-right: 17px;
+    }
+
+    cursor: pointer;
   }
 }

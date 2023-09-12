@@ -143,7 +143,7 @@
               <span class="icon">edit</span>
             </a>
             {% if exists %}
-            <a href="#" class="btn--icon-sm ml-1">
+            <a href="{% url 'documents-survey-instructions' pk=si.pk %}" class="btn--icon-sm ml-1">
               <span class="icon">download</span>
             </a>
             {% endif %}

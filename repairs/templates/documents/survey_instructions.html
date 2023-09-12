@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  </head>
+  <body>
+    <table class="table">
+      <tbody>
+        <!-- General information -->
+        <tr>
+          <td colspan="12" class="bg-blue bold">
+            SURVEY INSTRUCTIONS
+          </td>
+        </tr>
+        <tr>
+          <td colspan="12" class="center">
+            {{ instruction.project.name }}
+          </td>
+        </tr>
+        <tr>
+          <td colspan="12" class="center">
+            {{ instruction.project.address }}
+          </td>
+        </tr>
+        <tr>
+          <td colspan="12" class="center">
+            {{ instruction.project.description }}
+          </td>
+        </tr>
+        
+        <!-- Contacts -->
+        <tr>
+          <td colspan="12" class="bg-blue bold">
+            CONTACTS
+          </td>
+        </tr>
+        
+        {% with contact=instruction.project.primary_contact %}
+        <tr>
+          <td colspan="2" class="bg-lightgrey">
+            On Site
+          </td>
+          <td colspan="4" class="bg-lightgrey">
+            {{ contact.name }}
+          </td>
+          <td colspan="3" class="bg-lightgrey">
+            W: {% if contact.phone_work %}{{ contact.phone_work }}{% endif %}
+          </td>
+          <td colspan="3" class="bg-lightgrey">
+            C: {% if contact.phone_cell %}{{ contact.phone_cell }}{% endif %}
+          </td>
+        </tr>
+          <td colspan="6" class="bg-lightgrey">
+            {% if contact.email %}{{ contact.email }}{% endif %}
+          </td>
+          <td colspan="6" class="bg-lightgrey">
+            {% if contact.notes %}{{ contact.notes }}{% endif %}
+          </td>
+        </tr>
+        {% endwith %}
+
+        {% with contact=instruction.project.secondary_contact %}
+        <tr>
+          <td colspan="2">
+            2nd
+          </td>
+          <td colspan="4">
+            {% if contact.name %}{{ contact.name }}{% endif %}
+          </td>
+          <td colspan="3">
+            W: {% if contact.phone_work %}{{ contact.phone_work }}{% endif %}
+          </td>
+          <td colspan="3">
+            C: {% if contact.phone_cell %}{{ contact.phone_cell }}{% endif %}
+          </td>
+        </tr>
+          <td colspan="6">
+            {% if contact.email %}{{ contact.email }}{% endif %}
+          </td>
+          <td colspan="6">
+            {% if contact.notes %}{{ contact.notes }}{% endif %}
+          </td>
+        </tr>
+        {% endwith %}
+
+        <!--BD/BDA and surveyor -->
+        <tr>
+          <td colspan="2">BD/BDA</td>
+          <td colspan="2" class="center">
+          {{ instruction.project.business_development_manager.initials }}
+          {% if instruction.project.business_development_administrator %}
+            / {{ instruction.project.business_development_administrator.initials }}
+          {% endif %}
+          </td>
+          <td colspan="2">
+            Surveyor
+          </td>
+          <td colspan="2" class="center">
+            {% if instruction.surveyed_by %}
+              {{ instruction.surveyed_by.initials }}
+            {% else %}
+              N/A
+            {% endif %}
+          </td>
+          <td colspan="2">
+            Needed by
+          </td>
+          <td colspan="2" class="center">
+            {% if instruction.needed_asap %}
+              Due ASAP
+            {% elif instruction.needed_by %}
+              {{ instruction.get_needed_by_display }}
+            {% else %}
+              TBD
+            {% endif %}
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            BDM/{{ instruction.project.business_development_manager.first_name }}
+          </td>
+          <td colspan="4">
+            C:
+          </td>
+          <td colspan="2">
+            {% if instruction.project.business_development_administrator %}
+              BDA/{{ instruction.project.business_development_administrator.first_name }}
+            {% else %}
+              BDA/{{ instruction.project.business_development_manager.first_name }}
+            {% endif %}
+          </td>
+          <td colspan="4">C:</td>
+        </tr>
+
+        <!-- Survey specifications -->
+        <tr>
+          <td colspan="12" class="bg-blue bold center">
+            SURVEY SPECIFICATIONS
+          </td>
+        </tr>
+        <tr>
+          <td colspan="1">
+            HAZARDS
+          </td>
+          <td colspan="2" class="bg-grey bold center">
+            LEAST SEVERE
+          </td>
+          <td colspan="2" class="bg-grey bold center">
+            SEVERE
+          </td>
+          <td colspan="2" class="bg-grey bold center">
+            MOST SEVERE
+          </td>
+          <td colspan="5" class="bg-grey bold center">
+            SURVEY METHOD
+          </td>
+        </tr>
+        <tr>
+          <td colspan="1">
+            Size
+          </td>
+          <td colspan="2" class="bg-grey bold center">
+            1/4" to 1/2"
+          </td>
+          <td colspan="2" class="bg-grey bold center">
+            1/2" to 1"
+          </td>
+          <td colspan="2" class="bg-grey bold center">
+            1" to 1 1/2"
+          </td>
+          <td colspan="5" class="bg-grey bold center italic">
+            If less than 30 hazards - H1, H2, Sqft for ALL
+          </td>
+        </tr>
+        <tr>
+          <td colspan="1">
+            Survey
+          </td>
+
+          {% for key, value in hazards.items %}
+          <td colspan="2" class="center" {% if value.obj %}data-highlight="true"{% endif %}>
+            {% if value.obj %}YES{% else %}NO{% endif %}
+          </td>
+          {% endfor %}
+
+          <td colspan="5" class="center">
+          </td>
+        </tr>
+        <tr>
+          <td colspan="1">
+            Sq. Feet
+          </td>
+          
+          {% for key, value in hazards.items %}
+            {% with model=value.obj.pricing_model %}
+            <td colspan="2" class="center" {% if model == "SQFT" %}data-highlight="true"{% endif %}>
+              {% if model == "SQFT" %}YES{% endif %}
+            </td>
+            {% endwith %}
+          {% endfor %}
+
+          <td colspan="5" class="center">
+          </td>
+        </tr>
+
+        {% for key, value in special_cases.items %}
+        <tr>
+          <td colspan="1" class="center" {% if value.obj %}data-highlight="true"{% endif %}>
+            {% if value.obj %}YES{% else %}NO{% endif %}
+          </td>
+          <td colspan="2" data-special-case="{{ key }}">
+            {{ value.label }}
+          </td>
+          <td colspan="9">
+            {% if value.obj.note %}{{ value.obj.note }}{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+
+        <tr>
+          <td colspan="1" class="center">
+            {{ instruction.project.territory.label }}
+          </td>
+          <td colspan="2">Territory</td>
+          <td colspan="9"></td>
+        </tr>
+
+        <!-- Standard D&R specifications -->
+        <tr>
+          <td colspan="12" class="bg-blue bold">
+            STANDARD D&amp;R SPECIFICATIONS - See notes if additional specs are requested by customer
+          </td>
+        </tr>
+        <tr>
+          {% for key, value in dr_specs.items %}
+            {% if forloop.counter0 < 3 %}
+            <td colspan="4" class="bg-lightgrey">
+              {% if value.obj %}{{ value.label }}{% endif %}
+            </td>
+            {% endif %}
+          {% endfor %}
+        </tr>
+        <tr>
+          {% for key, value in dr_specs.items %}
+            {% if forloop.counter0 >= 3 %}
+            <td colspan="4" class="bg-lightgrey">
+              {% if value.obj %}{{ value.label }}{% endif %}
+            </td>
+            {% endif %}
+          {% endfor %}
+        </tr>
+
+        <!-- Pictures -->
+        <tr>
+          <td colspan="12" class="bg-yellow">
+            <strong>PICTURES</strong> - Pictures of Everything <span class="text-red">&lt;?&gt; minimum for ESTIMATE; different streets and types, curbs if any. Size:</span>
+          </td>
+        </tr>
+
+        <!-- Notes -->
+        <tr>
+          <td colspan="12" class="bg-blue bold">NOTES &amp; SPECIAL INSTRUCTIONS</td>
+        </tr>
+        
+        <tr>
+          <td colspan="12"></td>
+        </tr>
+        <tr>
+          <td colspan="12"></td>
+        </tr>
+        <tr>
+          <td colspan="12"></td>
+        </tr>
+        <tr>
+          <td colspan="12"></td>
+        </tr>
+        <tr>
+          <td colspan="12"></td>
+        </tr>
+        <tr>
+          <td colspan="12"></td>
+        </tr>
+        <tr>
+          <td colspan="12"></td>
+        </tr>
+        <tr>
+          <td colspan="12"></td>
+        </tr>
+
+      </tbody>
+    </table>
+  </body>
+</html>

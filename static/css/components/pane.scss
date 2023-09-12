@@ -1,0 +1,8 @@
+@import "../theme/colors.scss";
+
+.pane {
+  background-color: $surface;
+  color: $on-surface;
+  border-radius: 8px;
+  padding: 48px;
+}

@@ -13,9 +13,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   ca-certificates \
   curl \
   libgdal-dev \
+  libpango-1.0-0 \
+  libpangoft2-1.0-0 \
   libpq-dev \
   postgresql-client \
   python3-dev \
+  python3-gi \
   python3-pip
 
 # Install the Python dependencies

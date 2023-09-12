@@ -1,0 +1,35 @@
+@import "../theme/typography.scss";
+@import "../theme/colors.scss";
+
+.form-control {
+
+  input[type="text"] {
+    @extend .text--body-md;
+
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid rgba($outline, 0.38);
+    outline: none;
+    padding: 4px 12px;
+    width: calc(100% - 24px);
+  }
+  
+  select {
+    @extend .text--body-md;
+
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid rgba($outline, 0.38);
+    height: 32px;
+    padding: 0px 8px;
+    outline: none;
+    cursor: pointer;
+    width: 100%;
+  }
+
+  &:not([data-active="true"]) {
+    select {
+      display: none;
+    }
+  }
+}

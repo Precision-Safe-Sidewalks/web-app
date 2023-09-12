@@ -9,14 +9,19 @@
 @import "./components/app_bar.scss";
 @import "./components/buttons.scss";
 @import "./components/chip.scss";
+@import "./components/divider.scss";
 @import "./components/dialog.scss";
 @import "./components/icons.scss";
 @import "./components/map.scss";
 @import "./components/nav_rail.scss";
+@import "./components/pane.scss";
 @import "./components/search_bar.scss";
 @import "./components/snackbar.scss";
 @import "./components/table.scss";
 @import "./components/text_field.scss";
+
+@import "./components/forms.scss";
+@import "./components/menu.scss";
 
 body {
   margin: 0;

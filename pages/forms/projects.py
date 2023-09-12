@@ -1,10 +1,19 @@
 from django import forms
+from django.contrib.auth import get_user_model
 
 from customers.models import Contact, Customer
 from repairs.models import Project
 
+User = get_user_model()
+
 
 class ProjectForm(forms.ModelForm):
+    business_developmenet_manager = forms.ModelChoiceField(
+        queryset=User.bdm.order_by("full_name")
+    )
+    business_developmenet_administrator = forms.ModelChoiceField(
+        queryset=User.bda.order_by("full_name"), required=False
+    )
     primary_contact = forms.ModelChoiceField(queryset=Contact.objects.order_by("name"))
     secondary_contact = forms.ModelChoiceField(
         queryset=Contact.objects.order_by("name"), required=False
@@ -54,15 +63,3 @@ class ProjectMeasurementsForm(forms.Form):
     """Project measurements CSV upload"""
 
     file = forms.FileField(widget=forms.FileInput(attrs={"accept": "text/csv"}))
-
-
-class SurveyInstructionsForm(forms.Form):
-    """Survey instructions form for a Project"""
-
-    # TODO: add form fields
-
-
-class ProjectInstructionsForm(forms.Form):
-    """Project instructions form for a Project"""
-
-    # TODO: add form fields
