@@ -85,21 +85,45 @@
         <!--BD/BDA and surveyor -->
         <tr>
           <td colspan="2">BD/BDA</td>
-          <td colspan="2">
+          <td colspan="2" class="center">
           {{ instruction.project.business_development_manager.initials }}
           {% if instruction.project.business_development_administrator %}
             / {{ instruction.project.business_development_administrator.initials }}
           {% endif %}
           </td>
-          <td colspan="2">Surveyor</td>
-          <td colspan="2"></td>
-          <td colspan="2">Needed by</td>
-          <td colspan="2"></td>
+          <td colspan="2">
+            Surveyor
+          </td>
+          <td colspan="2" class="center">
+            {% if instruction.surveyed_by %}{{ instruction.surveyed_by.initials }}{% endif %}
+          </td>
+          <td colspan="2">
+            Needed by
+          </td>
+          <td colspan="2" class="center">
+            {% if instruction.needed_asap %}
+              Due ASAP
+            {% elif instruction.needed_by %}
+              {{ instruction.get_needed_by_display }}
+            {% else %}
+              TBD
+            {% endif %}
+          </td>
         </tr>
         <tr>
-          <td colspan="2">BDM/</td>
-          <td colspan="4">C:</td>
-          <td colspan="2">BDA/</td>
+          <td colspan="2">
+            BDM/{{ instruction.project.business_development_manager.first_name }}
+          </td>
+          <td colspan="4">
+            C:
+          </td>
+          <td colspan="2">
+            {% if instruction.project.business_development_administrator %}
+              BDA/{{ instruction.project.business_development_administrator.first_name }}
+            {% else %}
+              BDA/{{ instruction.project.business_development_manager.first_name }}
+            {% endif %}
+          </td>
           <td colspan="4">C:</td>
         </tr>
 

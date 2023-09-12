@@ -191,12 +191,18 @@ class SurveyInstructionsView(TemplateView):
                 instruction.surveyed_by_id = int(surveyor)
 
             if needed_by := request.POST.get("needed-by"):
-                try:
-                    needed_by = datetime.strptime(needed_by, "%m/%d/%Y")
-                    instruction.needed_by = needed_by.date()
-                except ValueError:
-                    redirect_url = request.path + "?error=Invalid needed by date"
-                    return redirect(redirect_url)
+                needed_by = needed_by.strip().upper()
+
+                if needed_by == "ASAP":
+                    instruction.needed_asap = True
+                    instruction.needed_by = None
+                else:
+                    try:
+                        needed_by = datetime.strptime(needed_by, "%m/%d/%Y")
+                        instruction.needed_by = needed_by.date()
+                    except ValueError:
+                        redirect_url = request.path + "?error=Invalid needed by date"
+                        return redirect(redirect_url)
 
             instruction.save()
 
