@@ -2,6 +2,7 @@ import io
 import json
 import logging
 
+from django.db import transaction
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, reverse
 from django.utils.text import slugify
@@ -21,8 +22,8 @@ from pages.forms.projects import (
     ProjectForm,
     ProjectMeasurementsForm,
 )
-from repairs.models import Measurement, Project
-from repairs.models.constants import DRSpecification, Hazard, SpecialCase
+from repairs.models import Measurement, Project, Instruction, InstructionSpecification
+from repairs.models.constants import DRSpecification, Hazard, SpecialCase, Stage
 
 LOGGER = logging.getLogger(__name__)
 
@@ -163,37 +164,56 @@ class SurveyInstructionsView(TemplateView):
     template_name = "projects/survey_instructions.html"
 
     def get_context_data(self, **kwargs):
+        project = get_object_or_404(Project, pk=self.kwargs["pk"])
         context = super().get_context_data(**kwargs)
-        context["project"] = get_object_or_404(Project, pk=self.kwargs["pk"])
+        context["instruction"] = project.instructions.get(stage=Stage.SURVEY)
         context["hazards"] = Hazard.choices
         context["special_cases"] = SpecialCase.choices
         context["dr_specifications"] = DRSpecification.choices
+        context["pricing_models"] = InstructionSpecification.PricingModel.choices
         return context
 
     def post(self, request, pk):
         project = get_object_or_404(Project, pk=pk)
+        instruction = project.instructions.get(project=project, stage=Stage.SURVEY)
+        SpecificationType = InstructionSpecification.SpecificationType
 
-        hazards = []
-        special_cases = []
-        dr_specs = []
+        keep = []
 
-        for key in request.POST:
-            if key.startswith("hazard-state"):
-                value = key.split("-")[-1]
-                hazards.append(value)
+        with transaction.atomic():
+            for key in request.POST:
+                spec_type = None
+                spec = None
+                defaults = {}
 
-            if key.startswith("special-case-state"):
-                value = key.split("-")[-1]
-                note = request.POST.get(f"special-case-note-{value}").strip()
-                special_cases.append((value, note if note != "" else None))
+                if key.startswith("hazard-state"):
+                    spec_type = SpecificationType.HAZARD
+                    spec = key.split("-")[-1]
+                    pricing_model = request.POST.get(f"hazard-pricing-model-{spec}")
+                    defaults["pricing_model"] = pricing_model
 
-            if key.startswith("dr-state"):
-                value = key.split("-")[-1]
-                dr_specs.append(value)
+                elif key.startswith("special-case-state"):
+                    spec_type = SpecificationType.SPECIAL_CASE
+                    spec = key.split("-")[-1]
+                    note = request.POST.get(f"special-case-note-{spec}").strip()
+                    defaults["note"] = note if note != "" else None
 
-        print(hazards)
-        print(special_cases)
-        print(dr_specs)
+                elif key.startswith("dr-state"):
+                    spec_type = SpecificationType.DR
+                    spec = key.split("-")[-1]
+
+                if spec_type and spec:
+                    obj, _ = InstructionSpecification.objects.update_or_create(
+                        instruction=instruction,
+                        specification_type=spec_type,
+                        specification=spec,
+                        defaults=defaults,
+                    )
+                    keep.append(obj.id)
+
+            InstructionSpecification.objects.exclude(
+                instruction=instruction, id__in=keep
+            ).delete()
 
         redirect_url = reverse("project-detail", kwargs={"pk": pk})
         return redirect(redirect_url)

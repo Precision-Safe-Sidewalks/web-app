@@ -41,6 +41,12 @@ class InstructionSpecification(models.Model):
         SPECIAL_CASE = ("SC", "Special case")
         DR = ("DR", "D&R specification")
 
+    class PricingModel(models.TextChoices):
+        """Pricing model type choices"""
+
+        STANDARD = ("S", "Standard")
+        SQFT = ("SQFT", "Square foot")
+
     instruction = models.ForeignKey(
         Instruction, on_delete=models.CASCADE, related_name="specifications"
     )
@@ -48,7 +54,9 @@ class InstructionSpecification(models.Model):
         max_length=10, choices=SpecificationType.choices
     )
     specification = models.CharField(max_length=10)
-    area = models.FloatField(blank=True, null=True)
+    pricing_model = models.CharField(
+        max_length=10, choices=PricingModel.choices, blank=True, null=True
+    )
     note = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

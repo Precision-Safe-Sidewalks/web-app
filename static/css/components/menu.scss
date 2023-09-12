@@ -1,0 +1,19 @@
+@import "../theme/colors.scss";
+
+.menu {
+  select {
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid rgba($outline, 0.38);
+    height: 32px;
+    padding: 0px 12px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  &:not([data-active="true"]) {
+    select {
+      display: none;
+    }
+  }
+}

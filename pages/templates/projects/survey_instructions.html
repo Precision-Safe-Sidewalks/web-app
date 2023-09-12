@@ -1,10 +1,13 @@
 {% extends "base.html" %}
+{% load project_tags %}
 
 {% block content %}
 <div class="pane">
   <h2>Survey Instructions</h2>
   <h5 class="mt-2">
-    <a href="{% url 'project-detail' pk=project.pk %}">{{ project.name }}</a>
+    <a href="{% url 'project-detail' pk=instruction.project.pk %}">
+      {{ instruction.project.name }}
+    </a>
   </h5>
 </div>
 
@@ -16,14 +19,37 @@
     <div class="mb-12">
       <h4 class="mb-1">Hazards</h4>
       <h6 class="text--body-md text--muted">
-        Select all that apply
+        Select all that apply. Optionally, select the pricing model (defaults to standard).
       </h6>
-      <div class="mt-4 flex">
+
+      <div class="mt-4 flex" style="display: grid; grid-template-columns: 256px auto; row-gap: 12px; column-gap: 24px; align-items: center">
       {% for hazard in hazards %}
-        <div class="chip--filter mr-3" onclick="onToggleChip(event)">
+        {% get_spec "H" hazard.0 as spec %}
+        <div class="chip--filter mr-3" onclick="onToggleHazardChip(event)" {% if spec %}data-active="true"{% endif %}>
           {{ hazard.1 }}
-          <input type="checkbox" name="hazard-state-{{ hazard.0 }}" hidden>
+          <input 
+            type="checkbox" 
+            name="hazard-state-{{ hazard.0 }}" 
+            {% if spec %}checked{% endif %}
+            hidden>
         </div>
+
+        <div class="menu" {% if spec %}data-active="true"{% endif %}>
+          <select name="hazard-pricing-model-{{ hazard.0 }}">
+          {% for pricing_model in pricing_models %}
+            <option value="{{ pricing_model.0 }}"
+              {% if pricing_model.0 == spec.pricing_model %}
+                selected
+              {% elif pricing_model.0 == "S" and not spec.pricing_model %}
+                selected
+              {% endif %}
+            >
+              {{ pricing_model.1 }}
+            </option>
+          {% endfor %}
+          </select>
+        </div>
+
       {% endfor %}
       </div>
     </div>
@@ -37,13 +63,22 @@
 
       <div class="mt-4" style="display: grid; grid-template-columns: 196px auto; row-gap: 12px; column-gap: 24px; align-items: center">
       {% for special_case in special_cases %}
-        <div class="chip--filter" onclick="onToggleSpecialCaseChip(event)">
+        {% get_spec "SC" special_case.0 as spec %}
+
+        <div class="chip--filter" onclick="onToggleSpecialCaseChip(event)" {% if spec %}data-active="true"{% endif %}>
           {{ special_case.1 }}
-          <input type="checkbox" name="special-case-state-{{ special_case.0 }}" hidden>
+          <input type="checkbox" name="special-case-state-{{ special_case.0 }}" {% if spec %}checked{% endif %} hidden>
         </div>
+
         <div class="form-control">
-          <input type="text" name="special-case-note-{{ special_case.0 }}" placeholder="Add a note" hidden>
+          <input 
+            type="text" 
+            name="special-case-note-{{ special_case.0 }}" 
+            placeholder="Add a note" 
+            {% if spec and spec.note %}value="{{ spec.note }}"{% endif %}
+            {% if not spec %}hidden{% endif %}>
         </div>
+
       {% endfor %}
       </div>
     </div>
@@ -61,10 +96,11 @@
         Select all that apply
       </h6>
       <div class="mt-4" style="display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 12px;">
-      {% for spec in dr_specifications%}
-        <div class="chip--filter mr-2" onclick="onToggleChip(event)">
-          {{ spec.1 }}
-          <input type="checkbox" name="dr-state-{{ spec.0 }}" hidden>
+      {% for dr_spec in dr_specifications %}
+        {% get_spec "DR" dr_spec.0 as spec %}
+        <div class="chip--filter mr-2" onclick="onToggleChip(event)" {% if spec %}data-active="true"{% endif %}>
+          {{ dr_spec.1 }}
+          <input type="checkbox" name="dr-state-{{ dr_spec.0 }}" {% if spec %}checked{% endif %} hidden>
         </div>
       {% endfor %}
       </div>
@@ -102,6 +138,14 @@
     $(checkbox).prop("checked", !checked)
 
     return !checked
+  }
+
+  /// Toggle handler for a hazard chip filter
+  const onToggleHazardChip = (event) => {
+    const checked = onToggleChip(event)
+
+    const menu = $(event.target).next()
+    $(menu).attr("data-active", checked)
   }
 
   /// Toggle handler for a special case chip filter
