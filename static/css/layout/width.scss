@@ -16,6 +16,19 @@
   width: $spacing * 128;
 }
 
+/* By percentage */
+.w-25p {
+  width: 25%;
+}
+
+.w-50p {
+  width: 50%;
+}
+
+.w-75p {
+  width: 75%;
+}
+
 .w-100p {
   width: 100%;
 }

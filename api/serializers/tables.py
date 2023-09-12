@@ -11,15 +11,25 @@ User = get_user_model()
 
 class ContactTableSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField()
+    phone_work = serializers.SerializerMethodField()
+    phone_cell = serializers.SerializerMethodField()
 
     def get_name(self, obj):
         href = reverse("contact-update", kwargs={"pk": obj.pk})
         html = f'<a href="{href}">{obj.name}</a>'
         return mark_safe(html)
 
+    def get_phone_work(self, obj):
+        number = obj.get_work_phone()
+        return str(number) if number else None
+
+    def get_phone_cell(self, obj):
+        number = obj.get_cell_phone()
+        return str(number) if number else None
+
     class Meta:
         model = Contact
-        fields = ("name", "email", "phone_number", "extension")
+        fields = ("name", "email", "phone_work", "phone_cell")
 
 
 class CustomerTableSerializer(serializers.ModelSerializer):
