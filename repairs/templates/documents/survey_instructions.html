@@ -43,10 +43,14 @@
             {{ contact.name }}
           </td>
           <td colspan="3" class="bg-lightgrey">
-            W: {% if contact.phone_work %}{{ contact.phone_work }}{% endif %}
+          {% with contact.get_work_phone as phone %}
+            W: {% if phone %}{{ phone }}{% endif %}
+          {% endwith %}
           </td>
           <td colspan="3" class="bg-lightgrey">
-            C: {% if contact.phone_cell %}{{ contact.phone_cell }}{% endif %}
+          {% with contact.get_cell_phone as phone %}
+            C: {% if phone %}{{ phone }}{% endif %}
+          {% endwith %}
           </td>
         </tr>
           <td colspan="6" class="bg-lightgrey">
@@ -67,10 +71,14 @@
             {% if contact.name %}{{ contact.name }}{% endif %}
           </td>
           <td colspan="3">
-            W: {% if contact.phone_work %}{{ contact.phone_work }}{% endif %}
+          {% with contact.get_work_phone as phone %}
+            W: {% if phone %}{{ phone }}{% endif %}
+          {% endwith %}
           </td>
           <td colspan="3">
-            C: {% if contact.phone_cell %}{{ contact.phone_cell }}{% endif %}
+          {% with contact.get_cell_phone as phone %}
+            C: {% if phone %}{{ phone }}{% endif %}
+          {% endwith %}
           </td>
         </tr>
           <td colspan="6">
