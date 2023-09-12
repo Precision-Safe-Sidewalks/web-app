@@ -95,7 +95,11 @@
             Surveyor
           </td>
           <td colspan="2" class="center">
-            {% if instruction.surveyed_by %}{{ instruction.surveyed_by.initials }}{% endif %}
+            {% if instruction.surveyed_by %}
+              {{ instruction.surveyed_by.initials }}
+            {% else %}
+              N/A
+            {% endif %}
           </td>
           <td colspan="2">
             Needed by

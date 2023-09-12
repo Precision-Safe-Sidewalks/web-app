@@ -189,6 +189,8 @@ class SurveyInstructionsView(TemplateView):
         with transaction.atomic():
             if surveyor := request.POST.get("surveyor"):
                 instruction.surveyed_by_id = int(surveyor)
+            else:
+                instruction.surveyed_by_id = None
 
             if needed_by := request.POST.get("needed-by"):
                 needed_by = needed_by.strip().upper()
