@@ -57,7 +57,18 @@ class Contact(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     # TODO: add notes
-    # TODO: work vs. cell phone
+
+    def get_work_phone(self):
+        """Return the work phone number"""
+        return self.phone_numbers.filter(
+            number_type=ContactPhoneNumber.NumberType.WORK
+        ).first()
+
+    def get_cell_phone(self):
+        """Return the cell phone number"""
+        return self.phone_numbers.filter(
+            number_type=ContactPhoneNumber.NumberType.CELL
+        ).first()
 
     def __str__(self):
         return f"{self.customer.name} - {self.name}"
@@ -80,3 +91,8 @@ class ContactPhoneNumber(models.Model):
     extension = models.CharField(max_length=10, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        if self.extension:
+            return f"{self.phone_number} ext. {self.extension}"
+        return self.phone_number

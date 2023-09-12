@@ -11,6 +11,18 @@ class ContactForm(forms.ModelForm):
     phone_cell = forms.CharField(max_length=25, required=False)
     phone_cell_ext = forms.CharField(max_length=10, required=False)
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if self.instance:
+            if phone_work := self.instance.get_work_phone():
+                self.fields["phone_work"].initial = phone_work.phone_number
+                self.fields["phone_work_ext"].initial = phone_work.extension
+
+            if phone_cell := self.instance.get_cell_phone():
+                self.fields["phone_cell"].initial = phone_cell.phone_number
+                self.fields["phone_cell_ext"].initial = phone_cell.extension
+
     def save(self, **kwargs):
         with transaction.atomic():
             contact = super().save(**kwargs)
@@ -36,20 +48,20 @@ class ContactForm(forms.ModelForm):
         )
 
     def clean_phone_work(self):
-        self.clean_phone("work")
+        number = self.clean_phone("work")
+        return number
 
     def clean_phone_cell(self):
-        self.clean_phone("cell")
+        number = self.clean_phone("cell")
+        return number
 
     def clean_phone(self, number_type):
         number = self.cleaned_data[f"phone_{number_type}"].strip()
 
-        if number:
-            number = PhoneNumberValidator.format(number, raise_exception=True)
-            self.cleaned_data[f"phone_{number_type}"] = number
-        else:
-            self.cleaned_data[f"phone_{number_type}"] = None
-            self.cleaned_data[f"phone_{number_type}_ext"] = None
+        if not number:
+            return None
+
+        return PhoneNumberValidator.format(number, raise_exception=True)
 
     class Meta:
         model = Contact
