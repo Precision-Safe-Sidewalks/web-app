@@ -146,4 +146,16 @@
   &--muted {
     color: rgba(0, 0, 0, 0.6);
   }
+
+  &--error {
+    color: $error;
+  }
+
+  &--warning {
+    color: $warning;
+  }
+
+  &--success {
+    color: $success;
+  }
 }
