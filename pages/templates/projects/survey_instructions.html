@@ -30,7 +30,9 @@
           <select name="surveyor">
             <option value="">---</option>
             {% for surveyor in surveyors %}
-            <option value="{{ surveyor.id }}">{{ surveyor.full_name }}</option>
+            <option value="{{ surveyor.id }}" {% if instruction.surveyed_by.id == surveyor.id %}selected{% endif %}>
+              {{ surveyor.full_name }}
+            </option>
             {% endfor %}
           </select>
         </div>
@@ -38,7 +40,8 @@
         <div class="text--body-md">
           Needed by</div>
         <div class="form-control w-64">
-          <input type="text" name="needed-by" placeholder="dd/mm/yyyy" {% if instruction.needed_by %}{{ instruction.needed_by }}{% endif %}>
+          <input type="text" name="needed-by" placeholder="mm/dd/yyyy" 
+            {% if instruction.needed_by %}value="{{ instruction.needed_by|date:'n/j/Y' }}"{% endif %}>
         </div>
       </div>
     </div>

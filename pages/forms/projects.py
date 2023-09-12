@@ -4,7 +4,6 @@ from django.contrib.auth import get_user_model
 from customers.models import Contact, Customer
 from repairs.models import Project
 
-
 User = get_user_model()
 
 

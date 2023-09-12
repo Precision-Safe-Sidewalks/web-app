@@ -3,8 +3,7 @@ from abc import abstractmethod
 from django.template import loader
 from weasyprint import CSS, HTML
 
-from repairs.models import InstructionSpecification
-from repairs.models.constants import Hazard, SpecialCase, DRSpecification
+from repairs.models.constants import DRSpecification, Hazard, SpecialCase
 
 
 class AbstractDocumentGenerator:

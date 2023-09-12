@@ -1,7 +1,7 @@
-from django.dispatch import receiver
 from django.db.models.signals import post_save
+from django.dispatch import receiver
 
-from repairs.models import Project, Instruction
+from repairs.models import Instruction, Project
 from repairs.models.constants import Stage
 
 

@@ -1,6 +1,7 @@
 import io
 import json
 import logging
+from datetime import datetime
 
 from django.contrib.auth import get_user_model
 from django.db import transaction
@@ -19,11 +20,8 @@ from django.views.generic import (
 from pydantic import ValidationError
 
 from customers.models import Customer
-from pages.forms.projects import (
-    ProjectForm,
-    ProjectMeasurementsForm,
-)
-from repairs.models import Measurement, Project, Instruction, InstructionSpecification
+from pages.forms.projects import ProjectForm, ProjectMeasurementsForm
+from repairs.models import InstructionSpecification, Measurement, Project
 from repairs.models.constants import DRSpecification, Hazard, SpecialCase, Stage
 
 LOGGER = logging.getLogger(__name__)
@@ -175,6 +173,7 @@ class SurveyInstructionsView(TemplateView):
         context["dr_specifications"] = DRSpecification.choices
         context["pricing_models"] = InstructionSpecification.PricingModel.choices
         context["surveyors"] = User.surveyors.all()
+        context["error"] = self.request.GET.get("error")
         return context
 
     def post(self, request, pk):
@@ -185,6 +184,19 @@ class SurveyInstructionsView(TemplateView):
         keep = []
 
         with transaction.atomic():
+            if surveyor := request.POST.get("surveyor"):
+                instruction.surveyed_by_id = int(surveyor)
+
+            if needed_by := request.POST.get("needed-by"):
+                try:
+                    needed_by = datetime.strptime(needed_by, "%m/%d/%Y")
+                    instruction.needed_by = needed_by.date()
+                except ValueError:
+                    redirect_url = request.path + "?error=Invalid needed by date"
+                    return redirect(redirect_url)
+
+            instruction.save()
+
             for key in request.POST:
                 spec_type = None
                 spec = None
