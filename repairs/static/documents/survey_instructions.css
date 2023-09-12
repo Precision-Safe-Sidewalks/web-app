@@ -88,4 +88,8 @@
   td[data-special-case="C"] {
     background-color: var(--color-pink);
   }
+
+  td[data-highlight="true"] {
+    background-color: var(--color-green);
+  }
 }

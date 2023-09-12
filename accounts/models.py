@@ -6,6 +6,10 @@ class User(AbstractUser):
     full_name = models.CharField(max_length=255, blank=True, null=True)
     is_active = models.BooleanField(default=False)
 
+    @property
+    def initials(self):
+        return self.first_name[0].upper() + self.last_name[0].upper()
+
     def __str__(self):
         return self.full_name
 

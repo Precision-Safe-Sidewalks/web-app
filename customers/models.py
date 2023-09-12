@@ -57,5 +57,8 @@ class Contact(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    # TODO: add notes
+    # TODO: work vs. cell phone
+
     def __str__(self):
         return f"{self.customer.name} - {self.name}"
