@@ -53,10 +53,6 @@ class Contact(models.Model):
     )
     name = models.CharField(max_length=255)
     email = models.EmailField(max_length=200, blank=True, null=True)
-    phone_number = models.CharField(
-        max_length=25, validators=[PhoneNumberValidator], blank=True, null=True
-    )
-    extension = models.CharField(max_length=10, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -65,3 +61,22 @@ class Contact(models.Model):
 
     def __str__(self):
         return f"{self.customer.name} - {self.name}"
+
+
+class ContactPhoneNumber(models.Model):
+    """Contact phone number"""
+
+    class NumberType(models.TextChoices):
+        """Phone number type choices"""
+
+        CELL = ("CELL", "Cell")
+        WORK = ("WORK", "Work")
+
+    contact = models.ForeignKey(
+        Contact, on_delete=models.CASCADE, related_name="phone_numbers"
+    )
+    number_type = models.CharField(max_length=10, choices=NumberType.choices)
+    phone_number = models.CharField(max_length=25, validators=[PhoneNumberValidator])
+    extension = models.CharField(max_length=10, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)

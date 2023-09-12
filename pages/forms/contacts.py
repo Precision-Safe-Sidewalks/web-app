@@ -5,6 +5,7 @@ from customers.models import Contact
 
 
 class ContactForm(forms.ModelForm):
+
     def clean_phone_number(self):
         phone_number = self.cleaned_data["phone_number"]
 
@@ -15,7 +16,7 @@ class ContactForm(forms.ModelForm):
 
     class Meta:
         model = Contact
-        fields = ("customer", "name", "email", "phone_number", "extension")
+        fields = ("customer", "name", "email")
         widgets = {
             "customer": forms.HiddenInput(),
         }
