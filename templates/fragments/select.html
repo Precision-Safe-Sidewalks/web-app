@@ -59,9 +59,9 @@
     }
 
     setSelectedText()
+    setMenuState()
 
-    const value = $(`option[id^="${menuOptionIdPrefix}"][selected]`).map((_, opt) => $(opt).val()).toArray()
-    $(`#${menuSelectId}`).trigger("change", { value: multiple ? value : value[0] })
+    triggerChangeEvent()
   }
 
   const setMenuItemState = (menuItem, selected) => {
@@ -76,6 +76,10 @@
       : $(menuItem).children(`span[class="icon"]`).text("")
   }
 
+  const setMenuState = () => {
+    !multiple && $(`#${menuId}`).removeClass("open")
+  }
+
   const setSelectedText = () => {
     const selectedMenuItems = $(`option[id^="${menuOptionIdPrefix}"][selected]`)
     const selectedText = selectedMenuItems.map((_, item) => $(item).text().trim())
@@ -83,6 +87,14 @@
       .join(", ")
 
     $(`#${menuControlTextId}`).text(selectedText)
+  }
+
+  const triggerChangeEvent = () => {
+    const options = $(`option[id^="${menuOptionIdPrefix}"][selected]`)
+    const value = $(options).map((_, option) => $(option).val()).toArray()
+    const eventData = { value: multiple ? value : value[0] }
+
+    $(`#${menuSelectId}`).trigger("change", eventData)
   }
 
   $(document).on("mouseup", (event) => {

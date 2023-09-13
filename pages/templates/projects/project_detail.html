@@ -16,7 +16,7 @@
     </div>
     <div class="flex align-items-center">
       <div class="w-64">
-        {% include "select.html" with name="status" choices=statuses selected=project.status multiple=False %}
+        {% include "select.html" with name="status" choices=statuses selected=project.status %}
       </div>
       <a class="btn--filled ml-6" href="{% url 'project-update' pk=project.pk %}">Edit</a>
     </div>
