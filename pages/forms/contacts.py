@@ -70,6 +70,7 @@ class ContactForm(forms.ModelForm):
             "customer",
             "name",
             "email",
+            "notes",
             "phone_work",
             "phone_work_ext",
             "phone_cell",
@@ -77,4 +78,5 @@ class ContactForm(forms.ModelForm):
         )
         widgets = {
             "customer": forms.HiddenInput(),
+            "notes": forms.TextInput(),
         }
