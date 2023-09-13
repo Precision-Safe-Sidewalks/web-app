@@ -47,6 +47,11 @@ urlpatterns = [
         name="project-update",
     ),
     path(
+        "projects/<int:pk>/edit/status/",
+        project_views.ProjectStatusUpdateView.as_view(),
+        name="project-update-status",
+    ),
+    path(
         "projects/<int:pk>/measurements/<str:stage>/",
         project_views.ProjectMeasurementsImportView.as_view(),
         name="project-measurements-import",

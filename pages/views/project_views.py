@@ -46,6 +46,7 @@ class ProjectDetailView(DetailView):
 
         context["si"] = project.instructions.filter(stage=Stage.SURVEY).first()
         context["pi"] = project.instructions.filter(stage=Stage.PRODUCTION).first()
+        context["statuses"] = Project.Status.choices
 
         markers = project.get_measurements_geojson()
         context["measurements"] = json.dumps(markers, default=str)
@@ -98,6 +99,16 @@ class ProjectUpdateView(UpdateView):
 
     def get_success_url(self):
         return reverse("project-detail", kwargs={"pk": self.kwargs["pk"]})
+
+
+class ProjectStatusUpdateView(View):
+    def post(self, request, pk):
+        project = get_object_or_404(Project, pk=pk)
+        project.status = request.POST.get("status")
+        project.save()
+
+        redirect_url = reverse("project-detail", kwargs={"pk": self.kwargs["pk"]})
+        return redirect(redirect_url)
 
 
 class ProjectMeasurementsImportView(FormView):
