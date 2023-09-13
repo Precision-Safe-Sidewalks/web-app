@@ -78,7 +78,7 @@
           </div>
 
           {% for role in roles %}
-            {% has_role user role.0 as is_selected %}
+            {% has_role target_user role.0 as is_selected %}
             <div class="chip--filter mt-2" 
               id="role-{{ role.0 }}" 
               data-active="{{ is_selected|lower }}"
