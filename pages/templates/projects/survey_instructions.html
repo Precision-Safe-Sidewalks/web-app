@@ -2,16 +2,16 @@
 {% load project_tags %}
 
 {% block content %}
-<div class="pane">
-  <h2>Survey Instructions</h2>
-  <h5 class="mt-2">
-    <a href="{% url 'project-detail' pk=instruction.project.pk %}">
-      {{ instruction.project.name }}
-    </a>
-  </h5>
-</div>
+<div class="pane pane--full-height">
+  <div class="mb-12">
+    <h2>Survey Instructions</h2>
+    <h5 class="mt-2">
+      <a href="{% url 'project-detail' pk=instruction.project.pk %}">
+        {{ instruction.project.name }}
+      </a>
+    </h5>
+  </div>
 
-<div class="pane mt-6">
   <form method="POST">
     {% csrf_token %}
 

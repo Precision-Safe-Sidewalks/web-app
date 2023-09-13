@@ -1,47 +1,49 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="flex align-items-center justify-content-between">
-  <h2>{{ customer.name }}</h2>
-
-  <a class="btn--filled" href="{% url 'customer-update' pk=customer.pk %}">
-    Edit
-  </a>
-</div>
-
-<div class="mt-16">
+<div class="pane pane--full-height">
   <div class="flex align-items-center justify-content-between">
-    <h5>Active Projects</h5>
+    <h2>{{ customer.name }}</h2>
 
-    <a href="{% url 'customer-project-create' pk=customer.pk %}" class="btn--tonal">
-      Add project
+    <a class="btn--filled" href="{% url 'customer-update' pk=customer.pk %}">
+      Edit
     </a>
   </div>
 
-  <div class="mt-4">
-    <div id="active-projects-table"></div>
-  </div>
-</div>
+  <div class="mt-16">
+    <div class="flex align-items-center justify-content-between">
+      <h5>Active Projects</h5>
 
-<div class="mt-16">
-  <h5>Completed Projects</h5>
-  
-  <div class="mt-4">
-    <div id="completed-projects-table"></div>
-  </div>
-</div>
+      <a href="{% url 'customer-project-create' pk=customer.pk %}" class="btn--tonal">
+        Add project
+      </a>
+    </div>
 
-<div class="mt-16">
-  <div class="flex align-items-center justify-content-between">
-    <h5>Contacts</h5>
-
-    <a href="{% url 'customer-contact-create' pk=customer.pk %}" class="btn--tonal">
-      Add contact
-    </a>
+    <div class="mt-4">
+      <div id="active-projects-table"></div>
+    </div>
   </div>
 
-  <div class="mt-4">
-    <div id="contacts-table"></div>
+  <div class="mt-16">
+    <h5>Completed Projects</h5>
+    
+    <div class="mt-4">
+      <div id="completed-projects-table"></div>
+    </div>
+  </div>
+
+  <div class="mt-16">
+    <div class="flex align-items-center justify-content-between">
+      <h5>Contacts</h5>
+
+      <a href="{% url 'customer-contact-create' pk=customer.pk %}" class="btn--tonal">
+        Add contact
+      </a>
+    </div>
+
+    <div class="mt-4">
+      <div id="contacts-table"></div>
+    </div>
   </div>
 </div>
 

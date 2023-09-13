@@ -11,7 +11,7 @@ class ProjectForm(forms.ModelForm):
     business_development_manager = forms.ModelChoiceField(
         queryset=User.bdm.order_by("full_name")
     )
-    business_developmenet_administrator = forms.ModelChoiceField(
+    business_development_administrator = forms.ModelChoiceField(
         queryset=User.bda.order_by("full_name"), required=False
     )
     primary_contact = forms.ModelChoiceField(queryset=Contact.objects.order_by("name"))

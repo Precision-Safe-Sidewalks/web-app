@@ -1,15 +1,17 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="flex align-items-center justify-content-between">
-  <h2>Customers</h2>
-  <a class="btn--tonal" href="{% url 'customer-create' %}">
-    New Customer
-  </a>
-</div>
+<div class="pane pane--full-height">
+  <div class="flex align-items-center justify-content-between">
+    <h2>Customers</h2>
+    <a class="btn--tonal" href="{% url 'customer-create' %}">
+      New Customer
+    </a>
+  </div>
 
-<div class="my-12">
-  <div id="customers-table"></div>
+  <div class="my-12">
+    <div id="customers-table"></div>
+  </div>
 </div>
 
 <script>

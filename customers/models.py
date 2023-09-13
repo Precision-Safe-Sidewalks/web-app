@@ -71,7 +71,7 @@ class Contact(models.Model):
         ).first()
 
     def __str__(self):
-        return f"{self.customer.name} - {self.name}"
+        return self.name
 
 
 class ContactPhoneNumber(models.Model):

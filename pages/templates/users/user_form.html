@@ -1,42 +1,79 @@
 {% extends "base.html" %}
+{% load user_tags %}
 
 {% block content %}
-<h2>{% if target_user %}{{ target_user.full_name }}{% else %}New user{% endif %}</h2>
+<div class="pane pane--full-height">
+  <h2>{% if target_user %}{{ target_user.full_name }}{% else %}New user{% endif %}</h2>
 
-<div class="mt-8 w-128">
-  <form method="POST">
-    {% csrf_token %}
+  <div class="mt-8 w-128">
+    <form method="POST">
+      {% csrf_token %}
 
-    <div class="text-field--filled">
-      <label for="{{ form.first_name.id_for_label }}">First Name</label>
-      {{ form.first_name }} 
-    </div>
-    
-    <div class="text-field--filled mt-4">
-      <label for="{{ form.last_name.id_for_label }}">Last Name</label>
-      {{ form.last_name }}
-    </div>
-   
-    <div class="text-field--filled mt-4">
-      <label for="{{ form.email.id_for_label }}">Email</label>
-      {{ form.email }}
-    </div>
-   
-    <div class="text--body-md mt-4">
-      {{ form.is_active }} 
-      <label for="{{ form.is_active.id_for_label }}">Is Active</label>
-    </div>
-   
-    <div class="text--body-md mt-2">
-      {{ form.is_staff }} 
-      <label for="{{ form.is_staff.id_for_label }}">Is Staff (Admin)</label>
-    </div>
+      <div class="text-field--filled">
+        <label for="{{ form.first_name.id_for_label }}">First Name</label>
+        {{ form.first_name }} 
+      </div>
+      
+      <div class="text-field--filled mt-4">
+        <label for="{{ form.last_name.id_for_label }}">Last Name</label>
+        {{ form.last_name }}
+      </div>
+     
+      <div class="text-field--filled mt-4">
+        <label for="{{ form.email.id_for_label }}">Email</label>
+        {{ form.email }}
+      </div>
+     
+      <div class="text--body-md mt-4">
+        {{ form.is_active }} 
+        <label for="{{ form.is_active.id_for_label }}">Is Active</label>
+      </div>
+     
+      <div class="text--body-md mt-2">
+        {{ form.is_staff }} 
+        <label for="{{ form.is_staff.id_for_label }}">Is Staff (Admin)</label>
+      </div>
 
-    <div class="mt-4">
-      <button class="btn--filled" type="submit">
-        {% if target_user %}Save{% else %}Create{% endif %}
-      </button>
-    </div>
-  </form>
+      <div class="mt-6">
+        <h4>Roles</h4>
+        <h6 class="text--body-md text--muted">Select all that apply.</h6>
+
+        <div>
+          <div style="visibility: hidden; height: 0">
+            {{ form.roles }}
+          </div>
+
+          {% for role in roles %}
+            {% has_role user role.0 as is_selected %}
+            <div class="chip--filter mt-2" 
+              id="role-{{ role.0 }}" 
+              data-active="{{ is_selected|lower }}"
+              onclick="onToggleRole(event, '{{ role.0 }}')"
+            >
+            {{ role.1 }}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="mt-6">
+        <button class="btn--filled" type="submit">
+          {% if target_user %}Save{% else %}Create{% endif %}
+        </button>
+      </div>
+    </form>
+  </div>
 </div>
+
+<script>
+  const onToggleRole = (event, role) => {
+    const chip = $(`#role-${role}`)
+    const select = $("#id_roles")
+    const option = $(select).children(`option[value="${role}"]`)
+    const selected = option.prop("selected")
+    
+    $(option).prop("selected", !selected)
+    $(chip).attr("data-active", !selected)
+  }
+</script>
 {% endblock %}
