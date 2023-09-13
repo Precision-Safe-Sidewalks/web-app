@@ -1,5 +1,7 @@
-@import "../theme/typography.scss";
 @import "../theme/colors.scss";
+@import "../theme/elevation.scss";
+@import "../theme/states.scss";
+@import "../theme/typography.scss";
 
 .form-control {
 
@@ -17,19 +19,91 @@
   select {
     @extend .text--body-md;
 
-    background-color: transparent;
-    border: none;
-    border-bottom: 1px solid rgba($outline, 0.38);
-    height: 32px;
-    padding: 0px 8px;
-    outline: none;
-    cursor: pointer;
     width: 100%;
+  
+    &:not([multiple]) {
+      background-color: transparent;
+      border: none;
+      border-bottom: 1px solid rgba($outline, 0.38);
+      height: 32px;
+      padding: 0px 8px;
+      outline: none;
+      cursor: pointer;
+    }
   }
 
-  &:not([data-active="true"]) {
+  &[data-active]:not([data-active="true"]) {
     select {
       display: none;
+    }
+  }
+
+  /* Multi select menu */
+  .menu-control {
+    @extend .text--body-md;
+
+    cursor: pointer;
+    height: 32px;
+    border-bottom: 1px solid rgba($outline, 0.38);
+    padding: 0px 8px;
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    .text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: calc(100% - 40px);
+    }
+
+    .icon {
+      position: absolute;
+      right: 8px;
+    }
+  }
+
+  .menu {
+    @extend .text--body-md;
+    @extend .elevation-2;
+
+    min-width: 112px;
+    max-width: 280px;
+    border-radius: 4px;
+    background-color: $surface-variant;
+    position: absolute;
+    overflow-y: scroll;
+    max-height: 300px;
+
+    &:not(.open) {
+      display: none;
+    }
+
+    .open {
+      display: block;
+    }
+  }
+
+  .menu-item {
+    @extend .text--body-md;
+
+    height: 32px;
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    cursor: pointer;
+
+    .icon {
+      width: 24px;
+      margin-right: 12px;
+    }
+
+    &:hover {
+      @include manualStateLayer($on-surface-variant, 8%);
+    }
+
+    &[data-selected="true"] {
+      @include manualStateLayer($on-surface-variant, 12%);
     }
   }
 }

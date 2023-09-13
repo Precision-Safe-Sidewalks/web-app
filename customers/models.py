@@ -1,7 +1,7 @@
 from django.db import models
 
-from core.models.constants import States
-from core.validators import PhoneNumberValidator
+from core.models.abstract import AbstractPhoneNumber
+from core.models.constants import PhoneNumberType, States
 
 
 class Customer(models.Model):
@@ -53,46 +53,25 @@ class Contact(models.Model):
     )
     name = models.CharField(max_length=255)
     email = models.EmailField(max_length=200, blank=True, null=True)
+    notes = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    # TODO: add notes
-
     def get_work_phone(self):
         """Return the work phone number"""
-        return self.phone_numbers.filter(
-            number_type=ContactPhoneNumber.NumberType.WORK
-        ).first()
+        return self.phone_numbers.filter(number_type=PhoneNumberType.WORK).first()
 
     def get_cell_phone(self):
         """Return the cell phone number"""
-        return self.phone_numbers.filter(
-            number_type=ContactPhoneNumber.NumberType.CELL
-        ).first()
+        return self.phone_numbers.filter(number_type=PhoneNumberType.CELL).first()
 
     def __str__(self):
         return self.name
 
 
-class ContactPhoneNumber(models.Model):
+class ContactPhoneNumber(AbstractPhoneNumber):
     """Contact phone number"""
-
-    class NumberType(models.TextChoices):
-        """Phone number type choices"""
-
-        CELL = ("CELL", "Cell")
-        WORK = ("WORK", "Work")
 
     contact = models.ForeignKey(
         Contact, on_delete=models.CASCADE, related_name="phone_numbers"
     )
-    number_type = models.CharField(max_length=10, choices=NumberType.choices)
-    phone_number = models.CharField(max_length=25, validators=[PhoneNumberValidator])
-    extension = models.CharField(max_length=10, blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        if self.extension:
-            return f"{self.phone_number} ext. {self.extension}"
-        return self.phone_number

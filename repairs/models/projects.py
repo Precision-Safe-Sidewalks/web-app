@@ -20,7 +20,8 @@ class Project(models.Model):
         CANCELED = ("X", "Canceled")
 
     name = models.CharField(max_length=255)
-    description = models.TextField(blank=True, null=True)
+    address = models.TextField(blank=True, null=True)
+    details = models.TextField(blank=True, null=True)
     status = models.CharField(
         max_length=1, choices=Status.choices, default=Status.STARTED
     )
@@ -48,7 +49,6 @@ class Project(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    # TODO: address
     # TODO: PO/PA number (PI only)
 
     def __str__(self):

@@ -54,3 +54,10 @@ class States(models.TextChoices):
     WV = ("WV", "West Virginia")
     WI = ("WI", "Wisconsin")
     WY = ("WY", "Wyoming")
+
+
+class PhoneNumberType(models.TextChoices):
+    """Phone number type choices"""
+
+    CELL = ("CELL", "Cell")
+    WORK = ("WORK", "Work")

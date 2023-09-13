@@ -18,7 +18,7 @@
         {{ form.name }} 
       </div>
       
-      <div class="text-field--filled mt-4">
+      <div class="text-field--filled mt-6">
         <label for="{{ form.email.id_for_label }}">Email</label>
         {{ form.email }} 
       </div>
@@ -27,8 +27,13 @@
         {{ form.email.errors.0 }}
       </div>
       {% endif %}
+      
+      <div class="text-field--filled mt-6">
+        <label for="{{ form.notes.id_for_label }}">Notes</label>
+        {{ form.notes }} 
+      </div>
 
-      <div class="mt-4 grid" style="grid-template-columns: calc(75% - 24px) 25%;">
+      <div class="mt-6 grid" style="grid-template-columns: calc(75% - 24px) 25%;">
         <div class="text-field--filled">
           <label for="{{ form.phone_work.id_for_label }}">Work Phone</label>
           {{ form.phone_work }} 
@@ -44,7 +49,7 @@
       </div>
       {% endif %}
       
-      <div class="mt-4 grid" style="grid-template-columns: calc(75% - 24px) 25%;">
+      <div class="mt-6 grid" style="grid-template-columns: calc(75% - 24px) 25%;">
         <div class="text-field--filled">
           <label for="{{ form.phone_cell.id_for_label }}">Cell Phone</label>
           {{ form.phone_cell }} 
@@ -60,7 +65,7 @@
       </div>
       {% endif %}
 
-      <div class="mt-4">
+      <div class="mt-6">
         <button class="btn--filled" type="submit">
           {% if customer %}Save{% else %}Create{% endif %}
         </button>

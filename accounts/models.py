@@ -2,6 +2,8 @@ from django.contrib.auth.models import AbstractUser, UserManager
 from django.db import models
 
 from accounts.managers import BDAManager, BDMManager, SurveyorManager
+from core.models.abstract import AbstractPhoneNumber
+from core.models.constants import PhoneNumberType
 
 
 class User(AbstractUser):
@@ -28,6 +30,14 @@ class User(AbstractUser):
 
         return super().save(**kwargs)
 
+    def get_work_phone(self):
+        """Return the work phone for the User"""
+        return self.phone_numbers.filter(number_type=PhoneNumberType.WORK).first()
+
+    def get_cell_phone(self):
+        """Return the cell phone for the User"""
+        return self.phone_numbers.filter(number_type=PhoneNumberType.CELL).first()
+
 
 class UserRole(models.Model):
     """Role a User performs"""
@@ -44,3 +54,11 @@ class UserRole(models.Model):
 
     class Meta:
         unique_together = ("user", "role")
+
+
+class UserPhoneNumber(AbstractPhoneNumber):
+    """Phone number for a user"""
+
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="phone_numbers"
+    )

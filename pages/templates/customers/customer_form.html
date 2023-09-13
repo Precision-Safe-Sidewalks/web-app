@@ -13,22 +13,22 @@
         {{ form.name }} 
       </div>
       
-      <div class="text-field--filled mt-4">
+      <div class="text-field--filled mt-6">
         <label for="{{ form.address.id_for_label }}">Address</label>
         {{ form.address }} 
       </div>
      
-      <div class="text-field--filled mt-4">
+      <div class="text-field--filled mt-6">
         <label for="{{ form.city.id_for_label }}">City</label>
         {{ form.city }} 
       </div>
      
-      <div class="text-field--filled mt-4">
+      <div class="text-field--filled mt-6">
         <label for="{{ form.state.id_for_label }}">State</label>
         {{ form.state }} 
       </div>
 
-      <div class="mt-4">
+      <div class="mt-6">
         <button class="btn--filled" type="submit">
           {% if customer %}Save{% else %}Create{% endif %}
         </button>

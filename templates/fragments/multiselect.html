@@ -1,0 +1,80 @@
+<!-- Multi select menu. Required form field "name", "choices", "selected" -->
+{% load core_tags %}
+
+<div class="form-control">
+  <!-- Select display -->
+  <div id="id-{{ name }}-control" class="menu-control">
+    <div id="id-{{ name }}-control-text" class="text">---</div>
+    <span class="icon">arrow_drop_down</span>
+  </div>
+
+  <!-- Select menu -->
+  <div id="id-{{ name }}-menu" class="menu">
+  {% for value, label in choices %}
+    <div class="menu-item" data-value="{{ value }}" data-selected="{{ value|isin:selected|lower }}" onclick="onClickMenuItem(event)">
+      <span class="icon">
+      {% if value in selected %}done{% endif %}
+      </span>
+      {{ label }}
+    </div>
+  {% endfor %}
+
+  <!-- Select form component -->
+  <select id="id-{{ name }}-select" name="{{ name }}" multiple hidden>
+  {% for value, label in choices %}
+    <option id="id-{{ name }}-option-{{ value }}" value="{{ value }}" {% if value|isin:selected %}selected{% endif %}>
+      {{ label }}
+    </option>
+  {% endfor %}
+  </select>
+
+</div>
+
+<script>
+  const menuControlId = "id-{{ name }}-control"
+  const menuControlTextId = "id-{{ name }}-control-text"
+  const menuId = "id-{{ name }}-menu"
+  const menuOptionIdPrefix = "id-{{ name }}-option-"
+
+  $(`#${menuControlId}`).on("click", () => {
+    const menu = $(`#${menuId}`)
+    const open = $(menu).hasClass("open")
+    open ? $(menu).removeClass("open") : $(menu).addClass("open")
+  })
+
+  const onClickMenuItem = (event) => {    
+    const menuItem = $(event.target)
+    const menuValue = $(menuItem).data("value")
+    const menuOption = $(`#${menuOptionIdPrefix}${menuValue}`)
+    const selected = $(menuOption).prop("selected")
+
+    $(menuOption).attr("selected", !selected)
+    $(menuItem).attr("data-selected", !selected)
+
+    selected 
+      ? $(menuItem).children(`span[class="icon"]`).text("")
+      : $(menuItem).children(`span[class="icon"]`).text("done")
+
+    const selectedMenuItems = $(`option[id^="${menuOptionIdPrefix}"][selected]`)
+    const selectedText = selectedMenuItems.map((_, item) => $(item).text().trim())
+      .toArray()
+      .join(", ")
+
+    $(`#${menuControlTextId}`).text(selectedText)
+  }
+
+  $(document).on("mouseup", (event) => {
+    const menu = $(`#${menuId}`)
+    const menuControl = $(`#${menuControlId}`)
+
+    const isMenu = $(menu).is(event.target)
+    const isInMenu = $(menu).has(event.target).length !== 0
+    const isMenuControl = $(menuControl).is(event.target)
+    const isInMenuControl = $(menuControl).has(event.target).length !== 0
+
+    if (!isMenu && !isMenuControl && !isInMenu && !isInMenuControl) {
+      $(menu).removeClass("open")
+    }
+  })
+
+</script>

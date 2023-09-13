@@ -18,37 +18,42 @@
         {{ form.name }} 
       </div>
       
-      <div class="text-field--filled mt-4">
-        <label for="{{ form.description.id_for_label }}">Description</label>
-        {{ form.description }} 
+      <div class="text-field--filled mt-6">
+        <label for="{{ form.address.id_for_label }}">Address</label>
+        {{ form.address }} 
+      </div>
+      
+      <div class="text-field--filled mt-6">
+        <label for="{{ form.details.id_for_label }}">Details</label>
+        {{ form.details }} 
       </div>
 
-      <div class="text-field--filled mt-4">
+      <div class="text-field--filled mt-6">
         <label for="{{ form.business_development_manager.id_for_label }}">Business development manager (BD)</label>
         {{ form.business_development_manager }} 
       </div>
       
-      <div class="text-field--filled mt-4">
+      <div class="text-field--filled mt-6">
         <label for="{{ form.business_development_administrator.id_for_label }}">Business development administrator (BDA)</label>
         {{ form.business_development_administrator }} 
       </div>
 
-      <div class="text-field--filled mt-4">
+      <div class="text-field--filled mt-6">
         <label for="{{ form.territory.id_for_label }}">Territory</label>
         {{ form.territory }} 
       </div>
 
-      <div class="text-field--filled mt-4">
+      <div class="text-field--filled mt-6">
         <label for="{{ form.primary_contact.id_for_label }}">Primary Contact</label>
         {{ form.primary_contact }}
       </div>
       
-      <div class="text-field--filled mt-4">
+      <div class="text-field--filled mt-6">
         <label for="{{ form.secondary_contact.id_for_label }}">Secondary Contact</label>
         {{ form.secondary_contact }}
       </div>
 
-      <div class="mt-4">
+      <div class="mt-6">
         <button class="btn--filled" type="submit">
           {% if customer %}Save{% else %}Create{% endif %}
         </button>
