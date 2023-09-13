@@ -21,7 +21,12 @@ from pydantic import ValidationError
 
 from customers.models import Customer
 from pages.forms.projects import ProjectForm, ProjectMeasurementsForm
-from repairs.models import InstructionSpecification, Measurement, Project
+from repairs.models import (
+    InstructionNote,
+    InstructionSpecification,
+    Measurement,
+    Project,
+)
 from repairs.models.constants import DRSpecification, Hazard, SpecialCase, Stage
 
 LOGGER = logging.getLogger(__name__)
@@ -180,14 +185,18 @@ class SurveyInstructionsView(TemplateView):
 
     def get_context_data(self, **kwargs):
         project = get_object_or_404(Project, pk=self.kwargs["pk"])
+        instruction = project.instructions.get(stage=Stage.SURVEY)
+
         context = super().get_context_data(**kwargs)
-        context["instruction"] = project.instructions.get(stage=Stage.SURVEY)
+        context["instruction"] = instruction
+        context["notes"] = instruction.notes.order_by("created_at")
         context["hazards"] = Hazard.choices
         context["special_cases"] = SpecialCase.choices
         context["dr_specifications"] = DRSpecification.choices
         context["pricing_models"] = InstructionSpecification.PricingModel.choices
         context["surveyors"] = User.surveyors.all()
         context["error"] = self.request.GET.get("error")
+
         return context
 
     def post(self, request, pk):
@@ -195,7 +204,8 @@ class SurveyInstructionsView(TemplateView):
         instruction = project.instructions.get(project=project, stage=Stage.SURVEY)
         SpecificationType = InstructionSpecification.SpecificationType
 
-        keep = []
+        keep_specs = []
+        keep_notes = []
 
         with transaction.atomic():
             if surveyor := request.POST.get("surveyor"):
@@ -240,6 +250,23 @@ class SurveyInstructionsView(TemplateView):
                     spec_type = SpecificationType.DR
                     spec = key.split("-")[-1]
 
+                elif key.startswith("note-new-"):
+                    note = request.POST.get(key).strip()
+
+                    if note:
+                        note = InstructionNote.objects.create(
+                            instruction=instruction, note=note
+                        )
+                        keep_notes.append(note.pk)
+
+                elif key.startswith("note-"):
+                    note_id = int(key.split("-")[-1])
+                    note = request.POST.get(key).strip()
+
+                    if note:
+                        instruction.notes.filter(pk=note_id).update(note=note)
+                        keep_notes.append(note_id)
+
                 if spec_type and spec:
                     obj, _ = InstructionSpecification.objects.update_or_create(
                         instruction=instruction,
@@ -247,10 +274,16 @@ class SurveyInstructionsView(TemplateView):
                         specification=spec,
                         defaults=defaults,
                     )
-                    keep.append(obj.id)
+                    keep_specs.append(obj.id)
 
+            # Delete any specifications or notes that weren't included in the
+            # form data
             InstructionSpecification.objects.exclude(
-                instruction=instruction, id__in=keep
+                instruction=instruction, id__in=keep_specs
+            ).delete()
+
+            InstructionNote.objects.exclude(
+                instruction=instruction, id__in=keep_notes
             ).delete()
 
         redirect_url = reverse("project-detail", kwargs={"pk": pk})

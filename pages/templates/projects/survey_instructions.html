@@ -147,8 +147,31 @@
     
     <!-- Notes & special instructions -->
     <div class="mb-12">
-      <h4>Notes and special instructions</h4>
-      <p>TBD</p>
+      <div class="flex align-items-center justify-content-between">
+        <div>
+          <h4>Notes and special instructions</h4>
+          <h6 class="text--body-md text--muted">
+            Add notes or special instructions for additional context.
+          </h6>
+        </div>
+
+        <button class="btn--tonal" onclick="onAddNote(event)">
+          Add note
+        </button>
+      </div>
+      
+      <div id="notes">
+      {% for note in notes %}
+        <div id="note-container-{{ note.pk }}" class="flex align-items-center mt-3">
+          <div class="form-control flex-grow">
+            <input id="note-{{ note.pk }}" name="note-{{ note.pk }}" type="text" value="{{ note.note }}">
+          </div>
+          <button class="btn--icon" onclick="onDeleteNote(event, '{{ note.pk }}')">
+            <span class="icon">delete</span>
+          </button>
+        </div>
+      {% endfor %}
+      </div>
     </div>
 
     <!-- Save button -->
@@ -189,6 +212,35 @@
     const input = $(formControl).children(`input[type="text"]`)
     $(input).attr("hidden", !checked)
   }
+
+  /// Handler for adding a new note
+  const onAddNote = (event) => {
+    event && event.preventDefault()
+
+    const notes = $(`div[id="notes"] input[id^="note-new"]`)
+    const noteId = notes.length === 0 ? 0 : 1 + parseInt($(notes).last().attr("id").replace("note-", ""))
+
+    const container = $(`<div id="note-container-${noteId}" class="flex align-items-center mt-3"></div>`)
+    const deleteButton = $(`<button class="btn--icon" onclick="onDeleteNote(event, ${noteId})"><span class="icon">delete</span></button>`)
+    const inputContainer = $(`<div class="form-control flex-grow"></div>`)
+    const input = $(`<input id="note-new-${noteId}" name="note-new-${noteId}" type="text">`)
+
+    $(inputContainer).append(input)
+    $(container).append(inputContainer)
+    $(container).append(deleteButton)
+    $("#notes").append(container)
+  }
+
+  /// Handler for deleting a note
+  const onDeleteNote = (event, noteId) => {
+    event.preventDefault()
+    $(`#note-container-${noteId}`).remove()
+  }
+
+  $(document).ready(() => {
+    // If no notes exists, add a default element
+    $("#notes").children().length === 0 ? onAddNote() : null
+  })
 
 </script>
 
