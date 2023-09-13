@@ -38,6 +38,7 @@ class ProjectTableFilter(django_filters.FilterSet):
     """Project data table filters"""
 
     q = django_filters.CharFilter(method="filter_q")
+    active = django_filters.BooleanFilter(method="filter_active")
     status = django_filters.MultipleChoiceFilter(choices=Project.Status.choices)
 
     def filter_q(self, queryset, name, value):
@@ -48,6 +49,15 @@ class ProjectTableFilter(django_filters.FilterSet):
             | Q(territory__label__icontains=value)
             | Q(territory__name__icontains=value)
         )
+
+    def filter_active(self, queryset, name, value):
+        if value is True:
+            return queryset.exclude(status=Project.Status.COMPLETE)
+
+        if value is False:
+            return queryset.filter(status=Project.Status.COMPLETE)
+
+        return queryset
 
     class Meta:
         model = Project

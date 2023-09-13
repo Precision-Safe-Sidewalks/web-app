@@ -13,7 +13,7 @@
   {% for value, label in choices %}
     <div id="id-{{ name }}-item-{{ value }}" class="menu-item" data-value="{{ value }}" menu-selected="{{ value|isin:selected|lower }}" onclick="onClickMenuItem(event)">
       <span class="icon">
-      {% if value in selected %}done{% endif %}
+      {% if value|isin:selected %}done{% endif %}
       </span>
       {{ label }}
     </div>
