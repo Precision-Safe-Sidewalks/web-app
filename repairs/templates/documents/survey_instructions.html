@@ -127,7 +127,9 @@
             BDM/{{ instruction.project.business_development_manager.first_name }}
           </td>
           <td colspan="4">
-            C:
+            {% with phone=instruction.project.business_development_manager.get_cell_phone %}
+            C: {{ phone }}
+            {% endwith %}
           </td>
           <td colspan="2">
             {% if instruction.project.business_development_administrator %}
@@ -136,7 +138,11 @@
               BDA/{{ instruction.project.business_development_manager.first_name }}
             {% endif %}
           </td>
-          <td colspan="4">C:</td>
+          <td colspan="4">
+            {% with phone=instruction.project.business_development_administrator.get_cell_phone %}
+            C: {{ phone }}
+            {% endwith %}
+          </td>
         </tr>
 
         <!-- Survey specifications -->

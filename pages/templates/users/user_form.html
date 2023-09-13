@@ -23,15 +23,49 @@
         <label for="{{ form.email.id_for_label }}">Email</label>
         {{ form.email }}
       </div>
+      
+      <div class="mt-4 grid" style="grid-template-columns: calc(75% - 24px) 25%;">
+        <div class="text-field--filled">
+          <label for="{{ form.phone_work.id_for_label }}">Work Phone</label>
+          {{ form.phone_work }} 
+        </div>
+        <div class="text-field--filled">
+          <label for="{{ form.phone_work_ext.id_for_label }}">Extension</label>
+          {{ form.phone_work_ext }}
+        </div>
+      </div>
+
+      {% if form.phone_work.errors %}
+      <div class="mt-2 text--body-sm text--error">
+        {{ form.phone_work.errors.0 }}
+      </div>
+      {% endif %}
+      
+      <div class="mt-4 grid" style="grid-template-columns: calc(75% - 24px) 25%;">
+        <div class="text-field--filled">
+          <label for="{{ form.phone_cell.id_for_label }}">Cell Phone</label>
+          {{ form.phone_cell }} 
+        </div>
+        <div class="text-field--filled">
+          <label for="{{ form.phone_cell_ext.id_for_label }}">Extension</label>
+          {{ form.phone_cell_ext }}
+        </div>
+      </div>
+
+      {% if form.phone_cell.errors %}
+      <div class="mt-2 text--body-sm text--error">
+        {{ form.phone_cell.errors.0 }}
+      </div>
+      {% endif %}
      
       <div class="text--body-md mt-4">
         {{ form.is_active }} 
         <label for="{{ form.is_active.id_for_label }}">Is Active</label>
       </div>
-     
+      
       <div class="text--body-md mt-2">
-        {{ form.is_staff }} 
-        <label for="{{ form.is_staff.id_for_label }}">Is Staff (Admin)</label>
+        {{ form.is_superuser }} 
+        <label for="{{ form.is_superuser.id_for_label }}">Is Admin</label>
       </div>
 
       <div class="mt-6">

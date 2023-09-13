@@ -113,14 +113,21 @@ class ProjectTableSerializer(serializers.ModelSerializer):
 
 class UserTableSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField()
+    email = serializers.SerializerMethodField()
     is_active = serializers.SerializerMethodField()
-    is_staff = serializers.SerializerMethodField()
-    created = serializers.SerializerMethodField()
+    is_admin = serializers.SerializerMethodField()
+    phone_work = serializers.SerializerMethodField()
+    phone_cell = serializers.SerializerMethodField()
     last_login = serializers.SerializerMethodField()
 
     def get_name(self, obj):
         href = reverse("user-update", kwargs={"pk": obj.pk})
         html = f'<a href="{href}">{obj.full_name}</a>'
+        return mark_safe(html)
+
+    def get_email(self, obj):
+        href = reverse("user-update", kwargs={"pk": obj.pk})
+        html = f'<a href="{href}">{obj.email}</a>'
         return mark_safe(html)
 
     def get_is_active(self, obj):
@@ -131,16 +138,21 @@ class UserTableSerializer(serializers.ModelSerializer):
 
         return mark_safe(html)
 
-    def get_is_staff(self, obj):
-        if obj.is_staff:
+    def get_is_admin(self, obj):
+        if obj.is_superuser:
             html = '<span class="icon icon--success">check_circle</span>'
         else:
             html = '<span class="icon icon--error">cancel</span>'
 
         return mark_safe(html)
 
-    def get_created(self, obj):
-        return obj.date_joined.strftime("%-m/%-d/%Y")
+    def get_phone_work(self, obj):
+        phone = obj.get_work_phone()
+        return str(phone) if phone else None
+
+    def get_phone_cell(self, obj):
+        phone = obj.get_cell_phone()
+        return str(phone) if phone else None
 
     def get_last_login(self, obj):
         if obj.last_login:
@@ -149,4 +161,12 @@ class UserTableSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("name", "email", "is_active", "is_staff", "created", "last_login")
+        fields = (
+            "name",
+            "email",
+            "is_active",
+            "is_admin",
+            "phone_work",
+            "phone_cell",
+            "last_login",
+        )
