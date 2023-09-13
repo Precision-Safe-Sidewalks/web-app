@@ -37,6 +37,10 @@ class Instruction(models.Model):
             return self.needed_by.strftime("%m/%d/%Y")
         return None
 
+    def get_notes(self):
+        """Return the notes in chronological order"""
+        return self.notes.order_by("created_at")
+
 
 class InstructionSpecification(models.Model):
     """Survey/Project instructions specifications set"""
