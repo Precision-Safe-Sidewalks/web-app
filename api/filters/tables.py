@@ -56,7 +56,7 @@ class ProjectTableFilter(django_filters.FilterSet):
 
         if value is False:
             return queryset.filter(status=Project.Status.COMPLETE)
-        
+
         return queryset
 
     class Meta:
