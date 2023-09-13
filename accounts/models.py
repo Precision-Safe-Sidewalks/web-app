@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser, UserManager
 from django.db import models
 
 from accounts.managers import BDAManager, BDMManager, SurveyorManager
+from core.models.abstract import AbstractPhoneNumber
 
 
 class User(AbstractUser):
@@ -44,3 +45,11 @@ class UserRole(models.Model):
 
     class Meta:
         unique_together = ("user", "role")
+
+
+class UserPhoneNumber(AbstractPhoneNumber):
+    """Phone number for a user"""
+
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="phone_numbers"
+    )
