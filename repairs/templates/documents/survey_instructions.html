@@ -274,31 +274,22 @@
         <tr>
           <td colspan="12" class="bg-blue bold">NOTES &amp; SPECIAL INSTRUCTIONS</td>
         </tr>
-        
-        <tr>
-          <td colspan="12"></td>
-        </tr>
-        <tr>
-          <td colspan="12"></td>
-        </tr>
-        <tr>
-          <td colspan="12"></td>
-        </tr>
-        <tr>
-          <td colspan="12"></td>
-        </tr>
-        <tr>
-          <td colspan="12"></td>
-        </tr>
-        <tr>
-          <td colspan="12"></td>
-        </tr>
-        <tr>
-          <td colspan="12"></td>
-        </tr>
-        <tr>
-          <td colspan="12"></td>
-        </tr>
+
+        {% with notes=instruction.get_notes %}
+          {% for note in notes %}
+          <tr>
+            <td colspan="12">{{ note.note }}</td>
+          </tr>
+          {% endfor %}
+
+          {% for i in notes_placeholder %}
+            {% if i >= notes.count %}
+            <tr>
+              <td colspan="12"></td>
+            </tr>
+            {% endif %}
+          {% endfor %}
+        {% endwith %}
 
       </tbody>
     </table>

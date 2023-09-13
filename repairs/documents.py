@@ -39,6 +39,7 @@ class SurveyInstructionsGenerator:
             "hazards": self.get_specification("H", Hazard.choices),
             "special_cases": self.get_specification("SC", SpecialCase.choices),
             "dr_specs": self.get_specification("DR", DRSpecification.choices),
+            "notes_placeholder": list(range(8)),
         }
 
     def get_specification(self, spec_type, choices):
