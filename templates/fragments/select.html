@@ -1,4 +1,4 @@
-<!-- Multi select menu. Required form field "name", "choices", "selected" -->
+<!-- Multi select menu. Required form field "name", "choices", "selected", multiple -->
 {% load core_tags %}
 
 <div class="form-control">
@@ -11,16 +11,17 @@
   <!-- Select menu -->
   <div id="id-{{ name }}-menu" class="menu">
   {% for value, label in choices %}
-    <div class="menu-item" data-value="{{ value }}" data-selected="{{ value|isin:selected|lower }}" onclick="onClickMenuItem(event)">
+    <div id="id-{{ name }}-item-{{ value }}" class="menu-item" data-value="{{ value }}" menu-selected="{{ value|isin:selected|lower }}" onclick="onClickMenuItem(event)">
       <span class="icon">
       {% if value in selected %}done{% endif %}
       </span>
       {{ label }}
     </div>
   {% endfor %}
+  </div>
 
   <!-- Select form component -->
-  <select id="id-{{ name }}-select" name="{{ name }}" multiple hidden>
+  <select id="id-{{ name }}-select" name="{{ name }}" {% if multiple %}multiple{% endif %} hidden onchange="{{ onChange }}">
   {% for value, label in choices %}
     <option id="id-{{ name }}-option-{{ value }}" value="{{ value }}" {% if value|isin:selected %}selected{% endif %}>
       {{ label }}
@@ -34,7 +35,10 @@
   const menuControlId = "id-{{ name }}-control"
   const menuControlTextId = "id-{{ name }}-control-text"
   const menuId = "id-{{ name }}-menu"
+  const menuItemIdPrefix = "id-{{ name }}-item-"
+  const menuSelectId = "id-{{ name }}-select"
   const menuOptionIdPrefix = "id-{{ name }}-option-"
+  const multiple = "{{ multiple }}".toLowerCase() == "true"
 
   $(`#${menuControlId}`).on("click", () => {
     const menu = $(`#${menuId}`)
@@ -44,17 +48,35 @@
 
   const onClickMenuItem = (event) => {    
     const menuItem = $(event.target)
+    const current = $(menuItem).attr("menu-selected") === "true"
+    const selected = multiple ? !current : true
+
+    setMenuItemState(menuItem, selected)
+
+    if (!multiple) {
+      const menuItems = $(`div[id^="${menuItemIdPrefix}"][id!="${event.target.id}"]`)
+      $(menuItems).each((_, item) => setMenuItemState(item, false))
+    }
+
+    setSelectedText()
+
+    const value = $(`option[id^="${menuOptionIdPrefix}"][selected]`).map((_, opt) => $(opt).val()).toArray()
+    $(`#${menuSelectId}`).trigger("change", { value: multiple ? value : value[0] })
+  }
+
+  const setMenuItemState = (menuItem, selected) => {
     const menuValue = $(menuItem).data("value")
     const menuOption = $(`#${menuOptionIdPrefix}${menuValue}`)
-    const selected = $(menuOption).prop("selected")
 
-    $(menuOption).attr("selected", !selected)
-    $(menuItem).attr("data-selected", !selected)
+    $(menuOption).attr("selected", selected)
+    $(menuItem).attr("menu-selected", selected)
 
     selected 
-      ? $(menuItem).children(`span[class="icon"]`).text("")
-      : $(menuItem).children(`span[class="icon"]`).text("done")
+      ? $(menuItem).children(`span[class="icon"]`).text("done")
+      : $(menuItem).children(`span[class="icon"]`).text("")
+  }
 
+  const setSelectedText = () => {
     const selectedMenuItems = $(`option[id^="${menuOptionIdPrefix}"][selected]`)
     const selectedText = selectedMenuItems.map((_, item) => $(item).text().trim())
       .toArray()
@@ -75,6 +97,10 @@
     if (!isMenu && !isMenuControl && !isInMenu && !isInMenuControl) {
       $(menu).removeClass("open")
     }
+  })
+
+  $(document).ready(() => {
+    setSelectedText()
   })
 
 </script>

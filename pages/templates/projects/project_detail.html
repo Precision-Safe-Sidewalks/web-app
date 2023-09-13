@@ -12,9 +12,13 @@
         </a>
         &#8212; {{ project.territory.name }} ({{ project.territory.label }})
       </h6>
+      <h6 class="mt-2">{{ project.address }}</h6>
     </div>
-    <div>
-      <a class="btn--filled" href="{% url 'project-update' pk=project.pk %}">Edit</a>
+    <div class="flex align-items-center">
+      <div class="w-64">
+        {% include "select.html" with name="status" choices=statuses selected=project.status multiple=False %}
+      </div>
+      <a class="btn--filled ml-6" href="{% url 'project-update' pk=project.pk %}">Edit</a>
     </div>
   </div>
 
@@ -298,5 +302,17 @@
       map.addFeatures(geojson.features, "measurements")
     }
   })
+
+  // Configure the handler for the status change
+  $("#id-status-select").on("change", (_, eventData) => {
+    const url = "/projects/{{ project.pk }}/edit/status/"
+
+    const data = new FormData()
+    data.append("csrfmiddlewaretoken", "{{ csrf_token }}")
+    data.append("status", eventData.value)
+
+    fetch(url, { method: "POST", body: data, credentials: "include" })
+  })
+
 </script>
 {% endblock %}
