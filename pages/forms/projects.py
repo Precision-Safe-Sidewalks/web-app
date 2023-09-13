@@ -46,7 +46,8 @@ class ProjectForm(forms.ModelForm):
         fields = (
             "customer",
             "name",
-            "description",
+            "address",
+            "details",
             "business_development_manager",
             "business_development_administrator",
             "territory",
@@ -55,7 +56,8 @@ class ProjectForm(forms.ModelForm):
         )
         widgets = {
             "customer": forms.HiddenInput(),
-            "description": forms.TextInput(),
+            "address": forms.TextInput(),
+            "details": forms.TextInput(),
         }
 
 
