@@ -109,7 +109,7 @@ class ProjectUpdateView(UpdateView):
 class ProjectStatusUpdateView(View):
     def post(self, request, pk):
         project = get_object_or_404(Project, pk=pk)
-        project.status = request.POST.get("status")
+        project.status = int(request.POST.get("status"))
         project.save()
 
         redirect_url = reverse("project-detail", kwargs={"pk": self.kwargs["pk"]})

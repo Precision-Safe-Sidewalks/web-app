@@ -31,7 +31,7 @@ class Customer(models.Model):
         """Return the Projects currently in progress"""
         from repairs.models.projects import Project
 
-        return self.projects.filter(status=Project.Status.STARTED).order_by(
+        return self.projects.exclude(status=Project.Status.COMPLETE).order_by(
             "created_at"
         )
 

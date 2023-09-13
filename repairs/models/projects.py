@@ -11,20 +11,19 @@ User = get_user_model()
 class Project(models.Model):
     """Repair project for a Customer"""
 
-    class Status(models.TextChoices):
+    class Status(models.IntegerChoices):
         """Status choices"""
 
-        STARTED = ("S", "Started")
-        IN_PROGRESS = ("I", "In Progress")
-        COMPLETE = ("C", "Complete")
-        CANCELED = ("X", "Canceled")
+        SURVEY = (1, "Survey")
+        NEGOTIATION = (2, "Negotiation/Review")
+        READY = (3, "Closed/Ready for scheduling")
+        SCHEDULED = (4, "Scheduled/Work in progress")
+        COMPLETE = (5, "Invoiced/Complete")
 
     name = models.CharField(max_length=255)
     address = models.TextField(blank=True, null=True)
     details = models.TextField(blank=True, null=True)
-    status = models.CharField(
-        max_length=1, choices=Status.choices, default=Status.STARTED
-    )
+    status = models.IntegerField(choices=Status.choices, default=Status.SURVEY)
     customer = models.ForeignKey(
         Customer, on_delete=models.CASCADE, related_name="projects"
     )

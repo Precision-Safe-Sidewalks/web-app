@@ -59,7 +59,7 @@
         "Primary Contact",
         "Created",
       ],
-      url: "/api/tables/projects/?customer={{ customer.pk }}&status=S&status=I",
+      url: "/api/tables/projects/?customer={{ customer.pk }}&active=true",
       perPage: 10,
     })
 
@@ -73,7 +73,7 @@
         "Primary Contact",
         "Created",
       ],
-      url: "/api/tables/projects/?customer={{ customer.pk }}&status=C",
+      url: "/api/tables/projects/?customer={{ customer.pk }}&active=false",
       perPage: 10,
     })
 
