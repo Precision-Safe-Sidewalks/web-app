@@ -4,7 +4,11 @@
 <div class="pane pane--full-height">
   <h2>{% if project %}{{ project.name}}{% else %}New project{% endif %}</h2>
   <h6 class="mt-2">
+  {% if project %}
+    <a href="{% url 'project-detail' pk=project.pk %}">{{ project.name }}</a>
+  {% else %}
     <a href="{% url 'customer-detail' pk=customer.pk %}">{{ customer.name }}</a>
+  {% endif %}
   </h6>
 
   <div class="mt-16 w-128">
