@@ -21,6 +21,10 @@ class UserForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         if self.instance.pk:
+            self.fields["roles"].initial = list(
+                self.instance.roles.values_list("role", flat=True)
+            )
+
             if phone_work := self.instance.get_work_phone():
                 self.fields["phone_work"].initial = phone_work.phone_number
                 self.fields["phone_work_ext"].initial = phone_work.extension
