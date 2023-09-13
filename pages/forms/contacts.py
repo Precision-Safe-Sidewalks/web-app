@@ -1,6 +1,7 @@
 from django import forms
 from django.db import transaction
 
+from core.models.constants import PhoneNumberType
 from core.validators import PhoneNumberValidator
 from customers.models import Contact, ContactPhoneNumber
 
@@ -26,8 +27,8 @@ class ContactForm(forms.ModelForm):
     def save(self, **kwargs):
         with transaction.atomic():
             contact = super().save(**kwargs)
-            self.save_phone_number(contact, ContactPhoneNumber.NumberType.WORK)
-            self.save_phone_number(contact, ContactPhoneNumber.NumberType.CELL)
+            self.save_phone_number(contact, PhoneNumberType.WORK)
+            self.save_phone_number(contact, PhoneNumberType.CELL)
 
     def save_phone_number(self, contact, number_type):
         """Save a phone number for the Contact"""

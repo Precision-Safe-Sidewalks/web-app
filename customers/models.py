@@ -1,7 +1,7 @@
 from django.db import models
 
-from core.models.constants import States, PhoneNumberType
 from core.models.abstract import AbstractPhoneNumber
+from core.models.constants import PhoneNumberType, States
 
 
 class Customer(models.Model):
@@ -60,15 +60,11 @@ class Contact(models.Model):
 
     def get_work_phone(self):
         """Return the work phone number"""
-        return self.phone_numbers.filter(
-            number_type=ContactPhoneNumber.PhoneNumberType.WORK
-        ).first()
+        return self.phone_numbers.filter(number_type=PhoneNumberType.WORK).first()
 
     def get_cell_phone(self):
         """Return the cell phone number"""
-        return self.phone_numbers.filter(
-            number_type=ContactPhoneNumber.PhoneNumberType.CELL
-        ).first()
+        return self.phone_numbers.filter(number_type=PhoneNumberType.CELL).first()
 
     def __str__(self):
         return self.name
