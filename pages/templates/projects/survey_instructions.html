@@ -67,7 +67,7 @@
             hidden>
         </div>
 
-        <div class="form-control w-64" {% if spec %}data-active="true"{% endif %}>
+        <div class="form-control w-64" {% if not spec %}data-active="false"{% endif %}>
           <select name="hazard-pricing-model-{{ hazard.0 }}">
           {% for pricing_model in pricing_models %}
             <option value="{{ pricing_model.0 }}"
