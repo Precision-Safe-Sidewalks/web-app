@@ -22,6 +22,7 @@ from pydantic import ValidationError
 from customers.models import Customer
 from pages.forms.projects import ProjectForm, ProjectMeasurementsForm
 from repairs.models import (
+    InstructionContactNote,
     InstructionNote,
     InstructionSpecification,
     Measurement,
@@ -202,92 +203,122 @@ class SurveyInstructionsView(TemplateView):
     def post(self, request, pk):
         project = get_object_or_404(Project, pk=pk)
         instruction = project.instructions.get(project=project, stage=Stage.SURVEY)
-        SpecificationType = InstructionSpecification.SpecificationType
-
-        keep_specs = []
-        keep_notes = []
 
         with transaction.atomic():
-            if surveyor := request.POST.get("surveyor"):
-                instruction.surveyed_by_id = int(surveyor)
-            else:
-                instruction.surveyed_by_id = None
+            self._errors = []
 
-            if needed_by := request.POST.get("needed-by"):
-                needed_by = needed_by.strip().upper()
-
-                if needed_by == "ASAP":
-                    instruction.needed_asap = True
-                    instruction.needed_by = None
-                else:
-                    try:
-                        needed_by = datetime.strptime(needed_by, "%m/%d/%Y")
-                        instruction.needed_by = needed_by.date()
-                    except ValueError:
-                        redirect_url = request.path + "?error=Invalid needed by date"
-                        return redirect(redirect_url)
+            self.process_surveyed_by(instruction)
+            self.process_needed_by(instruction)
+            self.process_contact_notes(instruction)
+            self.process_specifications(instruction)
+            self.process_notes(instruction)
 
             instruction.save()
 
-            for key in request.POST:
-                spec_type = None
-                spec = None
-                defaults = {}
+        if self._errors:
+            error = "; ".join(self._errors)
+            redirect_url = request.path + f"?error={error}"
+            return redirect(redirect_url)
 
-                if key.startswith("hazard-state"):
-                    spec_type = SpecificationType.HAZARD
-                    spec = key.split("-")[-1]
-                    pricing_model = request.POST.get(f"hazard-pricing-model-{spec}")
-                    defaults["pricing_model"] = pricing_model
+        redirect_url = reverse("project-detail", kwargs={"pk": pk})
+        return redirect(redirect_url)
 
-                elif key.startswith("special-case-state"):
-                    spec_type = SpecificationType.SPECIAL_CASE
-                    spec = key.split("-")[-1]
-                    note = request.POST.get(f"special-case-note-{spec}").strip()
-                    defaults["note"] = note if note != "" else None
+    def process_surveyed_by(self, instruction):
+        """Process the surveyed_by form field"""
+        surveyed_by = self.request.POST.get("surveyed_by")
+        instruction.surveyed_by = User.objects.filter(pk=surveyed_by).first()
 
-                elif key.startswith("dr-state"):
-                    spec_type = SpecificationType.DR
-                    spec = key.split("-")[-1]
+    def process_needed_by(self, instruction):
+        """Process the needed_by/needed_asap fields"""
+        needed_by = self.request.POST.get("needed_by").strip().upper()
 
-                elif key.startswith("note-new-"):
-                    note = request.POST.get(key).strip()
+        if not needed_by:
+            instruction.needed_by = None
+            instruction.needed_asap = None
+            return
 
-                    if note:
-                        note = InstructionNote.objects.create(
-                            instruction=instruction, note=note
-                        )
-                        keep_notes.append(note.pk)
+        if needed_by == "ASAP":
+            instruction.needed_by = None
+            instruction.needed_asap = True
+            return
 
-                elif key.startswith("note-"):
-                    note_id = int(key.split("-")[-1])
-                    note = request.POST.get(key).strip()
+        try:
+            needed_by = datetime.strptime(needed_by, "%m/%d/%Y")
+            instruction.needed_by = needed_by.date()
+            instruction.needed_asap = None
+        except ValueError:
+            self._errors.append("Invalid needed by date")
 
-                    if note:
-                        instruction.notes.filter(pk=note_id).update(note=note)
-                        keep_notes.append(note_id)
+    def process_contact_notes(self, instruction):
+        """Process the instruction contact notes"""
+        keep = []
 
-                if spec_type and spec:
+        for key in ("primary", "secondary"):
+            note = self.request.POST.get(f"contact_note:{key}").strip()
+            contact = getattr(instruction.project, f"{key}_contact", None)
+
+            if note and contact:
+                obj, _ = InstructionContactNote.objects.update_or_create(
+                    instruction=instruction, contact=contact, note=note
+                )
+                keep.append(obj.pk)
+
+        instruction.contact_notes.exclude(pk__in=keep).delete()
+
+    def process_specifications(self, instruction):
+        """Process the instruction special cases"""
+        index = {
+            "hazard": InstructionSpecification.SpecificationType.HAZARD,
+            "special_case": InstructionSpecification.SpecificationType.SPECIAL_CASE,
+            "dr": InstructionSpecification.SpecificationType.DR,
+        }
+
+        keep = []
+
+        for form_key in self.request.POST:
+            for spec_prefix, spec_type in index.items():
+                prefix = f"{spec_prefix}:state:"
+
+                if form_key.startswith(prefix):
+                    spec = form_key.replace(prefix, "")
+                    defaults = {}
+
+                    for aux_key in ("pricing_model", "note"):
+                        aux_prefix = f"{spec_prefix}:{aux_key}:{spec}"
+                        defaults[aux_key] = self.request.POST.get(aux_prefix)
+
                     obj, _ = InstructionSpecification.objects.update_or_create(
                         instruction=instruction,
                         specification_type=spec_type,
                         specification=spec,
                         defaults=defaults,
                     )
-                    keep_specs.append(obj.id)
 
-            # Delete any specifications or notes that weren't included in the
-            # form data
-            InstructionSpecification.objects.exclude(
-                instruction=instruction, id__in=keep_specs
-            ).delete()
+                    keep.append(obj.pk)
 
-            InstructionNote.objects.exclude(
-                instruction=instruction, id__in=keep_notes
-            ).delete()
+        instruction.specifications.exclude(pk__in=keep).delete()
 
-        redirect_url = reverse("project-detail", kwargs={"pk": pk})
-        return redirect(redirect_url)
+    def process_notes(self, instruction):
+        """Process the instruction notes"""
+        keep = []
+
+        for form_key in self.request.POST:
+            if form_key.startswith("note:new:"):
+                if note := self.request.POST.get(form_key).strip():
+                    obj = InstructionNote.objects.create(
+                        instruction=instruction, note=note
+                    )
+                    keep.append(obj.pk)
+
+            elif form_key.startswith("note:"):
+                if note := self.request.POST.get(form_key).strip():
+                    pk = int(form_key.replace("note:", ""))
+                    InstructionNote.objects.filter(
+                        instruction=instruction, pk=pk
+                    ).update(note=note)
+                    keep.append(pk)
+
+        instruction.notes.exclude(pk__in=keep).delete()
 
 
 class ProjectInstructionsView(TemplateView):

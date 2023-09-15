@@ -57,7 +57,9 @@
             {% if contact.email %}{{ contact.email }}{% endif %}
           </td>
           <td colspan="6" class="bg-lightgrey">
-            {% if contact.notes %}{{ contact.notes }}{% endif %}
+          {% for note in instruction.get_primary_contact_notes %}
+            <span>{% if forloop.counter0 > 0 %}&semi;{% endif %}{{ note.note }}</span>
+          {% endfor %}
           </td>
         </tr>
         {% endwith %}
@@ -85,7 +87,9 @@
             {% if contact.email %}{{ contact.email }}{% endif %}
           </td>
           <td colspan="6">
-            {% if contact.notes %}{{ contact.notes }}{% endif %}
+          {% for note in instruction.get_secondary_contact_notes %}
+            <span>{% if forloop.counter0 > 0 %}&semi;{% endif %}{{ note.note }}</span>
+          {% endfor %}
           </td>
         </tr>
         {% endwith %}

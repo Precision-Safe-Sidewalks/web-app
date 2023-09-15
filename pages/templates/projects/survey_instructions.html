@@ -27,7 +27,7 @@
           Surveyor
         </div>
         <div class="form-control w-64" data-active="true">
-          <select name="surveyor">
+          <select name="surveyed_by">
             <option value="">---</option>
             {% for surveyor in surveyors %}
             <option value="{{ surveyor.id }}" {% if instruction.surveyed_by.id == surveyor.id %}selected{% endif %}>
@@ -40,11 +40,36 @@
         <div class="text--body-md">
           Needed by</div>
         <div class="form-control w-64">
-          <input type="text" name="needed-by" placeholder="mm/dd/yyyy or ASAP" 
+          <input type="text" name="needed_by" placeholder="mm/dd/yyyy or ASAP" 
             {% if instruction.needed_by %}value="{{ instruction.needed_by|date:'n/j/Y' }}"{% endif %}
             {% if instruction.needed_asap %}value="ASAP"{% endif %}
           >
         </div>
+      </div>
+    </div>
+
+    <!-- Contact notes -->
+    <div class="mb-12">
+      <h4 class="mb-1">Contacts</h4>
+      <h6 class="text--body-md text--muted">
+        Provide notes or special instructions about the contacts.
+      </h6>
+      <div class="mt-4 grid" style="grid-template-columns: 256px auto;">
+        <div class="text--body-md">
+          {{ instruction.project.primary_contact.name }} (Primary)
+        </div>
+        <div class="form-control w-100p">
+          <input type="text" name="contact_note:primary" value="{{ instruction.get_primary_contact_notes.first.note|default:'' }}">
+        </div>
+        
+        {% if instruction.project.secondary_contact %}
+        <div class="text--body-md">
+          {{ instruction.project.secondary_contact.name }} (Secondary)
+        </div>
+        <div class="form-control w-100p">
+          <input type="text" name="contact_note:secondary" value="{{ instruction.get_secondary_contact_notes.first.note|default:'' }}">
+        </div>
+        {% endif %}
       </div>
     </div>
 
@@ -62,13 +87,13 @@
           {{ hazard.1 }}
           <input 
             type="checkbox" 
-            name="hazard-state-{{ hazard.0 }}" 
+            name="hazard:state:{{ hazard.0 }}" 
             {% if spec %}checked{% endif %}
             hidden>
         </div>
 
         <div class="form-control w-64" {% if not spec %}data-active="false"{% endif %}>
-          <select name="hazard-pricing-model-{{ hazard.0 }}">
+          <select name="hazard:pricing_model:{{ hazard.0 }}">
           {% for pricing_model in pricing_models %}
             <option value="{{ pricing_model.0 }}"
               {% if pricing_model.0 == spec.pricing_model %}
@@ -100,13 +125,13 @@
 
         <div class="chip--filter" onclick="onToggleSpecialCaseChip(event)" {% if spec %}data-active="true"{% endif %}>
           {{ special_case.1 }}
-          <input type="checkbox" name="special-case-state-{{ special_case.0 }}" {% if spec %}checked{% endif %} hidden>
+          <input type="checkbox" name="special_case:state:{{ special_case.0 }}" {% if spec %}checked{% endif %} hidden>
         </div>
 
         <div class="form-control">
           <input 
             type="text" 
-            name="special-case-note-{{ special_case.0 }}" 
+            name="special_case:note:{{ special_case.0 }}" 
             placeholder="Add a note" 
             {% if spec and spec.note %}value="{{ spec.note }}"{% endif %}
             {% if not spec %}hidden{% endif %}>
@@ -133,7 +158,7 @@
         {% get_spec "DR" dr_spec.0 as spec %}
         <div class="chip--filter mr-2" onclick="onToggleChip(event)" {% if spec %}data-active="true"{% endif %}>
           {{ dr_spec.1 }}
-          <input type="checkbox" name="dr-state-{{ dr_spec.0 }}" {% if spec %}checked{% endif %} hidden>
+          <input type="checkbox" name="dr:state:{{ dr_spec.0 }}" {% if spec %}checked{% endif %} hidden>
         </div>
       {% endfor %}
       </div>
@@ -164,7 +189,7 @@
       {% for note in notes %}
         <div id="note-container-{{ note.pk }}" class="flex align-items-center mt-3">
           <div class="form-control flex-grow">
-            <input id="note-{{ note.pk }}" name="note-{{ note.pk }}" type="text" value="{{ note.note }}">
+            <input id="note-{{ note.pk }}" name="note:{{ note.pk }}" type="text" value="{{ note.note }}">
           </div>
           <button class="btn--icon" onclick="onDeleteNote(event, '{{ note.pk }}')">
             <span class="icon">delete</span>
@@ -218,12 +243,12 @@
     event && event.preventDefault()
 
     const notes = $(`div[id="notes"] input[id^="note-new"]`)
-    const noteId = notes.length === 0 ? 0 : 1 + parseInt($(notes).last().attr("id").replace("note-", ""))
+    const noteId = notes.length === 0 ? 0 : 1 + parseInt($(notes).last().attr("id").replace("note-new-", ""))
 
     const container = $(`<div id="note-container-${noteId}" class="flex align-items-center mt-3"></div>`)
     const deleteButton = $(`<button class="btn--icon" onclick="onDeleteNote(event, ${noteId})"><span class="icon">delete</span></button>`)
     const inputContainer = $(`<div class="form-control flex-grow"></div>`)
-    const input = $(`<input id="note-new-${noteId}" name="note-new-${noteId}" type="text">`)
+    const input = $(`<input id="note-new-${noteId}" name="note:new:${noteId}" type="text">`)
 
     $(inputContainer).append(input)
     $(container).append(inputContainer)
