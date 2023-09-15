@@ -40,10 +40,14 @@ resource "aws_lb_listener" "http" {
   port              = 80
   protocol          = "HTTP"
 
-  # FIXME: convert to redirect to HTTPS
   default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.default.arn
+    type = "redirect"
+
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
   }
 
   tags = {
@@ -52,13 +56,12 @@ resource "aws_lb_listener" "http" {
   }
 }
 
-/*
 resource "aws_lb_listener" "https" {
   load_balancer_arn = aws_lb.default.arn
   port              = 443
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-TLS13-1-2-2021-06"
-  certificate_arn   = ""
+  certificate_arn   = aws_acm_certificate_validation.default.certificate_arn
 
   default_action {
     type             = "forward"
@@ -70,4 +73,3 @@ resource "aws_lb_listener" "https" {
     Environment = local.env
   }
 }
-*/
