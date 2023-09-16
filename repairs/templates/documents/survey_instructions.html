@@ -23,7 +23,7 @@
         </tr>
         <tr>
           <td colspan="12" class="center">
-            {{ instruction.project.details }}
+            {{ instruction.details }}
           </td>
         </tr>
         
@@ -57,7 +57,9 @@
             {% if contact.email %}{{ contact.email }}{% endif %}
           </td>
           <td colspan="6" class="bg-lightgrey">
-            {% if contact.notes %}{{ contact.notes }}{% endif %}
+          {% for note in instruction.get_primary_contact_notes %}
+            <span>{% if forloop.counter0 > 0 %}&semi;{% endif %}{{ note.note }}</span>
+          {% endfor %}
           </td>
         </tr>
         {% endwith %}
@@ -85,7 +87,9 @@
             {% if contact.email %}{{ contact.email }}{% endif %}
           </td>
           <td colspan="6">
-            {% if contact.notes %}{{ contact.notes }}{% endif %}
+          {% for note in instruction.get_secondary_contact_notes %}
+            <span>{% if forloop.counter0 > 0 %}&semi;{% endif %}{{ note.note }}</span>
+          {% endfor %}
           </td>
         </tr>
         {% endwith %}
@@ -197,6 +201,7 @@
           {% endfor %}
 
           <td colspan="5" class="center">
+          {{ instruction.survey_method }}
           </td>
         </tr>
         <tr>
@@ -213,6 +218,7 @@
           {% endfor %}
 
           <td colspan="5" class="center">
+          {{ instruction.survey_method_note }}
           </td>
         </tr>
 
@@ -266,7 +272,11 @@
         <!-- Pictures -->
         <tr>
           <td colspan="12" class="bg-yellow">
-            <strong>PICTURES</strong> - Pictures of Everything <span class="text-red">&lt;?&gt; minimum for ESTIMATE; different streets and types, curbs if any. Size:</span>
+            <strong>PICTURES</strong> - Pictures of Everything 
+            <span class="text-red">
+              &lt;{{ instruction.reference_images_required }}&gt; minimum for ESTIMATE;
+              Size: {{ instruction.reference_images_sizes }}
+            </span>
           </td>
         </tr>
 

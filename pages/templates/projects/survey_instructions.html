@@ -27,7 +27,7 @@
           Surveyor
         </div>
         <div class="form-control w-64" data-active="true">
-          <select name="surveyor">
+          <select name="surveyed_by">
             <option value="">---</option>
             {% for surveyor in surveyors %}
             <option value="{{ surveyor.id }}" {% if instruction.surveyed_by.id == surveyor.id %}selected{% endif %}>
@@ -38,13 +38,68 @@
         </div>
         
         <div class="text--body-md">
-          Needed by</div>
+          Needed by
+        </div>
         <div class="form-control w-64">
-          <input type="text" name="needed-by" placeholder="mm/dd/yyyy or ASAP" 
+          <input type="text" name="needed_by" placeholder="mm/dd/yyyy or ASAP" 
             {% if instruction.needed_by %}value="{{ instruction.needed_by|date:'n/j/Y' }}"{% endif %}
             {% if instruction.needed_asap %}value="ASAP"{% endif %}
           >
         </div>
+
+        <div class="text--body-md">
+          Survey details
+        </div>
+        <div class="form-control w-100p">
+          <input type="text" name="details" {% if instruction.details %}value="{{ instruction.details }}"{% endif %}>
+        </div>
+
+        <div class="text--body-md">
+          Survey method
+        </div>
+        <div class="flex align-items-end">
+          <div class="form-control w-64">
+            <select id="id_survey_method_type" name="survey_method_type" onchange="onChangeSurveyMethodType(event)">
+              <option value="default">H1 for all MS</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="form-control flex-grow ml-6">
+            <input id="id_survey_method" type="text" name="survey_method" hidden>
+          </div>
+        </div>
+        
+        <div class="text--body-md">
+          Survey method note
+        </div>
+        <div class="form-control w-100p">
+          <input type="text" name="survey_method_note" value="{{ instruction.survey_method_note|default:'' }}">
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact notes -->
+    <div class="mb-12">
+      <h4 class="mb-1">Contacts</h4>
+      <h6 class="text--body-md text--muted">
+        Provide notes or special instructions about the contacts.
+      </h6>
+      <div class="mt-4 grid" style="grid-template-columns: 256px auto;">
+        <div class="text--body-md">
+          {{ instruction.project.primary_contact.name }} (Primary)
+        </div>
+        <div class="form-control w-100p">
+          <input type="text" name="contact_note:primary" value="{{ instruction.get_primary_contact_notes.first.note|default:'' }}">
+        </div>
+        
+        {% if instruction.project.secondary_contact %}
+        <div class="text--body-md">
+          {{ instruction.project.secondary_contact.name }} (Secondary)
+        </div>
+        <div class="form-control w-100p">
+          <input type="text" name="contact_note:secondary" value="{{ instruction.get_secondary_contact_notes.first.note|default:'' }}">
+        </div>
+        {% endif %}
       </div>
     </div>
 
@@ -62,13 +117,13 @@
           {{ hazard.1 }}
           <input 
             type="checkbox" 
-            name="hazard-state-{{ hazard.0 }}" 
+            name="hazard:state:{{ hazard.0 }}" 
             {% if spec %}checked{% endif %}
             hidden>
         </div>
 
         <div class="form-control w-64" {% if not spec %}data-active="false"{% endif %}>
-          <select name="hazard-pricing-model-{{ hazard.0 }}">
+          <select name="hazard:pricing_model:{{ hazard.0 }}">
           {% for pricing_model in pricing_models %}
             <option value="{{ pricing_model.0 }}"
               {% if pricing_model.0 == spec.pricing_model %}
@@ -100,13 +155,13 @@
 
         <div class="chip--filter" onclick="onToggleSpecialCaseChip(event)" {% if spec %}data-active="true"{% endif %}>
           {{ special_case.1 }}
-          <input type="checkbox" name="special-case-state-{{ special_case.0 }}" {% if spec %}checked{% endif %} hidden>
+          <input type="checkbox" name="special_case:state:{{ special_case.0 }}" {% if spec %}checked{% endif %} hidden>
         </div>
 
         <div class="form-control">
           <input 
             type="text" 
-            name="special-case-note-{{ special_case.0 }}" 
+            name="special_case:note:{{ special_case.0 }}" 
             placeholder="Add a note" 
             {% if spec and spec.note %}value="{{ spec.note }}"{% endif %}
             {% if not spec %}hidden{% endif %}>
@@ -114,12 +169,6 @@
 
       {% endfor %}
       </div>
-    </div>
-
-    <!-- Method -->
-    <div class="mb-12">
-      <h4>Survey method</h4>
-      <p>TBD</p>
     </div>
     
     <!-- Standard D & R specifications -->
@@ -133,7 +182,7 @@
         {% get_spec "DR" dr_spec.0 as spec %}
         <div class="chip--filter mr-2" onclick="onToggleChip(event)" {% if spec %}data-active="true"{% endif %}>
           {{ dr_spec.1 }}
-          <input type="checkbox" name="dr-state-{{ dr_spec.0 }}" {% if spec %}checked{% endif %} hidden>
+          <input type="checkbox" name="dr:state:{{ dr_spec.0 }}" {% if spec %}checked{% endif %} hidden>
         </div>
       {% endfor %}
       </div>
@@ -142,7 +191,31 @@
     <!-- Pictures -->
     <div class="mb-12">
       <h4>Pictures</h4>
-      <p>TBD</p>
+      <h6 class="text--body-md text--muted">Provided details about the required reference pictures.</h6>
+      <div class="mt-4 grid" style="grid-template-columns: 256px auto;">
+        <div class="text--body-md">
+          Number of required pictures
+        </div>
+        <div class="form-control w-64">
+          <input type="number" name="reference_images_required" min="0" value="{{ instruction.reference_images_required|default:'0' }}">
+        </div>
+
+        <div class="text--body-md">
+          Sizes
+        </div>
+        <div class="form-control w-64">
+          <select name="reference_images_sizes">
+            <option value="MS" {% if instruction.reference_images_sizes == 'MS' %}selected{% endif %}>
+              Most severe
+            </option>
+            <option value="MS, S" {% if instruction.reference_images_sizes == 'MS, S' %}selected{% endif %}>
+              Most severe and severe</option>
+            <option value="ALL" {% if instruction.reference_images_sizes|default:'ALL' == 'ALL' %}selected{% endif %}>
+              All
+            </option>
+          </select>
+        </div>
+      </div>
     </div>
     
     <!-- Notes & special instructions -->
@@ -164,7 +237,7 @@
       {% for note in notes %}
         <div id="note-container-{{ note.pk }}" class="flex align-items-center mt-3">
           <div class="form-control flex-grow">
-            <input id="note-{{ note.pk }}" name="note-{{ note.pk }}" type="text" value="{{ note.note }}">
+            <input id="note-{{ note.pk }}" name="note:{{ note.pk }}" type="text" value="{{ note.note }}">
           </div>
           <button class="btn--icon" onclick="onDeleteNote(event, '{{ note.pk }}')">
             <span class="icon">delete</span>
@@ -183,6 +256,20 @@
 </div>
 
 <script>
+
+  // Handler for changing the survey method type
+  const onChangeSurveyMethodType = (event) => {
+    const input = $("#id_survey_method")
+
+    if (event.target.value === "default") {
+      const value = $(event.target).children(`option[value="default"]`).first().text()
+      $(input).hide()
+      $(input).val(value)
+    } else {
+      $(input).val("")
+      $(input).show()
+    }
+  }
 
   /// Toggle handler for a chip filter
   const onToggleChip = (event) => {
@@ -218,12 +305,12 @@
     event && event.preventDefault()
 
     const notes = $(`div[id="notes"] input[id^="note-new"]`)
-    const noteId = notes.length === 0 ? 0 : 1 + parseInt($(notes).last().attr("id").replace("note-", ""))
+    const noteId = notes.length === 0 ? 0 : 1 + parseInt($(notes).last().attr("id").replace("note-new-", ""))
 
     const container = $(`<div id="note-container-${noteId}" class="flex align-items-center mt-3"></div>`)
     const deleteButton = $(`<button class="btn--icon" onclick="onDeleteNote(event, ${noteId})"><span class="icon">delete</span></button>`)
     const inputContainer = $(`<div class="form-control flex-grow"></div>`)
-    const input = $(`<input id="note-new-${noteId}" name="note-new-${noteId}" type="text">`)
+    const input = $(`<input id="note-new-${noteId}" name="note:new:${noteId}" type="text">`)
 
     $(inputContainer).append(input)
     $(container).append(inputContainer)
@@ -240,6 +327,13 @@
   $(document).ready(() => {
     // If no notes exists, add a default element
     $("#notes").children().length === 0 ? onAddNote() : null
+
+    // Initialize the survey method inputs
+    const surveyMethod = "{{ instruction.survey_method|default:'' }}"
+    const surveyMethodType = surveyMethod === "" || surveyMethod === "H1 for all MS" ? "default" : "other"
+    $("#id_survey_method_type").val(surveyMethodType)
+    $("#id_survey_method").val(surveyMethod)
+    surveyMethodType !== "default" && $("#id_survey_method").show()
   })
 
 </script>
