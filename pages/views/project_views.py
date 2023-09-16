@@ -259,10 +259,10 @@ class SurveyInstructionsView(TemplateView):
 
     def process_survey_method(self, instruction):
         """Process the survey method"""
-        survey_method = self.request.POST.get("survey_method").strip()
+        survey_method = self.request.POST.get("survey_method", "").strip()
         instruction.survey_method = survey_method or None
 
-        survey_method_note = self.request.POST.get("survey_method_note").strip()
+        survey_method_note = self.request.POST.get("survey_method_note", "").strip()
         instruction.survey_method_note = survey_method_note or None
 
     def process_contact_notes(self, instruction):
@@ -270,7 +270,7 @@ class SurveyInstructionsView(TemplateView):
         keep = []
 
         for key in ("primary", "secondary"):
-            note = self.request.POST.get(f"contact_note:{key}").strip()
+            note = self.request.POST.get(f"contact_note:{key}", "").strip()
             contact = getattr(instruction.project, f"{key}_contact", None)
 
             if note and contact:
