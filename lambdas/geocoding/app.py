@@ -7,6 +7,7 @@ from psycopg2.extras import execute_batch
 
 def handler(event, context):
     """Measurement reverse geocoding Lambda function"""
+    print(event)
     project_id = int(event["project_id"])
     stage = event["stage"]
 

@@ -75,7 +75,7 @@ resource "aws_iam_role" "lambda" {
 
 resource "aws_iam_policy" "lambda" {
   name   = "LambdaRolePolicy"
-  policy = data.aws_iam_policy_document.lambda.arn
+  policy = data.aws_iam_policy_document.lambda.json
 }
 
 resource "aws_iam_role_policy_attachment" "lambda" {
