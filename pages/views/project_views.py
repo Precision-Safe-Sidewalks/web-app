@@ -209,6 +209,7 @@ class SurveyInstructionsView(TemplateView):
 
             self.process_surveyed_by(instruction)
             self.process_needed_by(instruction)
+            self.process_survey_details(instruction)
             self.process_contact_notes(instruction)
             self.process_specifications(instruction)
             self.process_notes(instruction)
@@ -248,6 +249,11 @@ class SurveyInstructionsView(TemplateView):
             instruction.needed_asap = None
         except ValueError:
             self._errors.append("Invalid needed by date")
+
+    def process_survey_details(self, instruction):
+        """Process the survey details"""
+        details = self.request.POST.get("details").strip() or None
+        instruction.details = details
 
     def process_contact_notes(self, instruction):
         """Process the instruction contact notes"""

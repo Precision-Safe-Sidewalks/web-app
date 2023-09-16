@@ -38,12 +38,20 @@
         </div>
         
         <div class="text--body-md">
-          Needed by</div>
+          Needed by
+        </div>
         <div class="form-control w-64">
           <input type="text" name="needed_by" placeholder="mm/dd/yyyy or ASAP" 
             {% if instruction.needed_by %}value="{{ instruction.needed_by|date:'n/j/Y' }}"{% endif %}
             {% if instruction.needed_asap %}value="ASAP"{% endif %}
           >
+        </div>
+
+        <div class="text--body-md">
+          Survey details
+        </div>
+        <div class="form-control w-100p">
+          <input type="text" name="details" {% if instruction.details %}value="{{ instruction.details }}"{% endif %}>
         </div>
       </div>
     </div>

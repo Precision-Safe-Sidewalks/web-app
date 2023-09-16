@@ -24,6 +24,7 @@ class Instruction(models.Model):
     )
     needed_by = models.DateField(blank=True, null=True)
     needed_asap = models.BooleanField(default=False)
+    details = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

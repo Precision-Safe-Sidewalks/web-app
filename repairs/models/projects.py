@@ -22,7 +22,6 @@ class Project(models.Model):
 
     name = models.CharField(max_length=255)
     address = models.TextField(blank=True, null=True)
-    details = models.TextField(blank=True, null=True)
     status = models.IntegerField(choices=Status.choices, default=Status.SURVEY)
     customer = models.ForeignKey(
         Customer, on_delete=models.CASCADE, related_name="projects"
@@ -45,10 +44,9 @@ class Project(models.Model):
     contacts = models.ManyToManyField(
         Contact, through="ProjectContact", through_fields=("project", "contact")
     )
+    po_number = models.CharField(max_length=100, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-    # TODO: PO/PA number (PI only)
 
     def __str__(self):
         return self.name
