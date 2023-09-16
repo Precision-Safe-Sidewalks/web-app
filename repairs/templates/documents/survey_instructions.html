@@ -23,7 +23,7 @@
         </tr>
         <tr>
           <td colspan="12" class="center">
-            {{ instruction.details }}
+            {% if instruction.details %}{{ instruction.details }}{% endif %}
           </td>
         </tr>
         
@@ -144,7 +144,7 @@
           </td>
           <td colspan="4">
             {% with phone=instruction.project.business_development_administrator.get_cell_phone %}
-            C: {{ phone }}
+            C: {% if phone %}{{ phone }}{% endif %}
             {% endwith %}
           </td>
         </tr>
@@ -201,7 +201,7 @@
           {% endfor %}
 
           <td colspan="5" class="center">
-          {{ instruction.survey_method }}
+            {% if instruction.survey_method %}{{ instruction.survey_method }}{% endif %}
           </td>
         </tr>
         <tr>
@@ -218,7 +218,7 @@
           {% endfor %}
 
           <td colspan="5" class="center">
-          {{ instruction.survey_method_note }}
+            {% if instruction.survey_method_note %}{{ instruction.survey_method_note }}{% endif %}
           </td>
         </tr>
 

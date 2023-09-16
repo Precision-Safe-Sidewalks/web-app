@@ -237,7 +237,7 @@ class SurveyInstructionsView(TemplateView):
 
         if not needed_by:
             instruction.needed_by = None
-            instruction.needed_asap = None
+            instruction.needed_asap = False
             return
 
         if needed_by == "ASAP":
@@ -248,7 +248,7 @@ class SurveyInstructionsView(TemplateView):
         try:
             needed_by = datetime.strptime(needed_by, "%m/%d/%Y")
             instruction.needed_by = needed_by.date()
-            instruction.needed_asap = None
+            instruction.needed_asap = False
         except ValueError:
             self._errors.append("Invalid needed by date")
 
@@ -259,10 +259,10 @@ class SurveyInstructionsView(TemplateView):
 
     def process_survey_method(self, instruction):
         """Process the survey method"""
-        survey_method = self.request.POST.get("survey_method").strip()
+        survey_method = self.request.POST.get("survey_method", "").strip()
         instruction.survey_method = survey_method or None
 
-        survey_method_note = self.request.POST.get("survey_method_note").strip()
+        survey_method_note = self.request.POST.get("survey_method_note", "").strip()
         instruction.survey_method_note = survey_method_note or None
 
     def process_contact_notes(self, instruction):
@@ -270,7 +270,7 @@ class SurveyInstructionsView(TemplateView):
         keep = []
 
         for key in ("primary", "secondary"):
-            note = self.request.POST.get(f"contact_note:{key}").strip()
+            note = self.request.POST.get(f"contact_note:{key}", "").strip()
             contact = getattr(instruction.project, f"{key}_contact", None)
 
             if note and contact:
