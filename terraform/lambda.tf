@@ -27,5 +27,5 @@ resource "aws_lambda_function" "geocoding" {
 resource "aws_lambda_event_source_mapping" "geocoding" {
   event_source_arn = data.aws_sqs_queue.geocoding.arn
   function_name    = aws_lambda_function.geocoding.function_name
-  batch_size       = 10
+  batch_size       = 1
 }

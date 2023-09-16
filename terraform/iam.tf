@@ -63,7 +63,10 @@ data "aws_iam_policy_document" "lambda" {
     resources = ["*"]
 
     actions = [
-      "sqs:*"
+      "sqs:*",
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
     ]
   }
 }
