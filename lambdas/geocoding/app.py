@@ -11,7 +11,7 @@ def handler(event, context):
     for record in event["Records"]:
         body = json.loads(record["body"])
         project_id = int(body["project_id"])
-        stage = event["stage"]
+        stage = body["stage"]
 
         measurements = get_measurements(project_id, stage)
         addresses = get_geocoded_addresses(measurements)
