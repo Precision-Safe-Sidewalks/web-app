@@ -22,9 +22,6 @@ services:
       - DB_USER=postgres
       - DB_PASSWORD=postgres
       - DB_NAME=pss_dev
-      - AWS_ACCESS_KEY_ID
-      - AWS_SECRET_ACCESS_KEY
-      - AWS_DEFAULT_REGION=us-east-1
     env_file:
       - docker/env
       - docker/env.secrets

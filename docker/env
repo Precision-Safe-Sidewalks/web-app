@@ -1,2 +1,4 @@
 DJANGO_SETTINGS_MODULE=app.settings.development
 DJANGO_SECRET_KEY=fake-secret
+
+AWS_DEFAULT_REGION=us-east-1
