@@ -191,7 +191,31 @@
     <!-- Pictures -->
     <div class="mb-12">
       <h4>Pictures</h4>
-      <p>TBD</p>
+      <h6 class="text--body-md text--muted">Provided details about the required reference pictures.</h6>
+      <div class="mt-4 grid" style="grid-template-columns: 256px auto;">
+        <div class="text--body-md">
+          Number of required pictures
+        </div>
+        <div class="form-control w-64">
+          <input type="number" name="reference_images_required" min="0" value="{{ instruction.reference_images_required|default:'0' }}">
+        </div>
+
+        <div class="text--body-md">
+          Sizes
+        </div>
+        <div class="form-control w-64">
+          <select name="reference_images_sizes">
+            <option value="MS" {% if instruction.reference_images_sizes == 'MS' %}selected{% endif %}>
+              Most severe
+            </option>
+            <option value="MS, S" {% if instruction.reference_images_sizes == 'MS, S' %}selected{% endif %}>
+              Most severe and severe</option>
+            <option value="ALL" {% if instruction.reference_images_sizes|default:'ALL' == 'ALL' %}selected{% endif %}>
+              All
+            </option>
+          </select>
+        </div>
+      </div>
     </div>
     
     <!-- Notes & special instructions -->

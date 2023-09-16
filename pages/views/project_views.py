@@ -213,6 +213,7 @@ class SurveyInstructionsView(TemplateView):
             self.process_survey_method(instruction)
             self.process_contact_notes(instruction)
             self.process_specifications(instruction)
+            self.process_reference_images(instruction)
             self.process_notes(instruction)
 
             instruction.save()
@@ -312,6 +313,14 @@ class SurveyInstructionsView(TemplateView):
                     keep.append(obj.pk)
 
         instruction.specifications.exclude(pk__in=keep).delete()
+
+    def process_reference_images(self, instruction):
+        """Process the reference images"""
+        reference_images_required = self.request.POST.get("reference_images_required")
+        instruction.reference_images_required = int(reference_images_required)
+
+        reference_images_sizes = self.request.POST.get("reference_images_sizes")
+        instruction.reference_images_sizes = reference_images_sizes
 
     def process_notes(self, instruction):
         """Process the instruction notes"""
