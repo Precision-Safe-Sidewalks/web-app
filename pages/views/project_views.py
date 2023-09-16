@@ -237,7 +237,7 @@ class SurveyInstructionsView(TemplateView):
 
         if not needed_by:
             instruction.needed_by = None
-            instruction.needed_asap = None
+            instruction.needed_asap = False
             return
 
         if needed_by == "ASAP":
@@ -248,7 +248,7 @@ class SurveyInstructionsView(TemplateView):
         try:
             needed_by = datetime.strptime(needed_by, "%m/%d/%Y")
             instruction.needed_by = needed_by.date()
-            instruction.needed_asap = None
+            instruction.needed_asap = False
         except ValueError:
             self._errors.append("Invalid needed by date")
 
