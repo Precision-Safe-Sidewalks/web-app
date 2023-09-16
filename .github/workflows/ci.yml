@@ -55,14 +55,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Build Docker image
+      - name: Build Docker images
         run: |
           touch docker/env.secrets # dummy environment file
-          make image
+          make images
 
-      - name: Release Docker image
+      - name: Release Docker images
         run: |
-          make release_image
+          make release_images
 
   test:
     runs-on: ubuntu-latest

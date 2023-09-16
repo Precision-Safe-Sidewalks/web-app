@@ -110,3 +110,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # FIXME: disable once using HTTPS
 SECURE_CROSS_ORIGIN_OPENER_POLICY = None
+
+# Measurement geocoding queue URL
+MEASUREMENT_GEOCODING_QUEUE_URL = os.environ.get("MEASUREMENT_GEOCODING_QUEUE_URL")
