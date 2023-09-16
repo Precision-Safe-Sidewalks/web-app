@@ -210,6 +210,7 @@ class SurveyInstructionsView(TemplateView):
             self.process_surveyed_by(instruction)
             self.process_needed_by(instruction)
             self.process_survey_details(instruction)
+            self.process_survey_method(instruction)
             self.process_contact_notes(instruction)
             self.process_specifications(instruction)
             self.process_notes(instruction)
@@ -254,6 +255,14 @@ class SurveyInstructionsView(TemplateView):
         """Process the survey details"""
         details = self.request.POST.get("details").strip() or None
         instruction.details = details
+
+    def process_survey_method(self, instruction):
+        """Process the survey method"""
+        survey_method = self.request.POST.get("survey_method").strip()
+        instruction.survey_method = survey_method or None
+
+        survey_method_note = self.request.POST.get("survey_method_note").strip()
+        instruction.survey_method_note = survey_method_note or None
 
     def process_contact_notes(self, instruction):
         """Process the instruction contact notes"""

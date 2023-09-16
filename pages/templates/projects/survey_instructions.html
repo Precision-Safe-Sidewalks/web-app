@@ -53,6 +53,28 @@
         <div class="form-control w-100p">
           <input type="text" name="details" {% if instruction.details %}value="{{ instruction.details }}"{% endif %}>
         </div>
+
+        <div class="text--body-md">
+          Survey method
+        </div>
+        <div class="flex align-items-end">
+          <div class="form-control w-64">
+            <select id="id_survey_method_type" name="survey_method_type" onchange="onChangeSurveyMethodType(event)">
+              <option value="default">H1 for all MS</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="form-control flex-grow ml-6">
+            <input id="id_survey_method" type="text" name="survey_method" hidden>
+          </div>
+        </div>
+        
+        <div class="text--body-md">
+          Survey method note
+        </div>
+        <div class="form-control w-100p">
+          <input type="text" name="survey_method_note" value="{{ instruction.survey_method_note|default:'' }}">
+        </div>
       </div>
     </div>
 
@@ -148,12 +170,6 @@
       {% endfor %}
       </div>
     </div>
-
-    <!-- Method -->
-    <div class="mb-12">
-      <h4>Survey method</h4>
-      <p>TBD</p>
-    </div>
     
     <!-- Standard D & R specifications -->
     <div class="mb-12">
@@ -217,6 +233,20 @@
 
 <script>
 
+  // Handler for changing the survey method type
+  const onChangeSurveyMethodType = (event) => {
+    const input = $("#id_survey_method")
+
+    if (event.target.value === "default") {
+      const value = $(event.target).children(`option[value="default"]`).first().text()
+      $(input).hide()
+      $(input).val(value)
+    } else {
+      $(input).val("")
+      $(input).show()
+    }
+  }
+
   /// Toggle handler for a chip filter
   const onToggleChip = (event) => {
     const chip = $(event.target)
@@ -273,6 +303,13 @@
   $(document).ready(() => {
     // If no notes exists, add a default element
     $("#notes").children().length === 0 ? onAddNote() : null
+
+    // Initialize the survey method inputs
+    const surveyMethod = "{{ instruction.survey_method|default:'' }}"
+    const surveyMethodType = surveyMethod === "" || surveyMethod === "H1 for all MS" ? "default" : "other"
+    $("#id_survey_method_type").val(surveyMethodType)
+    $("#id_survey_method").val(surveyMethod)
+    surveyMethodType !== "default" && $("#id_survey_method").show()
   })
 
 </script>

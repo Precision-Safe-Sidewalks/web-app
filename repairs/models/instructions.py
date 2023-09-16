@@ -25,10 +25,11 @@ class Instruction(models.Model):
     needed_by = models.DateField(blank=True, null=True)
     needed_asap = models.BooleanField(default=False)
     details = models.TextField(blank=True, null=True)
+    survey_method = models.CharField(max_length=255, blank=True, null=True)
+    survey_method_note = models.CharField(max_length=255, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    # TODO: survey method (SI only)
     # TODO: required number of images + sizes
     # TODO: cuts (PI only)
     # TODO: bidboss production, NTE/no survey, only pins, GD streets link (PI only)
