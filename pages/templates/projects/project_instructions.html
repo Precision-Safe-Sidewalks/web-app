@@ -38,6 +38,13 @@
         </div>
         
         <div class="text--body-md">
+          Survey date
+        </div>
+        <div class="form-control w-64">
+          <input type="text" name="survey_date" value="{{ instruction.survey_method_note|default:'' }}" placeholder="mm/dd/yyyy">
+        </div>
+        
+        <div class="text--body-md">
           Needed by
         </div>
         <div class="form-control w-64">
@@ -52,13 +59,6 @@
         </div>
         <div class="form-control w-100p">
           <input type="text" name="details" {% if instruction.details %}value="{{ instruction.details }}"{% endif %}>
-        </div>
-
-        <div class="text--body-md">
-          Survey date
-        </div>
-        <div class="form-control w-100p">
-          <input type="text" name="survey_date" value="{{ instruction.survey_method_note|default:'' }}" placeholder="mm/dd/yyyy">
         </div>
 
         <div class="text--body-md">
@@ -92,6 +92,35 @@
           <input type="text" name="contact_note:secondary" value="{{ instruction.get_secondary_contact_notes.first.note|default:'' }}">
         </div>
         {% endif %}
+      </div>
+    </div>
+    
+    <!-- General production cases -->
+    <div class="my-12">
+      <h4 class="mb-1">Production cases</h4>
+      <h6 class="text--body-md text--muted">
+        Select all that apply. Optionally, include a note for additional context or instructions.
+      </h6>
+
+      <div class="mt-4 grid" style="grid-template-columns: 256px auto;">
+      {% for production_case in production_cases %}
+        {% get_spec "P" production_case.0 as spec %}
+
+        <div class="chip--filter" onclick="onToggleProductionCaseChip(event)" {% if spec %}data-active="true"{% endif %}>
+          {{ production_case.1 }}
+          <input type="checkbox" name="production_case:state:{{ production_case.0 }}" {% if spec %}checked{% endif %} hidden>
+        </div>
+
+        <div class="form-control">
+          <input 
+            type="text" 
+            name="production_case:note:{{ production_case.0 }}" 
+            placeholder="Add a note" 
+            {% if spec %}value="{{ spec.note|default:'' }}"{% endif %}
+            {% if not spec %}hidden{% endif %}>
+        </div>
+
+      {% endfor %}
       </div>
     </div>
 
@@ -246,6 +275,15 @@
 
   /// Toggle handler for a special case chip filter
   const onToggleSpecialCaseChip = (event) => {
+    const checked = onToggleChip(event)
+
+    const formControl = $(event.target).next()
+    const input = $(formControl).children(`input[type="text"]`)
+    $(input).attr("hidden", !checked)
+  }
+
+  /// Toggle handler for a production case chip filter
+  const onToggleProductionCaseChip = (event) => {
     const checked = onToggleChip(event)
 
     const formControl = $(event.target).next()

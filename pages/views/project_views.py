@@ -28,7 +28,13 @@ from repairs.models import (
     Measurement,
     Project,
 )
-from repairs.models.constants import DRSpecification, Hazard, SpecialCase, Stage
+from repairs.models.constants import (
+    DRSpecification,
+    Hazard,
+    ProductionCase,
+    SpecialCase,
+    Stage,
+)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -182,9 +188,11 @@ class ProjectMeasurementsClearView(View):
 
 
 class BaseInstructionsView(TemplateView):
+    __stage__ = None
+
     def post(self, request, pk):
         project = get_object_or_404(Project, pk=pk)
-        instruction = project.instructions.get(project=project, stage=Stage.SURVEY)
+        instruction = project.instructions.get(project=project, stage=self.stage)
 
         with transaction.atomic():
             self._errors = []
@@ -253,12 +261,15 @@ class BaseInstructionsView(TemplateView):
     def process_survey_date(self, instruction):
         """Process the survey date (PI only)"""
         if instruction.stage == Stage.PRODUCTION:
+            survey_date = self.request.POST.get("survey_date").strip().upper()
             try:
-                survey_date = self.request.POST.get("survey_date").strip().upper()
-                survey_date = datetime.striptime(survey_date, "%m/%d/%Y")
+                survey_date = datetime.strptime(survey_date, "%m/%d/%Y")
                 instruction.survey_date = survey_date
             except ValueError:
-                self._errors.append("Invalid survey date")
+                if survey_date:
+                    self._errors.append("Invalid survey date")
+                else:
+                    survey_date = None
 
     def process_gd_streets_link(self, instruction):
         """Process the GD streets link (PI only)"""
@@ -288,6 +299,7 @@ class BaseInstructionsView(TemplateView):
             "hazard": InstructionSpecification.SpecificationType.HAZARD,
             "special_case": InstructionSpecification.SpecificationType.SPECIAL_CASE,
             "dr": InstructionSpecification.SpecificationType.DR,
+            "production_case": InstructionSpecification.SpecificationType.PRODUCTION,
         }
 
         keep = []
@@ -348,6 +360,7 @@ class BaseInstructionsView(TemplateView):
 
 class SurveyInstructionsView(BaseInstructionsView):
     template_name = "projects/survey_instructions.html"
+    stage = Stage.SURVEY
 
     def get_context_data(self, **kwargs):
         project = get_object_or_404(Project, pk=self.kwargs["pk"])
@@ -368,6 +381,7 @@ class SurveyInstructionsView(BaseInstructionsView):
 
 class ProjectInstructionsView(BaseInstructionsView):
     template_name = "projects/project_instructions.html"
+    stage = Stage.PRODUCTION
 
     def get_context_data(self, **kwargs):
         project = get_object_or_404(Project, pk=self.kwargs["pk"])
@@ -379,6 +393,7 @@ class ProjectInstructionsView(BaseInstructionsView):
         context["hazards"] = Hazard.choices
         context["special_cases"] = SpecialCase.get_pi_choices()
         context["dr_specifications"] = DRSpecification.choices
+        context["production_cases"] = ProductionCase.choices
         context["surveyors"] = User.surveyors.all()
         context["error"] = self.request.GET.get("error")
 

@@ -60,3 +60,11 @@ class DRSpecification(models.TextChoices):
     SIGNIFICANT_SPALLING = ("SS", "Significant spalling")
     LARGE_GAPS = ("LG", 'Large gaps >1"')
     SEVERE_CROSS_SLOPES = ("SCS", "Severe cross slopes >2.2%")
+
+
+class ProductionCase(models.TextChoices):
+    """Production case type choices"""
+
+    PRODUCTION_DATA = ("PD", "Production data")
+    NTE_OR_NO_SURVEY = ("NTE_NS", "NTE or no survey")
+    ONLY_PINS = ("OP", "Only pins")

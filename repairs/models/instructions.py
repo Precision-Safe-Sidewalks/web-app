@@ -79,6 +79,7 @@ class InstructionSpecification(models.Model):
         HAZARD = ("H", "Hazard")
         SPECIAL_CASE = ("SC", "Special case")
         DR = ("DR", "D&R specification")
+        PRODUCTION = ("P", "Producton")
 
     class PricingModel(models.TextChoices):
         """Pricing model type choices"""
