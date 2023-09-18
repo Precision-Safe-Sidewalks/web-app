@@ -7,7 +7,7 @@
     <h2>Project Instructions</h2>
     <h5 class="mt-2">
       <a href="{% url 'project-detail' pk=instruction.project.pk %}">
-        {{ instruction.project.name }}
+        {{ instruction.project.name }} - PO {{ instruction.project.po_number|default:'TBD' }}
       </a>
     </h5>
   </div>
