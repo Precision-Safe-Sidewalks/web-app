@@ -229,10 +229,14 @@
       </div>
     </div>
 
+    <!-- Hidden inputs -->
+    <input type="checkbox" name="published" {% if instruction.published %}checked{% endif %} hidden>
+
     <!-- Save button -->
-    <button type="submit" class="btn--filled">
-      Save
-    </button>
+    <div class="flex align-items-center">
+      <button type="submit" class="btn--tonal mr-3" onclick="onMarkComplete(false)">Save draft</button>
+      <button type="submit" class="btn--filled" onclick="onMarkComplete(true)">Save &amp; mark complete</button>
+    </div>
 
   </form>
 </div>
@@ -313,6 +317,13 @@
   const onDeleteNote = (event, noteId) => {
     event.preventDefault()
     $(`#note-container-${noteId}`).remove()
+  }
+
+  /// Handler for marking complete
+  const onMarkComplete = (isComplete) => {
+    event.preventDefault();
+    $(`input[name="published"]`).attr("checked", isComplete)
+    $(`form`).submit()
   }
 
   $(document).ready(() => {

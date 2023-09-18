@@ -188,7 +188,7 @@ class ProjectMeasurementsClearView(View):
 
 
 class BaseInstructionsView(TemplateView):
-    __stage__ = None
+    stage = None
 
     def post(self, request, pk):
         project = get_object_or_404(Project, pk=pk)
@@ -208,6 +208,7 @@ class BaseInstructionsView(TemplateView):
             self.process_reference_images(instruction)
             self.process_notes(instruction)
 
+            instruction.published = request.POST.get("published") == "on"
             instruction.save()
 
         if self._errors:
