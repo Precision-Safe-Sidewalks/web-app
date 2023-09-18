@@ -181,25 +181,7 @@ class ProjectMeasurementsClearView(View):
         return redirect(redirect_url)
 
 
-class SurveyInstructionsView(TemplateView):
-    template_name = "projects/survey_instructions.html"
-
-    def get_context_data(self, **kwargs):
-        project = get_object_or_404(Project, pk=self.kwargs["pk"])
-        instruction = project.instructions.get(stage=Stage.SURVEY)
-
-        context = super().get_context_data(**kwargs)
-        context["instruction"] = instruction
-        context["notes"] = instruction.notes.order_by("created_at")
-        context["hazards"] = Hazard.choices
-        context["special_cases"] = SpecialCase.get_si_choices()
-        context["dr_specifications"] = DRSpecification.choices
-        context["pricing_models"] = InstructionSpecification.PricingModel.choices
-        context["surveyors"] = User.surveyors.all()
-        context["error"] = self.request.GET.get("error")
-
-        return context
-
+class BaseInstructionsView(TemplateView):
     def post(self, request, pk):
         project = get_object_or_404(Project, pk=pk)
         instruction = project.instructions.get(project=project, stage=Stage.SURVEY)
@@ -210,7 +192,9 @@ class SurveyInstructionsView(TemplateView):
             self.process_surveyed_by(instruction)
             self.process_needed_by(instruction)
             self.process_survey_details(instruction)
-            self.process_survey_method(instruction)
+            self.process_survey_method(instruction)  # SI only
+            self.process_survey_date(instruction)  # PI only
+            self.process_gd_streets_link(instruction)  # PI only
             self.process_contact_notes(instruction)
             self.process_specifications(instruction)
             self.process_reference_images(instruction)
@@ -258,12 +242,29 @@ class SurveyInstructionsView(TemplateView):
         instruction.details = details
 
     def process_survey_method(self, instruction):
-        """Process the survey method"""
-        survey_method = self.request.POST.get("survey_method", "").strip()
-        instruction.survey_method = survey_method or None
+        """Process the survey method (SI only)"""
+        if instruction.stage == Stage.SURVEY:
+            survey_method = self.request.POST.get("survey_method", "").strip()
+            instruction.survey_method = survey_method or None
 
-        survey_method_note = self.request.POST.get("survey_method_note", "").strip()
-        instruction.survey_method_note = survey_method_note or None
+            survey_method_note = self.request.POST.get("survey_method_note", "").strip()
+            instruction.survey_method_note = survey_method_note or None
+
+    def process_survey_date(self, instruction):
+        """Process the survey date (PI only)"""
+        if instruction.stage == Stage.PRODUCTION:
+            try:
+                survey_date = self.request.POST.get("survey_date").strip().upper()
+                survey_date = datetime.striptime(survey_date, "%m/%d/%Y")
+                instruction.survey_date = survey_date
+            except ValueError:
+                self._errors.append("Invalid survey date")
+
+    def process_gd_streets_link(self, instruction):
+        """Process the GD streets link (PI only)"""
+        if instruction.stage == Stage.PRODUCTION:
+            gd_streets_link = self.request.POST.get("gd_streets_link", "").strip()
+            instruction.gd_streets_link = gd_streets_link or None
 
     def process_contact_notes(self, instruction):
         """Process the instruction contact notes"""
@@ -345,17 +346,40 @@ class SurveyInstructionsView(TemplateView):
         instruction.notes.exclude(pk__in=keep).delete()
 
 
-class ProjectInstructionsView(TemplateView):
-    template_name = "projects/project_instructions.html"
+class SurveyInstructionsView(BaseInstructionsView):
+    template_name = "projects/survey_instructions.html"
 
     def get_context_data(self, **kwargs):
         project = get_object_or_404(Project, pk=self.kwargs["pk"])
+        instruction = project.instructions.get(stage=Stage.SURVEY)
+
         context = super().get_context_data(**kwargs)
-        context["instruction"] = project.instructions.get(stage=Stage.SURVEY)
+        context["instruction"] = instruction
+        context["notes"] = instruction.notes.order_by("created_at")
         context["hazards"] = Hazard.choices
-        context["special_cases"] = SpecialCase.choices
+        context["special_cases"] = SpecialCase.get_si_choices()
         context["dr_specifications"] = DRSpecification.choices
         context["pricing_models"] = InstructionSpecification.PricingModel.choices
         context["surveyors"] = User.surveyors.all()
         context["error"] = self.request.GET.get("error")
+
+        return context
+
+
+class ProjectInstructionsView(BaseInstructionsView):
+    template_name = "projects/project_instructions.html"
+
+    def get_context_data(self, **kwargs):
+        project = get_object_or_404(Project, pk=self.kwargs["pk"])
+        instruction = project.instructions.get(stage=Stage.PRODUCTION)
+
+        context = super().get_context_data(**kwargs)
+        context["instruction"] = instruction
+        context["notes"] = instruction.notes.order_by("created_at")
+        context["hazards"] = Hazard.choices
+        context["special_cases"] = SpecialCase.get_pi_choices()
+        context["dr_specifications"] = DRSpecification.choices
+        context["surveyors"] = User.surveyors.all()
+        context["error"] = self.request.GET.get("error")
+
         return context
