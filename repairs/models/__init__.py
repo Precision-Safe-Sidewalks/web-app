@@ -1,6 +1,8 @@
 # ruff: noqa
 from repairs.models.instructions import (
     Instruction,
+    InstructionChecklist,
+    InstructionChecklistQuestion,
     InstructionContactNote,
     InstructionNote,
     InstructionSpecification,
