@@ -2,6 +2,9 @@
   --color-blue: #d9e2f2;
   --color-grey: #d8d8d8;
   --color-lightgrey: #F2F2F2;
+  --color-lightorange: #FFE598;
+  --color-lightgreen: #E2EFD9;
+  --color-lightred: #FBE4D5;
   --color-green: #92D050;
   --color-yellow: #FFFF04;
   --color-pink: #FF66FF;
@@ -48,6 +51,18 @@
 
   .bg-lightgrey {
     background-color: var(--color-lightgrey);
+  }
+
+  .bg-lightorange {
+    background-color: var(--color-lightorange);
+  }
+
+  .bg-lightgreen {
+    background-color: var(--color-lightgreen);
+  }
+
+  .bg-lightred {
+    background-color: var(--color-lightred);
   }
 
   .bg-green {

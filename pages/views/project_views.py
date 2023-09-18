@@ -202,7 +202,6 @@ class BaseInstructionsView(TemplateView):
             self.process_survey_details(instruction)
             self.process_survey_method(instruction)  # SI only
             self.process_survey_date(instruction)  # PI only
-            self.process_gd_streets_link(instruction)  # PI only
             self.process_contact_notes(instruction)
             self.process_specifications(instruction)
             self.process_reference_images(instruction)
@@ -271,12 +270,6 @@ class BaseInstructionsView(TemplateView):
                     self._errors.append("Invalid survey date")
                 else:
                     survey_date = None
-
-    def process_gd_streets_link(self, instruction):
-        """Process the GD streets link (PI only)"""
-        if instruction.stage == Stage.PRODUCTION:
-            gd_streets_link = self.request.POST.get("gd_streets_link", "").strip()
-            instruction.gd_streets_link = gd_streets_link or None
 
     def process_contact_notes(self, instruction):
         """Process the instruction contact notes"""

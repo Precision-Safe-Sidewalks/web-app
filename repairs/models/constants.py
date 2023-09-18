@@ -50,6 +50,22 @@ class Hazard(models.TextChoices):
     SEVERE = ("S", 'Severe 1/2" to 1"')
     MOST_SEVERE = ("MS", 'Most Severe 1" to 1 1/2"')
 
+    @classmethod
+    def get_quick_description(cls, hazard):
+        """Return the corresponding quick description"""
+        index = {"LS": "S", "S": "M", "MS": "L"}
+
+        if hazard in index:
+            return QuickDescription(index[hazard])
+
+        return None
+
+    @classmethod
+    def get_size(cls, hazard):
+        """Return the corresponding size"""
+        # TODO: implement a better way of handling this
+        return cls(hazard).label.split("Severe")[-1].strip()
+
 
 class DRSpecification(models.TextChoices):
     """Standard D&R specification type choices"""
@@ -68,3 +84,4 @@ class ProductionCase(models.TextChoices):
     PRODUCTION_DATA = ("PD", "Production data")
     NTE_OR_NO_SURVEY = ("NTE_NS", "NTE or no survey")
     ONLY_PINS = ("OP", "Only pins")
+    GD_STREETS_LINK = ("GDSL", "GD streets link")

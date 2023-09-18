@@ -30,7 +30,6 @@ class Instruction(models.Model):
     survey_date = models.DateField(blank=True, null=True)
     reference_images_required = models.PositiveIntegerField(default=0)
     reference_images_sizes = models.CharField(max_length=50, blank=True, null=True)
-    gd_streets_link = models.URLField(max_length=255, blank=True, null=True)
     published = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
