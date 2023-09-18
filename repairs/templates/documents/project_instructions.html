@@ -358,12 +358,14 @@
         <tr>
           <td colspan="12" class="bg-blue bold">No-Survey PI Checklist</td>
         </tr>
-        {% for question, response in checklist %}
+        {% for item in instruction.get_checklist %}
         <tr>
-          <td colspan="12" class="bg-grey bold">{{ question }}</td>
+          <td colspan="12" class="bg-grey bold">{{ item.question }}</td>
         </tr>
         <tr>
-          <td colspan="12">{{ response }}</td>
+          <td colspan="12">
+            {% if item.response %}{{ item.response }}{% endif %}
+          </td>
         </tr>
         {% endfor %}
 

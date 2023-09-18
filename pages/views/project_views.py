@@ -206,6 +206,7 @@ class BaseInstructionsView(TemplateView):
             self.process_specifications(instruction)
             self.process_reference_images(instruction)
             self.process_notes(instruction)
+            self.process_checklist(instruction)  # PI only
 
             instruction.published = request.POST.get("published") == "on"
             instruction.save()
@@ -351,6 +352,16 @@ class BaseInstructionsView(TemplateView):
 
         instruction.notes.exclude(pk__in=keep).delete()
 
+    def process_checklist(self, instruction):
+        """Process the checklist"""
+
+        for form_key in self.request.POST:
+            if form_key.startswith("checklist:"):
+                pk = int(form_key.split(":")[-1])
+                obj = instruction.checklist.get(pk=pk)
+                obj.response = self.request.POST.get(form_key).strip() or None
+                obj.save()
+
 
 class SurveyInstructionsView(BaseInstructionsView):
     template_name = "projects/survey_instructions.html"
@@ -388,6 +399,7 @@ class ProjectInstructionsView(BaseInstructionsView):
         context["special_cases"] = SpecialCase.get_pi_choices()
         context["dr_specifications"] = DRSpecification.choices
         context["production_cases"] = ProductionCase.choices
+        context["checklist"] = instruction.get_checklist()
         context["surveyors"] = User.surveyors.all()
         context["error"] = self.request.GET.get("error")
 

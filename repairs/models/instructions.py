@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.db.models.functions import Coalesce
 
 from customers.models import Contact
 from repairs.models.constants import Stage
@@ -55,6 +56,12 @@ class Instruction(models.Model):
     def get_notes(self):
         """Return the notes in chronological order"""
         return self.notes.order_by("created_at")
+
+    def get_checklist(self):
+        """Return the ordered checklist"""
+        return self.checklist.annotate(
+            suborder=Coalesce("question__suborder", -1)
+        ).order_by("question__order", "suborder")
 
 
 class InstructionContactNote(models.Model):
@@ -121,6 +128,11 @@ class InstructionChecklistQuestion(models.Model):
     order = models.PositiveIntegerField()
     suborder = models.PositiveIntegerField(blank=True, null=True)
     question = models.CharField(max_length=255)
+
+    def __str__(self):
+        if self.suborder:
+            return f"- {self.question}"
+        return f"{self.order}. {self.question}"
 
 
 class InstructionChecklist(models.Model):

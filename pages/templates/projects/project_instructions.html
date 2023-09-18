@@ -222,6 +222,30 @@
       </div>
     </div>
 
+    <!-- Required operation protocols -->
+
+    <!-- No-survey PI checklist -->
+    <div class="mb-12">
+      <h4>No-survey PI checklist</h4>
+      <h6 class="text--body-md text--muted mb-8">Fill out the checklist.</h6>
+
+      {% for item in checklist %}
+      <div class="mb-8">
+        <div class="text--body-md text--bold">
+          {% if item.question.suborder %}
+            -
+          {% else %}
+            {{ item.question.order }}.
+          {% endif %}
+          {{ item.question.question }}
+        </div>
+        <div class="form-control mt-4">
+          <input type="text" name="checklist:{{ item.id }}" value="{{ item.response|default:'' }}">
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
     <!-- Hidden inputs -->
     <input type="checkbox" name="published" {% if instruction.published %}checked{% endif %} hidden>
 
