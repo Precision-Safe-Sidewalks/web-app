@@ -192,7 +192,7 @@ class SurveyInstructionsView(TemplateView):
         context["instruction"] = instruction
         context["notes"] = instruction.notes.order_by("created_at")
         context["hazards"] = Hazard.choices
-        context["special_cases"] = SpecialCase.choices
+        context["special_cases"] = SpecialCase.get_si_choices()
         context["dr_specifications"] = DRSpecification.choices
         context["pricing_models"] = InstructionSpecification.PricingModel.choices
         context["surveyors"] = User.surveyors.all()
