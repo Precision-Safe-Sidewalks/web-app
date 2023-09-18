@@ -27,13 +27,12 @@ class Instruction(models.Model):
     details = models.TextField(blank=True, null=True)
     survey_method = models.CharField(max_length=255, blank=True, null=True)
     survey_method_note = models.CharField(max_length=255, blank=True, null=True)
+    survey_date = models.DateField(blank=True, null=True)
     reference_images_required = models.PositiveIntegerField(default=0)
     reference_images_sizes = models.CharField(max_length=50, blank=True, null=True)
+    gd_streets_link = models.URLField(max_length=255, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-    # TODO: cuts (PI only)
-    # TODO: bidboss production, NTE/no survey, only pins, GD streets link (PI only)
 
     def get_needed_by_display(self):
         """Return the needed_by date for display"""

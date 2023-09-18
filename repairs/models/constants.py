@@ -21,7 +21,18 @@ class SpecialCase(models.TextChoices):
     APRONS = ("AP", "Aprons")
     LEADWALK = ("L", "Leadwalk")
     RECUTS = ("RC", "Recuts")
-    METERES = ("MM", "Meters/Manholes")
+    METERS = ("MM", "Meters/Manholes")
+
+    @classmethod
+    def get_si_choices(cls):
+        """Return the available choices for the SI"""
+        return list(cls.choices)
+
+    @classmethod
+    def get_pi_choices(cls):
+        """Return the available choices for the PI"""
+        omit = {"R"}
+        return list(filter(lambda c: c[0] not in omit, cls.choices))
 
 
 class QuickDescription(models.TextChoices):
