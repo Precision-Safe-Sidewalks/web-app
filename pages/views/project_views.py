@@ -162,7 +162,7 @@ class ProjectMeasurementsExportView(View):
 
     def get(self, request, pk, stage):
         project = get_object_or_404(Project, pk=pk)
-        filename = f"{slugify(project.name)}_measurements_{stage}.csv"
+        filename = f"{slugify(project.name)}_data_{stage}.csv"
 
         with io.StringIO() as f:
             Measurement.export_to_csv(f, project, stage.upper())

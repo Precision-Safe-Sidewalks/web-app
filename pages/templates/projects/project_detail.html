@@ -114,7 +114,7 @@
         <!-- Survey measurements -->
         {% with exists=project.has_survey_measurements %}
         <tr>
-          <td>Survey measurements</td>
+          <td>Survey data</td>
           <td align="center">{{ exists|status_icon }}</td>
           <td align="center">---</td>
           <td align="center">---</td>
@@ -136,11 +136,11 @@
               <div class="dialog" data-control="btn-clear-survey-measurements">
                 <div class="dialog-content">
                   <div class="dialog-title">
-                    Remove survey measurements
+                    Remove survey data
                   </div>
 
                   <div class="dialog-body">
-                    Are you sure you want to remove all survey measurements?
+                    Are you sure you want to remove all survey data?
                   </div>
 
                   <div class="dialog-actions">
@@ -170,7 +170,7 @@
         <!-- Production measurements -->
         {% with exists=project.has_production_measurements %}
         <tr>
-          <td>Production measurements</td>
+          <td>Production data</td>
           <td align="center">{{ exists|status_icon }}</td>
           <td align="center">---</td>
           <td align="center">---</td>
@@ -192,11 +192,11 @@
               <div class="dialog" data-control="btn-clear-production-measurements">
                 <div class="dialog-content">
                   <div class="dialog-title">
-                    Remove production measurements
+                    Remove production data
                   </div>
 
                   <div class="dialog-body">
-                    Are you sure you want to remove all production measurements?
+                    Are you sure you want to remove all production data?
                   </div>
 
                   <div class="dialog-actions">
