@@ -4,5 +4,9 @@ from app.settings.base import *
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "app.bluezoneautomation.com",
+    "*",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.bluezoneautomation.com",
 ]
