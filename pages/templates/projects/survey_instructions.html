@@ -72,8 +72,16 @@
         <div class="text--body-md">
           Survey method note
         </div>
-        <div class="form-control w-100p">
-          <input type="text" name="survey_method_note" value="{{ instruction.survey_method_note|default:'' }}">
+        <div class="form-control w-64">
+          <select name="survey_method_note">
+            <option value="">---</option>
+            <option value="Square foot" {% if instruction.survey_method_note == 'Square foot' %}selected{% endif %}>
+              Square foot
+            </option>
+            <option value="Inch foot" {% if instruction.survey_method_node == 'Inch foot' %}selected{% endif %}>
+              Inch foot
+            </option>
+          </select>
         </div>
       </div>
     </div>

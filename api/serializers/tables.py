@@ -69,6 +69,7 @@ class CustomerTableSerializer(serializers.ModelSerializer):
 
 class ProjectTableSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField()
+    status = serializers.SerializerMethodField()
     business_development_manager = serializers.SerializerMethodField()
     business_development_administrator = serializers.SerializerMethodField()
     territory = serializers.CharField(source="territory.label")
@@ -79,6 +80,9 @@ class ProjectTableSerializer(serializers.ModelSerializer):
         href = reverse("project-detail", kwargs={"pk": obj.pk})
         html = f'<a href="{href}">{obj.name}</a>'
         return mark_safe(html)
+
+    def get_status(self, obj):
+        return obj.get_status_display()
 
     def get_business_development_manager(self, obj):
         if obj.business_development_manager:
@@ -103,6 +107,7 @@ class ProjectTableSerializer(serializers.ModelSerializer):
         model = Project
         fields = (
             "name",
+            "status",
             "business_development_manager",
             "business_development_administrator",
             "territory",
