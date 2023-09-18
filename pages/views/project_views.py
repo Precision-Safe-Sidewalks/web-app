@@ -212,7 +212,7 @@ class BaseInstructionsView(TemplateView):
 
     def process_surveyed_by(self, instruction):
         """Process the surveyed_by form field"""
-        surveyed_by = self.request.POST.get("surveyed_by")
+        surveyed_by = self.request.POST.get("surveyed_by") or None
         instruction.surveyed_by = User.objects.filter(pk=surveyed_by).first()
 
     def process_needed_by(self, instruction):
