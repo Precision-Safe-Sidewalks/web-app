@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from base64 import b64encode
 
 from django.template import loader
 from weasyprint import CSS, HTML
@@ -39,8 +40,16 @@ class SurveyInstructionsGenerator:
             "hazards": self.get_specification("H", Hazard.choices),
             "special_cases": self.get_specification("SC", SpecialCase.choices),
             "dr_specs": self.get_specification("DR", DRSpecification.choices),
-            "notes_placeholder": list(range(8)),
+            "notes_placeholder": list(range(5)),
+            "logo": self.get_logo(),
         }
+
+    def get_logo(self):
+        """Return the base64 encoded logo"""
+        with open("static/logos/pss_logo.png", "rb") as f:
+            image = f.read()
+            data = b64encode(image).decode("utf-8")
+            return f"data:image/png;base64,{data}"
 
     def get_specification(self, spec_type, choices):
         """Return the specification data"""
