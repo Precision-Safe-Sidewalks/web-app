@@ -229,16 +229,22 @@ class SurveyInstructionsView(TemplateView):
     def process_surveyed_by(self, instruction):
         """Process the surveyed_by form field"""
         surveyed_by = self.request.POST.get("surveyed_by")
-        instruction.surveyed_by = User.objects.filter(pk=surveyed_by).first()
+
+        if surveyed_by:
+            instruction.surveyed_by = User.objects.filter(pk=surveyed_by).first()
+        else:
+            instruction.surveyed_by = None
 
     def process_needed_by(self, instruction):
         """Process the needed_by/needed_asap fields"""
-        needed_by = self.request.POST.get("needed_by").strip().upper()
+        needed_by = self.request.POST.get("needed_by")
 
         if not needed_by:
             instruction.needed_by = None
             instruction.needed_asap = False
             return
+        else:
+            needed_by = needed_by.strip().upper()
 
         if needed_by == "ASAP":
             instruction.needed_by = None
@@ -254,8 +260,8 @@ class SurveyInstructionsView(TemplateView):
 
     def process_survey_details(self, instruction):
         """Process the survey details"""
-        details = self.request.POST.get("details").strip() or None
-        instruction.details = details
+        details = self.request.POST.get("details", "").strip()
+        instruction.details = details or None
 
     def process_survey_method(self, instruction):
         """Process the survey method"""
@@ -316,7 +322,9 @@ class SurveyInstructionsView(TemplateView):
 
     def process_reference_images(self, instruction):
         """Process the reference images"""
-        reference_images_required = self.request.POST.get("reference_images_required")
+        reference_images_required = self.request.POST.get(
+            "reference_images_required", 0
+        )
         instruction.reference_images_required = int(reference_images_required)
 
         reference_images_sizes = self.request.POST.get("reference_images_sizes")
