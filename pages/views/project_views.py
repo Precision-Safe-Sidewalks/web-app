@@ -28,7 +28,13 @@ from repairs.models import (
     Measurement,
     Project,
 )
-from repairs.models.constants import DRSpecification, Hazard, SpecialCase, Stage
+from repairs.models.constants import (
+    DRSpecification,
+    Hazard,
+    ReferenceImageMethod,
+    SpecialCase,
+    Stage,
+)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -195,6 +201,7 @@ class SurveyInstructionsView(TemplateView):
         context["special_cases"] = SpecialCase.choices
         context["dr_specifications"] = DRSpecification.choices
         context["surveyors"] = User.surveyors.all()
+        context["reference_image_methods"] = ReferenceImageMethod.choices
         context["error"] = self.request.GET.get("error")
 
         return context
@@ -318,13 +325,19 @@ class SurveyInstructionsView(TemplateView):
 
     def process_reference_images(self, instruction):
         """Process the reference images"""
-        reference_images_required = self.request.POST.get(
-            "reference_images_required", 0
-        )
-        instruction.reference_images_required = int(reference_images_required)
+        method = int(self.request.POST.get("reference_images_method", 1))
 
-        reference_images_sizes = self.request.POST.get("reference_images_sizes")
-        instruction.reference_images_sizes = reference_images_sizes
+        if method == ReferenceImageMethod.EVERYTHING.value:
+            instruction.reference_images_method = method
+            return
+
+        if method == ReferenceImageMethod.NUMBER_SIZES:
+            number_required = self.request.POST.get("reference_images_required", 0)
+            sizes = self.request.POST.get("reference_images_sizes")
+
+            instruction.reference_images_method = method
+            instruction.reference_images_required = int(number_required)
+            instruction.reference_images_sizes = sizes
 
     def process_notes(self, instruction):
         """Process the instruction notes"""

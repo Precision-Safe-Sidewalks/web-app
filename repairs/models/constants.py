@@ -56,3 +56,10 @@ class PricingModel(models.IntegerChoices):
 
     INCH_FOOT = (1, "Inch Foot")
     SQUARE_FOOT = (2, "Square Foot")
+
+
+class ReferenceImageMethod(models.IntegerChoices):
+    """Reference image method type choices"""
+
+    EVERYTHING = (1, "Pictures for everything")
+    NUMBER_SIZES = (2, "Number/Sizes")

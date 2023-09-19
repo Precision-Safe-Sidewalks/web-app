@@ -103,7 +103,7 @@
         Select all that apply. Optionally, select the pricing model (defaults to standard).
       </h6>
 
-      <div class="mt-4 grid" style="grid-template-columns: 256px auto;">
+      <div class="mt-4 grid" style="grid-template-columns: 256px;">
       {% for hazard in hazards %}
         {% get_spec "H" hazard.0 as spec %}
         <div class="chip--filter mr-3" onclick="onToggleHazardChip(event)" {% if spec %}data-active="true"{% endif %}>
@@ -114,23 +114,6 @@
             {% if spec %}checked{% endif %}
             hidden>
         </div>
-
-        <div class="form-control w-64" {% if not spec %}data-active="false"{% endif %}>
-          <select name="hazard:pricing_model:{{ hazard.0 }}">
-          {% for pricing_model in pricing_models %}
-            <option value="{{ pricing_model.0 }}"
-              {% if pricing_model.0 == spec.pricing_model %}
-                selected
-              {% elif pricing_model.0 == "S" and not spec.pricing_model %}
-                selected
-              {% endif %}
-            >
-              {{ pricing_model.1 }}
-            </option>
-          {% endfor %}
-          </select>
-        </div>
-
       {% endfor %}
       </div>
     </div>
@@ -187,16 +170,29 @@
       <h6 class="text--body-md text--muted">Provided details about the required reference pictures.</h6>
       <div class="mt-4 grid" style="grid-template-columns: 256px auto;">
         <div class="text--body-md">
-          Number of required pictures
+          Reference image method
         </div>
         <div class="form-control w-64">
+          <select name="reference_images_method" onchange="onChangeReferenceImageMethod(event)">
+          {% for value, label in reference_image_methods %}
+            <option value="{{ value }}" {% if instruction.reference_images_method == value %}selected{% endif %}>
+              {{ label }}
+            </option>
+          {% endfor %}
+          </select>
+        </div>
+
+        <div class="text--body-md" id="id_reference_images_number_label">
+          Number of required pictures
+        </div>
+        <div class="form-control w-64" id="id_reference_images_number_control">
           <input type="number" name="reference_images_required" min="0" value="{{ instruction.reference_images_required|default:'0' }}">
         </div>
 
-        <div class="text--body-md">
+        <div class="text--body-md" id="id_reference_images_sizes_label">
           Sizes
         </div>
-        <div class="form-control w-64">
+        <div class="form-control w-64" id="id_reference_images_sizes_control">
           <select name="reference_images_sizes">
             <option value="MS" {% if instruction.reference_images_sizes == 'MS' %}selected{% endif %}>
               Most severe
@@ -279,9 +275,6 @@
   /// Toggle handler for a hazard chip filter
   const onToggleHazardChip = (event) => {
     const checked = onToggleChip(event)
-
-    const menu = $(event.target).next()
-    $(menu).attr("data-active", checked)
   }
 
   /// Toggle handler for a special case chip filter
@@ -317,6 +310,14 @@
     $(`#note-container-${noteId}`).remove()
   }
 
+  /// Handler for changing the reference image method
+  const onChangeReferenceImageMethod = (event) => {
+    const visibility = event.target.value == 1 ? "hidden" : "visible"
+
+    $(`div[id^="id_reference_images_sizes"]`).css("visibility", visibility)
+    $(`div[id^="id_reference_images_number"]`).css("visibility", visibility)
+  }
+
   $(document).ready(() => {
     // If no notes exists, add a default element
     $("#notes").children().length === 0 ? onAddNote() : null
@@ -327,6 +328,9 @@
     $("#id_survey_method_type").val(surveyMethodType)
     $("#id_survey_method").val(surveyMethod)
     surveyMethodType !== "default" && $("#id_survey_method").show()
+
+    // Initialize the reference image method
+    $(`select[name="reference_images_method"]`).trigger("change")
   })
 
 </script>

@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 from customers.models import Contact
-from repairs.models.constants import Stage
+from repairs.models.constants import ReferenceImageMethod, Stage
 from repairs.models.projects import Project
 
 User = get_user_model()
@@ -26,6 +26,9 @@ class Instruction(models.Model):
     needed_asap = models.BooleanField(default=False)
     details = models.TextField(blank=True, null=True)
     survey_method = models.CharField(max_length=255, blank=True, null=True)
+    reference_images_method = models.IntegerField(
+        choices=ReferenceImageMethod.choices, default=ReferenceImageMethod.EVERYTHING
+    )
     reference_images_required = models.PositiveIntegerField(default=0)
     reference_images_sizes = models.CharField(max_length=50, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)

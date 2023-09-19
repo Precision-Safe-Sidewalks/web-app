@@ -274,11 +274,17 @@
         <!-- Pictures -->
         <tr>
           <td colspan="12" class="bg-yellow">
-            <strong>PICTURES</strong> - Pictures of Everything 
+            <strong>PICTURES</strong> &#8212; 
+            {% if instruction.reference_images_method == 1 %}
             <span class="text-red">
-              &lt;{{ instruction.reference_images_required }}&gt; minimum for ESTIMATE;
+              Pictures of everything
+            </span>
+            {% else %}
+            <span class="text-red">
+              {{ instruction.reference_images_required }} minimum for ESTIMATE;
               Size: {{ instruction.reference_images_sizes }}
             </span>
+            {% endif %}
           </td>
         </tr>
 
