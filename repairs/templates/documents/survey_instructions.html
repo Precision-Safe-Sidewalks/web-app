@@ -282,7 +282,8 @@
             {% else %}
             <span class="text-red">
               {{ instruction.reference_images_required }} minimum for ESTIMATE;
-              Size: {{ instruction.reference_images_sizes }}
+              Size: {{ instruction.reference_images_sizes }};
+              {% if instruction.reference_images_curbs %}Curbs{% endif %}
             </span>
             {% endif %}
           </td>

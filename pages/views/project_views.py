@@ -334,10 +334,12 @@ class SurveyInstructionsView(TemplateView):
         if method == ReferenceImageMethod.NUMBER_SIZES:
             number_required = self.request.POST.get("reference_images_required", 0)
             sizes = self.request.POST.get("reference_images_sizes")
+            curbs = self.request.POST.get("reference_images_curbs") == "on"
 
             instruction.reference_images_method = method
             instruction.reference_images_required = int(number_required)
             instruction.reference_images_sizes = sizes
+            instruction.reference_images_curbs = curbs
 
     def process_notes(self, instruction):
         """Process the instruction notes"""

@@ -31,6 +31,7 @@ class Instruction(models.Model):
     )
     reference_images_required = models.PositiveIntegerField(default=0)
     reference_images_sizes = models.CharField(max_length=50, blank=True, null=True)
+    reference_images_curbs = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -204,6 +204,13 @@
             </option>
           </select>
         </div>
+        
+        <div class="text--body-md" id="id_reference_images_curbs_label">
+          Curbs
+        </div>
+        <div class="form-control w-64" id="id_reference_images_curbs_control">
+          <input type="checkbox" name="reference_images_curbs" {% if instruction.reference_images_curbs %}checked{% endif %}>
+        </div>
       </div>
     </div>
     
@@ -316,6 +323,7 @@
 
     $(`div[id^="id_reference_images_sizes"]`).css("visibility", visibility)
     $(`div[id^="id_reference_images_number"]`).css("visibility", visibility)
+    $(`div[id^="id_reference_images_curbs"]`).css("visibility", visibility)
   }
 
   $(document).ready(() => {
