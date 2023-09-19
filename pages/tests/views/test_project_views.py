@@ -50,6 +50,7 @@ class TestProjectCreateView(IntegrationTestBase):
             "business_development_manager": self.bdm.pk,
             "territory": territory.pk,
             "primary_contact": contact.pk,
+            "pricing_model": 1,
         }
 
         url = reverse("customer-project-create", kwargs={"pk": customer.pk})
@@ -72,6 +73,7 @@ class TestProjectUpdateView(IntegrationTestBase):
             "business_development_manager": self.bdm.pk,
             "territory": project.territory.pk,
             "primary_contact": contact.pk,
+            "pricing_model": project.pricing_model,
         }
 
         url = reverse("project-update", kwargs={"pk": project.pk})
