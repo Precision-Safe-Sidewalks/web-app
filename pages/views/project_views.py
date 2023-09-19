@@ -194,7 +194,6 @@ class SurveyInstructionsView(TemplateView):
         context["hazards"] = Hazard.choices
         context["special_cases"] = SpecialCase.choices
         context["dr_specifications"] = DRSpecification.choices
-        context["pricing_models"] = InstructionSpecification.PricingModel.choices
         context["surveyors"] = User.surveyors.all()
         context["error"] = self.request.GET.get("error")
 
@@ -267,9 +266,6 @@ class SurveyInstructionsView(TemplateView):
         """Process the survey method"""
         survey_method = self.request.POST.get("survey_method", "").strip()
         instruction.survey_method = survey_method or None
-
-        survey_method_note = self.request.POST.get("survey_method_note", "").strip()
-        instruction.survey_method_note = survey_method_note or None
 
     def process_contact_notes(self, instruction):
         """Process the instruction contact notes"""

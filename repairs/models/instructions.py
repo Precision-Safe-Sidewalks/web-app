@@ -79,12 +79,6 @@ class InstructionSpecification(models.Model):
         SPECIAL_CASE = ("SC", "Special case")
         DR = ("DR", "D&R specification")
 
-    class PricingModel(models.TextChoices):
-        """Pricing model type choices"""
-
-        STANDARD = ("S", "Standard")
-        SQFT = ("SQFT", "Square foot")
-
     instruction = models.ForeignKey(
         Instruction, on_delete=models.CASCADE, related_name="specifications"
     )

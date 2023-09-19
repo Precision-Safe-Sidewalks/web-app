@@ -210,11 +210,9 @@
           </td>
           
           {% for key, value in hazards.items %}
-            {% with model=value.obj.pricing_model %}
-            <td colspan="2" class="center" {% if model == "SQFT" %}data-highlight="true"{% endif %}>
-              {% if model == "SQFT" %}YES{% endif %}
-            </td>
-            {% endwith %}
+          <td colspan="2" class="center" {% if instruction.project.pricing_model == 2 %}data-highlight="true"{% endif %}>
+            {% if instruction.project.pricing_model == 2 %}YES{% endif %}
+          </td>
           {% endfor %}
 
           <td colspan="5" class="center">
