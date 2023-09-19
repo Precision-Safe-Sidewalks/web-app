@@ -50,6 +50,7 @@ class ProjectForm(forms.ModelForm):
             "business_development_manager",
             "business_development_administrator",
             "territory",
+            "pricing_model",
             "primary_contact",
             "secondary_contact",
         )

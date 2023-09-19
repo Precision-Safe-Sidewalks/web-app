@@ -28,7 +28,13 @@ from repairs.models import (
     Measurement,
     Project,
 )
-from repairs.models.constants import DRSpecification, Hazard, SpecialCase, Stage
+from repairs.models.constants import (
+    DRSpecification,
+    Hazard,
+    ReferenceImageMethod,
+    SpecialCase,
+    Stage,
+)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -194,8 +200,8 @@ class SurveyInstructionsView(TemplateView):
         context["hazards"] = Hazard.choices
         context["special_cases"] = SpecialCase.choices
         context["dr_specifications"] = DRSpecification.choices
-        context["pricing_models"] = InstructionSpecification.PricingModel.choices
         context["surveyors"] = User.surveyors.all()
+        context["reference_image_methods"] = ReferenceImageMethod.choices
         context["error"] = self.request.GET.get("error")
 
         return context
@@ -268,9 +274,6 @@ class SurveyInstructionsView(TemplateView):
         survey_method = self.request.POST.get("survey_method", "").strip()
         instruction.survey_method = survey_method or None
 
-        survey_method_note = self.request.POST.get("survey_method_note", "").strip()
-        instruction.survey_method_note = survey_method_note or None
-
     def process_contact_notes(self, instruction):
         """Process the instruction contact notes"""
         keep = []
@@ -305,7 +308,7 @@ class SurveyInstructionsView(TemplateView):
                     spec = form_key.replace(prefix, "")
                     defaults = {}
 
-                    for aux_key in ("pricing_model", "note"):
+                    for aux_key in ("note",):
                         aux_prefix = f"{spec_prefix}:{aux_key}:{spec}"
                         defaults[aux_key] = self.request.POST.get(aux_prefix)
 
@@ -322,13 +325,21 @@ class SurveyInstructionsView(TemplateView):
 
     def process_reference_images(self, instruction):
         """Process the reference images"""
-        reference_images_required = self.request.POST.get(
-            "reference_images_required", 0
-        )
-        instruction.reference_images_required = int(reference_images_required)
+        method = int(self.request.POST.get("reference_images_method", 1))
 
-        reference_images_sizes = self.request.POST.get("reference_images_sizes")
-        instruction.reference_images_sizes = reference_images_sizes
+        if method == ReferenceImageMethod.EVERYTHING.value:
+            instruction.reference_images_method = method
+            return
+
+        if method == ReferenceImageMethod.NUMBER_SIZES:
+            number_required = self.request.POST.get("reference_images_required", 0)
+            sizes = self.request.POST.get("reference_images_sizes")
+            curbs = self.request.POST.get("reference_images_curbs") == "on"
+
+            instruction.reference_images_method = method
+            instruction.reference_images_required = int(number_required)
+            instruction.reference_images_sizes = sizes
+            instruction.reference_images_curbs = curbs
 
     def process_notes(self, instruction):
         """Process the instruction notes"""

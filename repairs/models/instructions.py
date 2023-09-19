@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 from customers.models import Contact
-from repairs.models.constants import Stage
+from repairs.models.constants import ReferenceImageMethod, Stage
 from repairs.models.projects import Project
 
 User = get_user_model()
@@ -26,9 +26,12 @@ class Instruction(models.Model):
     needed_asap = models.BooleanField(default=False)
     details = models.TextField(blank=True, null=True)
     survey_method = models.CharField(max_length=255, blank=True, null=True)
-    survey_method_note = models.CharField(max_length=255, blank=True, null=True)
+    reference_images_method = models.IntegerField(
+        choices=ReferenceImageMethod.choices, default=ReferenceImageMethod.EVERYTHING
+    )
     reference_images_required = models.PositiveIntegerField(default=0)
     reference_images_sizes = models.CharField(max_length=50, blank=True, null=True)
+    reference_images_curbs = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -80,12 +83,6 @@ class InstructionSpecification(models.Model):
         SPECIAL_CASE = ("SC", "Special case")
         DR = ("DR", "D&R specification")
 
-    class PricingModel(models.TextChoices):
-        """Pricing model type choices"""
-
-        STANDARD = ("S", "Standard")
-        SQFT = ("SQFT", "Square foot")
-
     instruction = models.ForeignKey(
         Instruction, on_delete=models.CASCADE, related_name="specifications"
     )
@@ -93,9 +90,6 @@ class InstructionSpecification(models.Model):
         max_length=10, choices=SpecificationType.choices
     )
     specification = models.CharField(max_length=10)
-    pricing_model = models.CharField(
-        max_length=10, choices=PricingModel.choices, blank=True, null=True
-    )
     note = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

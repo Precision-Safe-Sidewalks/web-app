@@ -3,6 +3,10 @@
   <head>
   </head>
   <body>
+    <div class="header">
+      <img src="{{ logo }}" alt="logo">
+      <h2>SURVEY INSTRUCTIONS</h2>
+    </div>
     <table class="table">
       <tbody>
         <!-- General information -->
@@ -210,11 +214,9 @@
           </td>
           
           {% for key, value in hazards.items %}
-            {% with model=value.obj.pricing_model %}
-            <td colspan="2" class="center" {% if model == "SQFT" %}data-highlight="true"{% endif %}>
-              {% if model == "SQFT" %}YES{% endif %}
-            </td>
-            {% endwith %}
+          <td colspan="2" class="center" {% if instruction.project.pricing_model == 2 %}data-highlight="true"{% endif %}>
+            {% if instruction.project.pricing_model == 2 %}YES{% endif %}
+          </td>
           {% endfor %}
 
           <td colspan="5" class="center">
@@ -272,11 +274,18 @@
         <!-- Pictures -->
         <tr>
           <td colspan="12" class="bg-yellow">
-            <strong>PICTURES</strong> - Pictures of Everything 
+            <strong>PICTURES</strong> &#8212; 
+            {% if instruction.reference_images_method == 1 %}
             <span class="text-red">
-              &lt;{{ instruction.reference_images_required }}&gt; minimum for ESTIMATE;
-              Size: {{ instruction.reference_images_sizes }}
+              Pictures of everything
             </span>
+            {% else %}
+            <span class="text-red">
+              {{ instruction.reference_images_required }} minimum for ESTIMATE;
+              Size: {{ instruction.reference_images_sizes }};
+              {% if instruction.reference_images_curbs %}Curbs{% endif %}
+            </span>
+            {% endif %}
           </td>
         </tr>
 
