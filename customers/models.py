@@ -8,6 +8,7 @@ class Customer(models.Model):
     """External client or municipality"""
 
     name = models.CharField(max_length=255)
+    title = models.CharField(max_length=255, blank=True, null=True)
     address = models.CharField(max_length=255, blank=True, null=True)
     city = models.CharField(max_length=100, blank=True, null=True)
     state = models.CharField(
