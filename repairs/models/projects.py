@@ -3,7 +3,7 @@ from django.contrib.gis.db.models.aggregates import Union
 from django.db import models, transaction
 
 from customers.models import Contact, Customer
-from repairs.models.constants import Stage
+from repairs.models.constants import PricingModel, Stage
 
 User = get_user_model()
 
@@ -45,6 +45,9 @@ class Project(models.Model):
         Contact, through="ProjectContact", through_fields=("project", "contact")
     )
     po_number = models.CharField(max_length=100, blank=True, null=True)
+    pricing_model = models.IntegerField(
+        choices=PricingModel.choices, default=PricingModel.INCH_FOOT
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

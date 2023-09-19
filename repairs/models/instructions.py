@@ -26,7 +26,6 @@ class Instruction(models.Model):
     needed_asap = models.BooleanField(default=False)
     details = models.TextField(blank=True, null=True)
     survey_method = models.CharField(max_length=255, blank=True, null=True)
-    survey_method_note = models.CharField(max_length=255, blank=True, null=True)
     reference_images_required = models.PositiveIntegerField(default=0)
     reference_images_sizes = models.CharField(max_length=50, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -93,9 +92,6 @@ class InstructionSpecification(models.Model):
         max_length=10, choices=SpecificationType.choices
     )
     specification = models.CharField(max_length=10)
-    pricing_model = models.CharField(
-        max_length=10, choices=PricingModel.choices, blank=True, null=True
-    )
     note = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

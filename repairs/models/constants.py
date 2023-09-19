@@ -49,3 +49,10 @@ class DRSpecification(models.TextChoices):
     SIGNIFICANT_SPALLING = ("SS", "Significant spalling")
     LARGE_GAPS = ("LG", 'Large gaps >1"')
     SEVERE_CROSS_SLOPES = ("SCS", "Severe cross slopes >2.2%")
+
+
+class PricingModel(models.IntegerChoices):
+    """Pricing model type choices"""
+
+    INCH_FOOT = (1, "Inch Foot")
+    SQUARE_FOOT = (2, "Square Foot")
