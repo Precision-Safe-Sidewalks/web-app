@@ -167,10 +167,9 @@
           </td>
         </tr>
 
-        <!-- TODO: check with Chad about the CUT note -->
         <tr>
           <td colspan="12" class="bg-yellow bold center">
-            CUT: <span class="text-red">1:8, 1:10, 1:12 - MS cut 1:10, Record 1:8</span>
+            CUT: <span class="text-red">{{ instruction.get_cut_display }}</span>
           </td>
         </tr>
 
@@ -363,7 +362,7 @@
           <td colspan="12" class="bg-grey bold">{{ item.question }}</td>
         </tr>
         <tr>
-          <td colspan="12">
+          <td colspan="12" class="p-1">
             {% if item.response %}{{ item.response }}{% endif %}
           </td>
         </tr>

@@ -107,4 +107,9 @@
   td[data-highlight="true"] {
     background-color: var(--color-green);
   }
+
+  /* Layout */
+  .p-1 {
+    padding: 4px;
+  }
 }

@@ -29,6 +29,7 @@ from repairs.models import (
     Project,
 )
 from repairs.models.constants import (
+    Cut,
     DRSpecification,
     Hazard,
     ProductionCase,
@@ -202,6 +203,7 @@ class BaseInstructionsView(TemplateView):
             self.process_survey_details(instruction)
             self.process_survey_method(instruction)  # SI only
             self.process_survey_date(instruction)  # PI only
+            self.process_cut(instruction)  # PI only
             self.process_contact_notes(instruction)
             self.process_specifications(instruction)
             self.process_reference_images(instruction)
@@ -271,6 +273,12 @@ class BaseInstructionsView(TemplateView):
                     self._errors.append("Invalid survey date")
                 else:
                     survey_date = None
+
+    def process_cut(self, instruction):
+        """Process the cut (PI only)"""
+        if instruction.stage == Stage.PRODUCTION:
+            cut = self.request.POST.get("cut") or None
+            instruction.cut = cut
 
     def process_contact_notes(self, instruction):
         """Process the instruction contact notes"""
@@ -401,6 +409,7 @@ class ProjectInstructionsView(BaseInstructionsView):
         context["production_cases"] = ProductionCase.choices
         context["checklist"] = instruction.get_checklist()
         context["surveyors"] = User.surveyors.all()
+        context["cuts"] = Cut.choices
         context["error"] = self.request.GET.get("error")
 
         return context

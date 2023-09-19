@@ -60,6 +60,19 @@
         <div class="form-control w-100p">
           <input type="text" name="details" {% if instruction.details %}value="{{ instruction.details }}"{% endif %}>
         </div>
+
+        <div class="text--body-md">
+          Cut
+        </div>
+        <div class="form-control w-64">
+          <select name="cut">
+          {% for option in cuts %}
+            <option value="{{ option.0 }}" {% if instruction.cut == option.0 %}selected{% endif %}>
+              {{ option.1 }}
+            </option>
+          {% endfor %}
+          </select>
+        </div>
       </div>
     </div>
 

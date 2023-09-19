@@ -85,3 +85,12 @@ class ProductionCase(models.TextChoices):
     NTE_OR_NO_SURVEY = ("NTE_NS", "NTE or no survey")
     ONLY_PINS = ("OP", "Only pins")
     GD_STREETS_LINK = ("GDSL", "GD streets link")
+
+
+class Cut(models.IntegerChoices):
+    """Cut type choices"""
+
+    ONE_EIGHT = (1, "1:8")
+    ONE_TEN = (2, "1:10")
+    ONE_TWELVE = (3, "1:12")
+    HYBRID = (4, "MS & S 1:12, LS 1:8")

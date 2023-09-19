@@ -3,7 +3,7 @@ from django.db import models
 from django.db.models.functions import Coalesce
 
 from customers.models import Contact
-from repairs.models.constants import Stage
+from repairs.models.constants import Cut, Stage
 from repairs.models.projects import Project
 
 User = get_user_model()
@@ -31,6 +31,7 @@ class Instruction(models.Model):
     survey_date = models.DateField(blank=True, null=True)
     reference_images_required = models.PositiveIntegerField(default=0)
     reference_images_sizes = models.CharField(max_length=50, blank=True, null=True)
+    cut = models.IntegerField(choices=Cut.choices, blank=True, null=True)
     published = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -39,6 +40,12 @@ class Instruction(models.Model):
         """Return the needed_by date for display"""
         if self.needed_by:
             return self.needed_by.strftime("%m/%d/%Y")
+        return None
+
+    def get_cut_display(self):
+        """Return the cut for display"""
+        if self.cut:
+            return Cut(self.cut).label
         return None
 
     def get_primary_contact_notes(self):
