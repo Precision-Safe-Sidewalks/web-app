@@ -301,7 +301,7 @@ class SurveyInstructionsView(TemplateView):
                     spec = form_key.replace(prefix, "")
                     defaults = {}
 
-                    for aux_key in ("pricing_model", "note"):
+                    for aux_key in ("note",):
                         aux_prefix = f"{spec_prefix}:{aux_key}:{spec}"
                         defaults[aux_key] = self.request.POST.get(aux_prefix)
 
