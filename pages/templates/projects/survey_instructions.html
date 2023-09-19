@@ -153,13 +153,20 @@
       <h6 class="text--body-md text--muted">
         Select all that apply
       </h6>
-      <div class="mt-4 grid--col-3">
-      {% for dr_spec in dr_specifications %}
-        {% get_spec "DR" dr_spec.0 as spec %}
+      <div class="mt-4 grid--col-4">
+      {% for value, label in dr_specifications %}
+        {% get_spec "DR" value as spec %}
+
+        {% if value != "C1" and value != "C2" %}
         <div class="chip--filter mr-2" onclick="onToggleChip(event)" {% if spec %}data-active="true"{% endif %}>
-          {{ dr_spec.1 }}
-          <input type="checkbox" name="dr:state:{{ dr_spec.0 }}" {% if spec %}checked{% endif %} hidden>
+          {{ label }}
+          <input type="checkbox" name="dr:state:{{ value }}" {% if spec %}checked{% endif %} hidden>
         </div>
+        {% else %}
+        <div class="form-control">
+          <input type="text" name="dr:state:{{ value }}" value="{{ spec.note|default:'' }}" placeholder="{{ label }}">
+        </div>
+        {% endif %}
       {% endfor %}
       </div>
     </div>

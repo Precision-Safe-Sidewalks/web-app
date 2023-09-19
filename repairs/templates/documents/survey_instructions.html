@@ -254,18 +254,30 @@
         </tr>
         <tr>
           {% for key, value in dr_specs.items %}
-            {% if forloop.counter0 < 3 %}
-            <td colspan="4" class="bg-lightgrey">
-              {% if value.obj %}{{ value.label }}{% endif %}
+            {% if forloop.counter0 < 4 %}
+            <td colspan="3" class="bg-lightgrey">
+              {% if value.obj %}
+                {% if value.label != 'Custom 1' %}
+                  {{ value.label }}
+                {% else %}
+                  {{ value.obj.note }}
+                {% endif %}
+              {% endif %}
             </td>
             {% endif %}
           {% endfor %}
         </tr>
         <tr>
           {% for key, value in dr_specs.items %}
-            {% if forloop.counter0 >= 3 %}
-            <td colspan="4" class="bg-lightgrey">
-              {% if value.obj %}{{ value.label }}{% endif %}
+            {% if forloop.counter0 >= 4 %}
+            <td colspan="3" class="bg-lightgrey">
+              {% if value.obj %}
+                {% if value.label != 'Custom 2' %}
+                  {{ value.label }}
+                {% else %}
+                  {{ value.obj.note }}
+                {% endif %}
+              {% endif %}
             </td>
             {% endif %}
           {% endfor %}
