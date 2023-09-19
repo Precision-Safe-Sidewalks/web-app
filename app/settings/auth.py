@@ -29,10 +29,12 @@ MICROSOFT_AUTH_CLIENT_SECRET = os.environ.get("MICROSOFT_AUTH_CLIENT_SECRET")
 MICROSOFT_AUTH_LOGIN_TYPE = "ma"
 
 # Authentication backends
-AUTHENTICATION_BACKENDS = [
-    "microsoft_auth.backends.MicrosoftAuthenticationBackend",
-    "django.contrib.auth.backends.ModelBackend",
-]
+AUTHENTICATION_BACKENDS = ["django.contrib.auth.backends.ModelBackend"]
+
+if MICROSOFT_AUTH_CLIENT_SECRET:
+    AUTHENTICATION_BACKENDS.insert(
+        0, "microsoft_auth.backends.MicrosoftAuthenticationBackend"
+    )
 
 # Define the public URL regular expressions
 PUBLIC_URLS = [
