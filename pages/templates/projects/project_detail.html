@@ -29,6 +29,7 @@
         <tr>
           <th>Type</th>
           <th>Name</th>
+          <th>Title</th>
           <th>Email</th>
           <th>Phone Number</th>
           <th>Extension</th>
@@ -48,6 +49,7 @@
             ---
           {% endif %}
           </td>
+          <td>{{ primary.title|default:"---" }}</td>
           <td>{{ primary.email|default:"---" }}</td>
           <td>{{ primary.phone_number|default:"---" }}</td>
           <td>{{ primary.extension|default:"---" }}</td>
@@ -67,6 +69,7 @@
             ---
           {% endif %}
           </td>
+          <td>{{ secondary.title|default:"---" }}</td>
           <td>{{ secondary.email|default:"---" }}</td>
           <td>{{ secondary.phone_number|default:"---" }}</td>
           <td>{{ secondary.extension|default:"---" }}</td>
