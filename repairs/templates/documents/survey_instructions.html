@@ -40,7 +40,7 @@
             On Site
           </td>
           <td colspan="4" class="bg-lightgrey">
-            {{ contact.name }}
+            {{ contact.name }}{% if contact.title %}, {{ contact.title }}{% endif %}
           </td>
           <td colspan="3" class="bg-lightgrey">
           {% with contact.get_work_phone as phone %}
@@ -70,7 +70,7 @@
             2nd
           </td>
           <td colspan="4">
-            {% if contact.name %}{{ contact.name }}{% endif %}
+            {{ contact.name }}{% if contact.title %}, {{ contact.title }}{% endif %}
           </td>
           <td colspan="3">
           {% with contact.get_work_phone as phone %}

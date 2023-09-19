@@ -69,6 +69,7 @@ class ContactForm(forms.ModelForm):
         fields = (
             "customer",
             "name",
+            "title",
             "email",
             "phone_work",
             "phone_work_ext",
