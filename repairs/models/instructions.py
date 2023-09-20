@@ -71,6 +71,10 @@ class Instruction(models.Model):
         )
         return measurement.measured_at if measurement else None
 
+    def get_checklist(self):
+        """Return the checklist in order"""
+        return self.checklist.order_by("question__order", "question__suborder")
+
 
 class InstructionContactNote(models.Model):
     """Survey/Project instructions contact note"""

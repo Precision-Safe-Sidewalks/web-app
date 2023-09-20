@@ -108,7 +108,7 @@
     </div>
 
     <!-- General/Project specifications -->
-    <div class="my-12">
+    <div class="mb-12">
       <h4 class="mb-1">Project specifications</h4>
       <h6 class="text--body-md text-muted">
         Select all that apply. Optionally, include a note for additional context or instructions.
@@ -135,7 +135,7 @@
     </div>
 
     <!-- Special cases -->
-    <div class="my-12">
+    <div class="mb-12">
       <h4 class="mb-1">Special cases</h4>
       <h6 class="text--body-md text--muted">
         Select all that apply. Optionally, include a note for additional context or instructions.
@@ -244,6 +244,23 @@
         </div>
       {% endfor %}
       </div>
+    </div>
+
+    <!-- Checklist -->
+    <div class="mb-12">
+      <h4>No-survey PI Checklist</h5>
+      <h6 class="text--body-md text--muted">Provide responses to the checklist questions.</h6>
+
+      {% for obj in checklist %}
+      <div class="mt-8">
+        <div class="text--body-md text--bold">
+          {{ obj.question.question }}
+        </div>
+        <div class="form-control mt-4 100p">
+          <input type="text" name="checklist:{{ obj.id }}" value="{{ obj.response|default:'' }}">
+        </div>
+      </div>
+      {% endfor %}
     </div>
 
     <!-- Save button -->
