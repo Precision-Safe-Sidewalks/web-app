@@ -32,6 +32,7 @@ class Instruction(models.Model):
     reference_images_required = models.PositiveIntegerField(default=0)
     reference_images_sizes = models.CharField(max_length=50, blank=True, null=True)
     reference_images_curbs = models.BooleanField(default=False)
+    po_number = models.CharField(max_length=50, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -59,6 +60,11 @@ class Instruction(models.Model):
     def get_notes(self):
         """Return the notes in chronological order"""
         return self.notes.order_by("created_at")
+
+    def get_survey_date(self):
+        """Return the survey date (from the survey measurements)"""
+        measurement = self.project.measurements.filter(stage=Stage.SURVEY).order_by("measured_at").first()
+        return measurement.measured_at if measurement else None
 
 
 class InstructionContactNote(models.Model):
