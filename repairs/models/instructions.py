@@ -37,6 +37,7 @@ class Instruction(models.Model):
     contact_method = models.IntegerField(
         choices=ContactMethod.choices, default=ContactMethod.CALL
     )
+    published = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -12,7 +12,7 @@
     </h5>
   </div>
 
-  <form method="POST">
+  <form id="id_form" method="POST">
     {% csrf_token %}
 
     <!-- Details -->
@@ -250,10 +250,18 @@
       </div>
     </div>
 
+    <!-- Published (hidden) -->
+    <input id="id_published" name="published" type="checkbox" {% if instruction.published %}checked{% endif %} hidden>
+
     <!-- Save button -->
-    <button type="submit" class="btn--filled">
-      Save
-    </button>
+    <div class="flex">
+      <button type="submit" class="btn--tonal mr-3" onclick="onSave(event, false)">
+        Save Draft
+      </button>
+      <button type="submit" class="btn--filled" onclick="onSave(event, true)">
+        Save &amp; Publish
+      </button>
+    </div>
 
   </form>
 </div>
@@ -331,6 +339,14 @@
     $(`div[id^="id_reference_images_sizes"]`).css("visibility", visibility)
     $(`div[id^="id_reference_images_number"]`).css("visibility", visibility)
     $(`div[id^="id_reference_images_curbs"]`).css("visibility", visibility)
+  }
+
+  /// Handler for saving the form
+  const onSave = (event, published) => {
+    event.preventDefault()
+
+    $("#id_published").attr("checked", published)
+    $("#id_form").submit()
   }
 
   $(document).ready(() => {
