@@ -323,9 +323,6 @@ class SurveyInstructionsView(TemplateView):
                         defaults=defaults,
                     )
 
-                    if spec_prefix == "dr" and spec in ("C1", "C2"):
-                        print(obj.pk, defaults, obj.note)
-
                     keep.append(obj.pk)
 
         instruction.specifications.exclude(pk__in=keep).delete()
