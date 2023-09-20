@@ -8,4 +8,5 @@ from repairs.models.instructions import (
     InstructionSpecification,
 )
 from repairs.models.measurements import Measurement, MeasurementImage
+from repairs.models.pricing import PricingSheet
 from repairs.models.projects import Project, ProjectContact

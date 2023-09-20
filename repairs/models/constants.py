@@ -49,6 +49,22 @@ class Hazard(models.TextChoices):
         return "MS"
 
 
+class HazardTier(models.IntegerChoices):
+    """Hazard tier type choices"""
+
+    ABOVE_LS = (1, "All")
+    ABOVE_S = (2, "Most Severe and Severe")
+    ABOVE_MS = (3, "Most Severe")
+
+
+class HazardDensity(models.IntegerChoices):
+    """Hazard density type choices"""
+
+    LOW = (1, "Low")
+    AVG = (2, "Average")
+    HIGH = (3, "High")
+
+
 class DRSpecification(models.TextChoices):
     """Standard D&R specification type choices"""
 
@@ -101,3 +117,11 @@ class ContactMethod(models.IntegerChoices):
 
     CALL = (1, "Call")
     TEXT = (2, "Text")
+
+
+class PanelSize(models.IntegerChoices):
+    """Panel size type choices"""
+
+    FIVE_FOOT = (1, "5 ft.")
+    SIX_FOOT = (2, "6 ft.")
+    SEVEN_FOOT = (3, "7 ft.")
