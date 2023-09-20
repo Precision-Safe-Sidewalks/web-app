@@ -312,12 +312,19 @@ class SurveyInstructionsView(TemplateView):
                         aux_prefix = f"{spec_prefix}:{aux_key}:{spec}"
                         defaults[aux_key] = self.request.POST.get(aux_prefix)
 
+                    # TODO: improve how this is stored
+                    if spec_prefix == "dr" and spec in ("C1", "C2"):
+                        defaults["note"] = self.request.POST.get(f"dr:state:{spec}")
+
                     obj, _ = InstructionSpecification.objects.update_or_create(
                         instruction=instruction,
                         specification_type=spec_type,
                         specification=spec,
                         defaults=defaults,
                     )
+
+                    if spec_prefix == "dr" and spec in ("C1", "C2"):
+                        print(obj.pk, defaults, obj.note)
 
                     keep.append(obj.pk)
 
