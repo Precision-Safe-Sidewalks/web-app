@@ -39,6 +39,15 @@ class Hazard(models.TextChoices):
     SEVERE = ("S", 'Severe 1/2" to 1"')
     MOST_SEVERE = ("MS", 'Most Severe 1" to 1 1/2"')
 
+    @staticmethod
+    def get_size(value):
+        """Return the corresponding size"""
+        if value == "LS":
+            return "S"
+        if value == "S":
+            return "M"
+        return "MS"
+
 
 class DRSpecification(models.TextChoices):
     """Standard D&R specification type choices"""
@@ -55,6 +64,15 @@ class DRSpecification(models.TextChoices):
     CUSTOM2 = ("C2", "Custom 2")
 
 
+class ProjectSpecification(models.IntegerChoices):
+    """Project specification type choices"""
+
+    DATA = (1, "Production Data")
+    NTE = (2, "NTE or No Survey")
+    ONLY_PINS = (3, "Only Pins")
+    GD_STREETS = (4, "GD Streets Link")
+
+
 class PricingModel(models.IntegerChoices):
     """Pricing model type choices"""
 
@@ -67,3 +85,19 @@ class ReferenceImageMethod(models.IntegerChoices):
 
     EVERYTHING = (1, "Pictures for everything")
     NUMBER_SIZES = (2, "Number/Sizes")
+
+
+class Cut(models.IntegerChoices):
+    """Cut type choices"""
+
+    ONE_EIGHT = (1, "1:8")
+    ONE_TEN = (2, "1:10")
+    ONE_TWELVE = (3, "1:12")
+    MULTIPLE = (4, "MS & S 1:12, LS 1:8")
+
+
+class ContactMethod(models.IntegerChoices):
+    """Contact method type choices"""
+
+    CALL = (1, "Call")
+    TEXT = (2, "Text")

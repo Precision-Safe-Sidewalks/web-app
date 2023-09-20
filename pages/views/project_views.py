@@ -29,8 +29,11 @@ from repairs.models import (
     Project,
 )
 from repairs.models.constants import (
+    ContactMethod,
+    Cut,
     DRSpecification,
     Hazard,
+    ProjectSpecification,
     ReferenceImageMethod,
     SpecialCase,
     Stage,
@@ -187,28 +190,12 @@ class ProjectMeasurementsClearView(View):
         return redirect(redirect_url)
 
 
-class SurveyInstructionsView(TemplateView):
-    template_name = "projects/survey_instructions.html"
-
-    def get_context_data(self, **kwargs):
-        project = get_object_or_404(Project, pk=self.kwargs["pk"])
-        instruction = project.instructions.get(stage=Stage.SURVEY)
-
-        context = super().get_context_data(**kwargs)
-        context["instruction"] = instruction
-        context["notes"] = instruction.notes.order_by("created_at")
-        context["hazards"] = Hazard.choices
-        context["special_cases"] = SpecialCase.choices
-        context["dr_specifications"] = DRSpecification.choices
-        context["surveyors"] = User.surveyors.all()
-        context["reference_image_methods"] = ReferenceImageMethod.choices
-        context["error"] = self.request.GET.get("error")
-
-        return context
+class BaseInstructionsView(TemplateView):
+    stage = None
 
     def post(self, request, pk):
         project = get_object_or_404(Project, pk=pk)
-        instruction = project.instructions.get(project=project, stage=Stage.SURVEY)
+        instruction = project.instructions.get(project=project, stage=self.stage)
 
         with transaction.atomic():
             self._errors = []
@@ -217,10 +204,13 @@ class SurveyInstructionsView(TemplateView):
             self.process_needed_by(instruction)
             self.process_survey_details(instruction)
             self.process_survey_method(instruction)
+            self.process_cut(instruction)
+            self.process_contact_method(instruction)
             self.process_contact_notes(instruction)
             self.process_specifications(instruction)
             self.process_reference_images(instruction)
             self.process_notes(instruction)
+            self.process_checklist(instruction)
 
             instruction.save()
 
@@ -274,6 +264,16 @@ class SurveyInstructionsView(TemplateView):
         survey_method = self.request.POST.get("survey_method", "").strip()
         instruction.survey_method = survey_method or None
 
+    def process_cut(self, instruction):
+        """Process the cut"""
+        cut = int(self.request.POST.get("cut", 1))
+        instruction.cut = cut
+
+    def process_contact_method(self, instruction):
+        """Process the instruction contact method"""
+        contact_method = int(self.request.POST.get("contact_method", 1))
+        instruction.contact_method = contact_method
+
     def process_contact_notes(self, instruction):
         """Process the instruction contact notes"""
         keep = []
@@ -296,6 +296,7 @@ class SurveyInstructionsView(TemplateView):
             "hazard": InstructionSpecification.SpecificationType.HAZARD,
             "special_case": InstructionSpecification.SpecificationType.SPECIAL_CASE,
             "dr": InstructionSpecification.SpecificationType.DR,
+            "project": InstructionSpecification.SpecificationType.PROJECT,
         }
 
         keep = []
@@ -322,9 +323,6 @@ class SurveyInstructionsView(TemplateView):
                         specification=spec,
                         defaults=defaults,
                     )
-
-                    if spec_prefix == "dr" and spec in ("C1", "C2"):
-                        print(obj.pk, defaults, obj.note)
 
                     keep.append(obj.pk)
 
@@ -370,18 +368,56 @@ class SurveyInstructionsView(TemplateView):
 
         instruction.notes.exclude(pk__in=keep).delete()
 
+    def process_checklist(self, instruction):
+        """Process the instruction checklist"""
 
-class ProjectInstructionsView(TemplateView):
-    template_name = "projects/project_instructions.html"
+        for form_key in self.request.POST:
+            if form_key.startswith("checklist:"):
+                pk = int(form_key.replace("checklist:", ""))
+                obj = instruction.checklist.get(pk=pk)
+                obj.response = self.request.POST.get(form_key, "").strip()
+                obj.save()
+
+
+class SurveyInstructionsView(BaseInstructionsView):
+    template_name = "projects/survey_instructions.html"
+    stage = Stage.SURVEY
 
     def get_context_data(self, **kwargs):
         project = get_object_or_404(Project, pk=self.kwargs["pk"])
+        instruction = project.instructions.get(stage=self.stage)
+
         context = super().get_context_data(**kwargs)
-        context["instruction"] = project.instructions.get(stage=Stage.SURVEY)
+        context["instruction"] = instruction
+        context["notes"] = instruction.notes.order_by("created_at")
         context["hazards"] = Hazard.choices
         context["special_cases"] = SpecialCase.choices
         context["dr_specifications"] = DRSpecification.choices
-        context["pricing_models"] = InstructionSpecification.PricingModel.choices
+        context["surveyors"] = User.surveyors.all()
+        context["reference_image_methods"] = ReferenceImageMethod.choices
+        context["error"] = self.request.GET.get("error")
+
+        return context
+
+
+class ProjectInstructionsView(BaseInstructionsView):
+    template_name = "projects/project_instructions.html"
+    stage = Stage.PRODUCTION
+
+    def get_context_data(self, **kwargs):
+        project = get_object_or_404(Project, pk=self.kwargs["pk"])
+        instruction = project.instructions.get(stage=self.stage)
+
+        context = super().get_context_data(**kwargs)
+        context["instruction"] = instruction
+        context["notes"] = instruction.notes.order_by("created_at")
+        context["cuts"] = Cut.choices
+        context["project_specifications"] = ProjectSpecification.choices
+        context["special_cases"] = SpecialCase.choices
+        context["dr_specifications"] = DRSpecification.choices
+        context["contact_methods"] = ContactMethod.choices
+        context["checklist"] = instruction.get_checklist()
         context["surveyors"] = User.surveyors.all()
         context["error"] = self.request.GET.get("error")
+
         return context

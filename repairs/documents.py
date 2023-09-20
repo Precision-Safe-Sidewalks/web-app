@@ -4,7 +4,13 @@ from base64 import b64encode
 from django.template import loader
 from weasyprint import CSS, HTML
 
-from repairs.models.constants import DRSpecification, Hazard, SpecialCase
+from repairs.models.constants import (
+    DRSpecification,
+    Hazard,
+    ProjectSpecification,
+    SpecialCase,
+    Stage,
+)
 
 
 class AbstractDocumentGenerator:
@@ -16,11 +22,10 @@ class AbstractDocumentGenerator:
         raise NotImplementedError
 
 
-class SurveyInstructionsGenerator:
-    """Survey instructions PDF generator"""
+class BaseInstructionsGenerator:
+    """Base instructions PDF generator"""
 
-    template_name = "documents/survey_instructions.html"
-    stylesheet = "repairs/static/documents/survey_instructions.css"
+    stylesheet = "repairs/static/documents/instructions.css"
 
     def __init__(self, instruction):
         self.instruction = instruction
@@ -35,12 +40,9 @@ class SurveyInstructionsGenerator:
         html.write_pdf(file_obj, stylesheets=[css])
 
     def get_context_data(self):
+        """Return the context data to render"""
         return {
             "instruction": self.instruction,
-            "hazards": self.get_specification("H", Hazard.choices),
-            "special_cases": self.get_specification("SC", SpecialCase.choices),
-            "dr_specs": self.get_specification("DR", DRSpecification.choices),
-            "notes_placeholder": list(range(5)),
             "logo": self.get_logo(),
         }
 
@@ -62,3 +64,61 @@ class SurveyInstructionsGenerator:
             ).first()
 
         return data
+
+
+class SurveyInstructionsGenerator(BaseInstructionsGenerator):
+    """Survey instructions PDF generator"""
+
+    template_name = "documents/survey_instructions.html"
+
+    def get_context_data(self):
+        context = super().get_context_data()
+        context["hazards"] = self.get_specification("H", Hazard.choices)
+        context["special_cases"] = self.get_specification("SC", SpecialCase.choices)
+        context["dr_specs"] = self.get_specification("DR", DRSpecification.choices)
+        context["notes_placeholder"] = list(range(5))
+        return context
+
+
+class ProjectInstructionsGenerator(BaseInstructionsGenerator):
+    """Project instructions PDF generator"""
+
+    template_name = "documents/project_instructions.html"
+
+    def get_context_data(self):
+        context = super().get_context_data()
+        context["hazards"] = self.get_hazards()
+        context["project_specifications"] = self.get_specification(
+            "P", ProjectSpecification.choices
+        )
+        context["special_cases"] = self.get_specification("SC", SpecialCase.choices)
+        context["dr_specs"] = self.get_specification("DR", DRSpecification.choices)
+        context["notes_placeholder"] = list(range(5))
+        return context
+
+    def get_hazards(self):
+        """Return the matrix of hazards data"""
+        hazards = {"labels": [], "counts": [], "sqft": [], "inft": []}
+        queryset = self.instruction.project.measurements.filter(stage=Stage.SURVEY)
+
+        for value, name in Hazard.choices:
+            size = Hazard.get_size(value)
+            data = queryset.filter(quick_description=size)
+
+            label = name.split("Severe")[-1].strip()
+            count = data.count()
+            sqft = sum([m.length * m.width for m in data if m.length and m.width])
+            inft = sum([m.inch_feet for m in data if m.inch_feet])
+
+            hazards["labels"].append(label)
+            hazards["counts"].append(count)
+            hazards["sqft"].append(sqft)
+            hazards["inft"].append(inft)
+
+        # Compute the totals
+        hazards["labels"].append("TOTALS")
+        hazards["counts"].append(sum(hazards["counts"]))
+        hazards["sqft"].append(sum(hazards["sqft"]))
+        hazards["inft"].append(sum(hazards["inft"]))
+
+        return hazards

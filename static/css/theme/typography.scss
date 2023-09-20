@@ -147,6 +147,10 @@
     color: rgba(0, 0, 0, 0.6);
   }
 
+  &--bold {
+    font-weight: 500;
+  }
+
   &--error {
     color: $error;
   }

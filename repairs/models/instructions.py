@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 from customers.models import Contact
-from repairs.models.constants import ReferenceImageMethod, Stage
+from repairs.models.constants import ContactMethod, Cut, ReferenceImageMethod, Stage
 from repairs.models.projects import Project
 
 User = get_user_model()
@@ -32,16 +32,30 @@ class Instruction(models.Model):
     reference_images_required = models.PositiveIntegerField(default=0)
     reference_images_sizes = models.CharField(max_length=50, blank=True, null=True)
     reference_images_curbs = models.BooleanField(default=False)
+    po_number = models.CharField(max_length=50, blank=True, null=True)
+    cut = models.IntegerField(choices=Cut.choices, default=Cut.ONE_EIGHT)
+    contact_method = models.IntegerField(
+        choices=ContactMethod.choices, default=ContactMethod.CALL
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-    # TODO: cuts (PI only)
-    # TODO: bidboss production, NTE/no survey, only pins, GD streets link (PI only)
 
     def get_needed_by_display(self):
         """Return the needed_by date for display"""
         if self.needed_by:
             return self.needed_by.strftime("%m/%d/%Y")
+        return None
+
+    def get_cut_display(self):
+        """Return the cut for display"""
+        if self.cut:
+            return Cut(self.cut).label
+        return None
+
+    def get_contact_method_display(self):
+        """Return the contact method for display"""
+        if self.contact_method:
+            return ContactMethod(self.contact_method).label
         return None
 
     def get_primary_contact_notes(self):
@@ -59,6 +73,19 @@ class Instruction(models.Model):
     def get_notes(self):
         """Return the notes in chronological order"""
         return self.notes.order_by("created_at")
+
+    def get_survey_date(self):
+        """Return the survey date (from the survey measurements)"""
+        measurement = (
+            self.project.measurements.filter(stage=Stage.SURVEY)
+            .order_by("measured_at")
+            .first()
+        )
+        return measurement.measured_at.strftime("%-m/%-d/%Y") if measurement else None
+
+    def get_checklist(self):
+        """Return the checklist in order"""
+        return self.checklist.order_by("question__order", "question__suborder")
 
 
 class InstructionContactNote(models.Model):
@@ -82,6 +109,7 @@ class InstructionSpecification(models.Model):
         HAZARD = ("H", "Hazard")
         SPECIAL_CASE = ("SC", "Special case")
         DR = ("DR", "D&R specification")
+        PROJECT = ("P", "Project specification")
 
     instruction = models.ForeignKey(
         Instruction, on_delete=models.CASCADE, related_name="specifications"
@@ -105,5 +133,25 @@ class InstructionNote(models.Model):
         Instruction, on_delete=models.CASCADE, related_name="notes"
     )
     note = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+class InstructionChecklistQuestion(models.Model):
+    """Project instruction checklist question"""
+
+    order = models.PositiveIntegerField()
+    suborder = models.IntegerField(default=-1)
+    question = models.CharField(max_length=255)
+
+
+class InstructionChecklist(models.Model):
+    """Project instruction checklist"""
+
+    instruction = models.ForeignKey(
+        Instruction, on_delete=models.CASCADE, related_name="checklist"
+    )
+    question = models.ForeignKey(InstructionChecklistQuestion, on_delete=models.CASCADE)
+    response = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
