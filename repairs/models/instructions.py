@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 from customers.models import Contact
-from repairs.models.constants import ReferenceImageMethod, Stage
+from repairs.models.constants import Cut, ReferenceImageMethod, Stage
 from repairs.models.projects import Project
 
 User = get_user_model()
@@ -33,11 +33,9 @@ class Instruction(models.Model):
     reference_images_sizes = models.CharField(max_length=50, blank=True, null=True)
     reference_images_curbs = models.BooleanField(default=False)
     po_number = models.CharField(max_length=50, blank=True, null=True)
+    cut = models.IntegerField(choices=Cut.choices, default=Cut.ONE_EIGHT)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-    # TODO: cuts (PI only)
-    # TODO: bidboss production, NTE/no survey, only pins, GD streets link (PI only)
 
     def get_needed_by_display(self):
         """Return the needed_by date for display"""
@@ -63,7 +61,11 @@ class Instruction(models.Model):
 
     def get_survey_date(self):
         """Return the survey date (from the survey measurements)"""
-        measurement = self.project.measurements.filter(stage=Stage.SURVEY).order_by("measured_at").first()
+        measurement = (
+            self.project.measurements.filter(stage=Stage.SURVEY)
+            .order_by("measured_at")
+            .first()
+        )
         return measurement.measured_at if measurement else None
 
 

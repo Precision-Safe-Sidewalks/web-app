@@ -55,6 +55,15 @@ class DRSpecification(models.TextChoices):
     CUSTOM2 = ("C2", "Custom 2")
 
 
+class ProjectSpecification(models.IntegerChoices):
+    """Project specification type choices"""
+
+    DATA = (1, "Production Data")
+    NTE = (2, "NTE or No Survey")
+    ONLY_PINS = (3, "Only Pins")
+    GD_STREETS = (4, "GD Streets Link")
+
+
 class PricingModel(models.IntegerChoices):
     """Pricing model type choices"""
 
@@ -67,3 +76,12 @@ class ReferenceImageMethod(models.IntegerChoices):
 
     EVERYTHING = (1, "Pictures for everything")
     NUMBER_SIZES = (2, "Number/Sizes")
+
+
+class Cut(models.IntegerChoices):
+    """Cut type choices"""
+
+    ONE_EIGHT = (1, "1:8")
+    ONE_TEN = (2, "1:10")
+    ONE_TWELVE = (3, "1:12")
+    MULTIPLE = (4, "MS & S 1:12, LS 1:8")
