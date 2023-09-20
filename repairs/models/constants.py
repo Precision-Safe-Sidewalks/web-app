@@ -43,12 +43,16 @@ class Hazard(models.TextChoices):
 class DRSpecification(models.TextChoices):
     """Standard D&R specification type choices"""
 
+    # TODO: improve how the CUSTOMX are handled
+
     NON_REPAIRABLE = ("NR", "Non-repairable")
     UNSTABLE = ("U", "Unstable, shifting sections, void")
     EXCESSIVE_CRACKING = ("EC", "Excessive cracking >2 cracks")
+    CUSTOM1 = ("C1", "Custom 1")
     SIGNIFICANT_SPALLING = ("SS", "Significant spalling")
     LARGE_GAPS = ("LG", 'Large gaps >1"')
     SEVERE_CROSS_SLOPES = ("SCS", "Severe cross slopes >2.2%")
+    CUSTOM2 = ("C2", "Custom 2")
 
 
 class PricingModel(models.IntegerChoices):
