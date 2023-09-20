@@ -110,14 +110,12 @@ class Project(models.Model):
     @property
     def has_survey_instructions(self):
         """Return True if the survey instructions exist"""
-        # TODO: check if it's filled out
         return self.instructions.filter(stage=Stage.SURVEY).exists()
 
     @property
     def has_project_instructions(self):
         """Return True if the project instructions exist"""
-        # TODO: define logic
-        return False
+        return self.instructions.filter(stage=Stage.PRODUCTION).exists()
 
     @property
     def has_pricing_sheet(self):

@@ -33,4 +33,9 @@ urlpatterns = router.urls + [
         repairs.SurveyInstructionsAPIView.as_view(),
         name="documents-survey-instructions",
     ),
+    path(
+        "documents/instructions/project/<int:pk>/",
+        repairs.ProjectInstructionsAPIView.as_view(),
+        name="documents-project-instructions",
+    ),
 ]

@@ -16,11 +16,10 @@ class AbstractDocumentGenerator:
         raise NotImplementedError
 
 
-class SurveyInstructionsGenerator:
-    """Survey instructions PDF generator"""
+class BaseInstructionsGenerator:
+    """Base instructions PDF generator"""
 
-    template_name = "documents/survey_instructions.html"
-    stylesheet = "repairs/static/documents/survey_instructions.css"
+    stylesheet = "repairs/static/documents/instructions.css"
 
     def __init__(self, instruction):
         self.instruction = instruction
@@ -35,12 +34,9 @@ class SurveyInstructionsGenerator:
         html.write_pdf(file_obj, stylesheets=[css])
 
     def get_context_data(self):
+        """Return the context data to render"""
         return {
             "instruction": self.instruction,
-            "hazards": self.get_specification("H", Hazard.choices),
-            "special_cases": self.get_specification("SC", SpecialCase.choices),
-            "dr_specs": self.get_specification("DR", DRSpecification.choices),
-            "notes_placeholder": list(range(5)),
             "logo": self.get_logo(),
         }
 
@@ -62,3 +58,27 @@ class SurveyInstructionsGenerator:
             ).first()
 
         return data
+
+
+class SurveyInstructionsGenerator(BaseInstructionsGenerator):
+    """Survey instructions PDF generator"""
+
+    template_name = "documents/survey_instructions.html"
+
+    def get_context_data(self):
+        context = super().get_context_data()
+        context["hazards"] = self.get_specification("H", Hazard.choices)
+        context["special_cases"] = self.get_specification("SC", SpecialCase.choices)
+        context["dr_specs"] = self.get_specification("DR", DRSpecification.choices)
+        context["notes_placeholder"] = list(range(5))
+        return context
+
+
+class ProjectInstructionsGenerator(BaseInstructionsGenerator):
+    """Project instructions PDF generator"""
+
+    template_name = "documents/project_instructions.html"
+
+    def get_context_data(self):
+        context = super().get_context_data()
+        return context
