@@ -119,3 +119,23 @@ class InstructionNote(models.Model):
     note = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+
+class InstructionChecklistQuestion(models.Model):
+    """Project instruction checklist question"""
+
+    order = models.PositiveIntegerField()
+    suborder = models.IntegerField(default=-1)
+    question = models.CharField(max_length=255)
+
+
+class InstructionChecklist(models.Model):
+    """Project instruction checklist"""
+
+    instruction = models.ForeignKey(
+        Instruction, on_delete=models.CASCADE, related_name="checklist"
+    )
+    question = models.ForeignKey(InstructionChecklistQuestion, on_delete=models.CASCADE)
+    response = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
