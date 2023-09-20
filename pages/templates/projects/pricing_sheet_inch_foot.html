@@ -14,6 +14,87 @@
 
   <form id="id_form" method="POST">
     {% csrf_token %}
+
+    <div class="my-12 grid" style="grid-template-columns: 256px auto;">
+      {{ form.project.as_hidden }}
+
+      <div class="text--body-md">
+        Estimated sidewalk miles
+      </div>
+      <div class="form-control w-64">
+        {{ form.estimated_sidewalk_miles }}
+      </div>
+
+      <div class="text--body-md">
+        Surveyor speed (hazards/hour)
+      </div>
+      <div class="form-control w-64">
+        {{ form.surveyor_speed }}
+      </div>
+
+      <div class="text--body-md">
+        Survey hazards
+      </div>
+      <div class="form-control w-64">
+        {{ form.survey_hazards }}
+      </div>
+
+      <div class="text--body-md">
+        Hazard density
+      </div>
+      <div class="form-control w-64">
+        {{ form.hazard_density }}
+      </div>
+
+      <div class="text--body-md">
+        Panel size
+      </div>
+      <div class="form-control w-64">
+        {{ form.panel_size }}
+      </div>
+
+      <div class="text--body-md">
+        Distance from surveyor (miles)
+      </div>
+      <div class="form-control w-64">
+        {{ form.distance_from_surveyor }}
+      </div>
+
+      <div class="text--body-md">
+        Distance from ops team (miles)
+      </div>
+      <div class="form-control w-64">
+        {{ form.distance_from_ops }}
+      </div>
+
+      <div class="text--body-md">
+        Commission rate
+      </div>
+      <div class="form-control w-64">
+        {{ form.commission_rate }}
+      </div>
+
+      <div class="text--body-md">
+        Base rate (per square foot)
+      </div>
+      <div class="form-control w-64">
+        {{ form.base_rate }}
+      </div>
+
+      <div class="text--body-md">
+        Number of technicians
+      </div>
+      <div class="form-control w-64">
+        {{ form.number_of_technicians }}
+      </div>
+
+    </div>
+
+    <div class="flex">
+      <button type="submit" class="btn--filled">Save</button>
+    </div>
+
+    {{ form.errors }}
   </form>
 </div>
 

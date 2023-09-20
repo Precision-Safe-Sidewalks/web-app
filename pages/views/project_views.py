@@ -20,8 +20,7 @@ from django.views.generic import (
 from pydantic import ValidationError
 
 from customers.models import Customer
-from pages.forms.pricing import PricingSheetInchFootForm
-from pages.forms.projects import ProjectForm, ProjectMeasurementsForm
+from pages.forms.projects import ProjectForm, ProjectMeasurementsForm, PricingSheetInchFootForm
 from repairs.models import (
     InstructionContactNote,
     InstructionNote,
@@ -431,7 +430,7 @@ class ProjectInstructionsView(BaseInstructionsView):
         return context
 
 
-class PricingSheetView(FormView):
+class PricingSheetView(TemplateView):
     def get_object(self):
         """Return the Project object"""
         return get_object_or_404(Project, pk=self.kwargs["pk"])
@@ -455,6 +454,21 @@ class PricingSheetView(FormView):
         return PricingSheetInchFootForm
 
     def get_context_data(self, **kwargs):
+        project = self.get_object()
         context = super().get_context_data(**kwargs)
-        context["project"] = self.get_object()
+        context["project"] = project
+        context["form"] = self.get_form_class()(instance=project.pricing_sheet)
         return context
+
+    def post(self, request, pk):
+        project = self.get_object()
+        form = self.get_form_class()(request.POST, instance=project.pricing_sheet)
+
+        if form.is_valid():
+            form.save()
+            redirect_url = reverse("project-detail", kwargs={"pk": self.kwargs["pk"]})
+            return redirect(redirect_url)
+
+        # TODO: improve the errors for context
+        redirect_url = request.path + "?errors=Unable to save the pricing sheet"
+        return redirect(redirect_url)
