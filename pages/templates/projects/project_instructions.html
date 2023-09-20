@@ -15,6 +15,237 @@
   <form method="POST">
     {% csrf_token %}
 
+    <!-- Details -->
+    <div class="mb-12">
+      <h4 class="mb-1">Details</h4>
+      <h6 class="text--body-md text--muted">
+        Provide details about the survey.
+      </h6>
+
+      <div class="mt-4 grid" style="grid-template-columns: 256px auto;">
+        <div class="text--body-md">
+          Surveyor
+        </div>
+        <div class="form-control w-64" data-active="true">
+          <select name="surveyed_by">
+            <option value="">---</option>
+            {% for surveyor in surveyors %}
+            <option value="{{ surveyor.id }}" {% if instruction.surveyed_by.id == surveyor.id %}selected{% endif %}>
+              {{ surveyor.full_name }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+        
+        <div class="text--body-md">
+          Needed by
+        </div>
+        <div class="form-control w-64">
+          <input type="text" name="needed_by" placeholder="mm/dd/yyyy or ASAP" 
+            {% if instruction.needed_by %}value="{{ instruction.needed_by|date:'n/j/Y' }}"{% endif %}
+            {% if instruction.needed_asap %}value="ASAP"{% endif %}
+          >
+        </div>
+
+        <div class="text--body-md">
+          Project details
+        </div>
+        <div class="form-control w-100p">
+          <input type="text" name="details" {% if instruction.details %}value="{{ instruction.details }}"{% endif %}>
+        </div>
+
+        <div class="text--body-md">
+          Cut
+        </div>
+        <div class="form-control w-64">
+          <select name="cut">
+          {% for value, label in cuts %}
+            <option value="{{ value }}" {% if instruction.cut == value %}selected{% endif %}>
+              {{ label }}
+            </option>
+          {% endfor %}
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact notes -->
+    <div class="mb-12">
+      <h4 class="mb-1">Contacts</h4>
+      <h6 class="text--body-md text--muted">
+        Provide notes or special instructions about the contacts.
+      </h6>
+      <div class="mt-4 grid" style="grid-template-columns: 256px auto;">
+        <div class="text--body-md">
+          Contact method
+        </div>
+        <div class="form-control w-64">
+          <select name="contact_method">
+          {% for value, label in contact_methods %}
+            <option value="{{ value }}" {% if instruction.contact_method == value %}selected{% endif %}>
+              {{ label }}
+            </option>
+          {% endfor %}
+          </select>
+        </div>
+
+        <div class="text--body-md">
+          {{ instruction.project.primary_contact.name }} (Primary)
+        </div>
+        <div class="form-control w-100p">
+          <input type="text" name="contact_note:primary" value="{{ instruction.get_primary_contact_notes.first.note|default:'' }}">
+        </div>
+        
+        {% if instruction.project.secondary_contact %}
+        <div class="text--body-md">
+          {{ instruction.project.secondary_contact.name }} (Secondary)
+        </div>
+        <div class="form-control w-100p">
+          <input type="text" name="contact_note:secondary" value="{{ instruction.get_secondary_contact_notes.first.note|default:'' }}">
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- General/Project specifications -->
+    <div class="my-12">
+      <h4 class="mb-1">Project specifications</h4>
+      <h6 class="text--body-md text-muted">
+        Select all that apply. Optionally, include a note for additional context or instructions.
+      </h6>
+
+      <div class="mt-4 grid" style="grid-template-columns: 256px auto;">
+      {% for value, label in project_specifications %}
+        {% get_spec "P" value as spec %}
+        <div class="chip--filter" onclick="onToggleProjectSpecificationChip(event)" {% if spec %}data-active="true"{% endif %}>
+          {{ label }}
+          <input type="checkbox" name="project:state:{{ value }}" {% if spec %}checked{% endif %} hidden>
+        </div>
+
+        <div class="form-control">
+          <input 
+            type="text" 
+            name="project:note:{{ value }}" 
+            placeholder="Add a note" 
+            {% if spec and spec.note %}value="{{ spec.note }}"{% endif %}
+            {% if not spec %}hidden{% endif %}>
+        </div>
+      {% endfor %}
+      </div>
+    </div>
+
+    <!-- Special cases -->
+    <div class="my-12">
+      <h4 class="mb-1">Special cases</h4>
+      <h6 class="text--body-md text--muted">
+        Select all that apply. Optionally, include a note for additional context or instructions.
+      </h6>
+
+      <div class="mt-4 grid" style="grid-template-columns: 256px auto;">
+      {% for special_case in special_cases %}
+        {% if special_case.0 != 'R' %}
+          {% get_spec "SC" special_case.0 as spec %}
+          <div class="chip--filter" onclick="onToggleSpecialCaseChip(event)" {% if spec %}data-active="true"{% endif %}>
+            {{ special_case.1 }}
+            <input type="checkbox" name="special_case:state:{{ special_case.0 }}" {% if spec %}checked{% endif %} hidden>
+          </div>
+
+          <div class="form-control">
+            <input 
+              type="text" 
+              name="special_case:note:{{ special_case.0 }}" 
+              placeholder="Add a note" 
+              {% if spec and spec.note %}value="{{ spec.note }}"{% endif %}
+              {% if not spec %}hidden{% endif %}>
+          </div>
+        {% endif %}
+      {% endfor %}
+      </div>
+    </div>
+    
+    <!-- Standard D & R specifications -->
+    <div class="mb-12">
+      <h4 class="mb-1">Standard D&amp;R specifications</h4>
+      <h6 class="text--body-md text--muted">
+        Select all that apply
+      </h6>
+      <div class="mt-4 grid--col-4">
+      {% for value, label in dr_specifications %}
+        {% get_spec "DR" value as spec %}
+
+        {% if value != "C1" and value != "C2" %}
+        <div class="chip--filter mr-2" onclick="onToggleChip(event)" {% if spec %}data-active="true"{% endif %}>
+          {{ label }}
+          <input type="checkbox" name="dr:state:{{ value }}" {% if spec %}checked{% endif %} hidden>
+        </div>
+        {% else %}
+        <div class="form-control">
+          <input type="text" name="dr:state:{{ value }}" value="{{ spec.note|default:'' }}" placeholder="{{ label }}">
+        </div>
+        {% endif %}
+      {% endfor %}
+      </div>
+    </div>
+    
+    <!-- Pictures -->
+    <div class="mb-12">
+      <h4>Pictures</h4>
+      <h6 class="text--body-md text--muted">Provided details about the required reference pictures.</h6>
+      <div class="mt-4 grid" style="grid-template-columns: 256px auto;">
+        <div class="text--body-md" id="id_reference_images_number_label">
+          Number of required pictures
+        </div>
+        <div class="form-control w-64" id="id_reference_images_number_control">
+          <input type="number" name="reference_images_required" min="0" value="{{ instruction.reference_images_required|default:'0' }}">
+        </div>
+
+        <div class="text--body-md" id="id_reference_images_sizes_label">
+          Sizes
+        </div>
+        <div class="form-control w-64" id="id_reference_images_sizes_control">
+          <select name="reference_images_sizes">
+            <option value="MS" {% if instruction.reference_images_sizes == 'MS' %}selected{% endif %}>
+              Most severe
+            </option>
+            <option value="MS, S" {% if instruction.reference_images_sizes == 'MS, S' %}selected{% endif %}>
+              Most severe and severe</option>
+            <option value="ALL" {% if instruction.reference_images_sizes|default:'ALL' == 'ALL' %}selected{% endif %}>
+              All
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Notes & special instructions -->
+    <div class="mb-12">
+      <div class="flex align-items-center justify-content-between">
+        <div>
+          <h4>Notes and special instructions</h4>
+          <h6 class="text--body-md text--muted">
+            Add notes or special instructions for additional context.
+          </h6>
+        </div>
+
+        <button class="btn--tonal" onclick="onAddNote(event)">
+          Add note
+        </button>
+      </div>
+      
+      <div id="notes">
+      {% for note in notes %}
+        <div id="note-container-{{ note.pk }}" class="flex align-items-center mt-3">
+          <div class="form-control flex-grow">
+            <input id="note-{{ note.pk }}" name="note:{{ note.pk }}" type="text" value="{{ note.note }}">
+          </div>
+          <button class="btn--icon" onclick="onDeleteNote(event, '{{ note.pk }}')">
+            <span class="icon">delete</span>
+          </button>
+        </div>
+      {% endfor %}
+      </div>
+    </div>
+
     <!-- Save button -->
     <button type="submit" class="btn--filled">
       Save
@@ -22,4 +253,68 @@
 
   </form>
 </div>
+
+<script>
+
+  /// Toggle handler for a chip filter
+  const onToggleChip = (event) => {
+    const chip = $(event.target)
+    const checkbox = $(chip).children(`input[type="checkbox"]`)
+    const checked = $(checkbox).prop("checked")
+  
+    $(chip).attr("data-active", !checked)
+    $(checkbox).prop("checked", !checked)
+
+    return !checked
+  }
+
+  // Toggle handler for a project specification chip filter
+  const onToggleProjectSpecificationChip = (event) => {
+    const checked = onToggleChip(event)
+
+    const formControl = $(event.target).next()
+    const input = $(formControl).children(`input[type="text"]`)
+    $(input).attr("hidden", !checked)
+  }
+
+  /// Toggle handler for a special case chip filter
+  const onToggleSpecialCaseChip = (event) => {
+    const checked = onToggleChip(event)
+
+    const formControl = $(event.target).next()
+    const input = $(formControl).children(`input[type="text"]`)
+    $(input).attr("hidden", !checked)
+  }
+
+  /// Handler for adding a new note
+  const onAddNote = (event) => {
+    event && event.preventDefault()
+
+    const notes = $(`div[id="notes"] input[id^="note-new"]`)
+    const noteId = notes.length === 0 ? 0 : 1 + parseInt($(notes).last().attr("id").replace("note-new-", ""))
+
+    const container = $(`<div id="note-container-${noteId}" class="flex align-items-center mt-3"></div>`)
+    const deleteButton = $(`<button class="btn--icon" onclick="onDeleteNote(event, ${noteId})"><span class="icon">delete</span></button>`)
+    const inputContainer = $(`<div class="form-control flex-grow"></div>`)
+    const input = $(`<input id="note-new-${noteId}" name="note:new:${noteId}" type="text">`)
+
+    $(inputContainer).append(input)
+    $(container).append(inputContainer)
+    $(container).append(deleteButton)
+    $("#notes").append(container)
+  }
+
+  /// Handler for deleting a note
+  const onDeleteNote = (event, noteId) => {
+    event.preventDefault()
+    $(`#note-container-${noteId}`).remove()
+  }
+
+  $(document).ready(() => {
+    // If no notes exists, add a default element
+    $("#notes").children().length === 0 ? onAddNote() : null
+  })
+
+</script>
+
 {% endblock %}

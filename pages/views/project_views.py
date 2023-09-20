@@ -29,8 +29,11 @@ from repairs.models import (
     Project,
 )
 from repairs.models.constants import (
+    ContactMethod,
+    Cut,
     DRSpecification,
     Hazard,
+    ProjectSpecification,
     ReferenceImageMethod,
     SpecialCase,
     Stage,
@@ -201,6 +204,8 @@ class BaseInstructionsView(TemplateView):
             self.process_needed_by(instruction)
             self.process_survey_details(instruction)
             self.process_survey_method(instruction)
+            self.process_cut(instruction)
+            self.process_contact_method(instruction)
             self.process_contact_notes(instruction)
             self.process_specifications(instruction)
             self.process_reference_images(instruction)
@@ -258,6 +263,16 @@ class BaseInstructionsView(TemplateView):
         survey_method = self.request.POST.get("survey_method", "").strip()
         instruction.survey_method = survey_method or None
 
+    def process_cut(self, instruction):
+        """Process the cut"""
+        cut = int(self.request.POST.get("cut", 1))
+        instruction.cut = cut
+
+    def process_contact_method(self, instruction):
+        """Process the instruction contact method"""
+        contact_method = int(self.request.POST.get("contact_method", 1))
+        instruction.contact_method = contact_method
+
     def process_contact_notes(self, instruction):
         """Process the instruction contact notes"""
         keep = []
@@ -280,6 +295,7 @@ class BaseInstructionsView(TemplateView):
             "hazard": InstructionSpecification.SpecificationType.HAZARD,
             "special_case": InstructionSpecification.SpecificationType.SPECIAL_CASE,
             "dr": InstructionSpecification.SpecificationType.DR,
+            "project": InstructionSpecification.SpecificationType.PROJECT,
         }
 
         keep = []
@@ -358,7 +374,7 @@ class SurveyInstructionsView(BaseInstructionsView):
 
     def get_context_data(self, **kwargs):
         project = get_object_or_404(Project, pk=self.kwargs["pk"])
-        instruction = project.instructions.get(stage=Stage.SURVEY)
+        instruction = project.instructions.get(stage=self.stage)
 
         context = super().get_context_data(**kwargs)
         context["instruction"] = instruction
@@ -379,9 +395,17 @@ class ProjectInstructionsView(BaseInstructionsView):
 
     def get_context_data(self, **kwargs):
         project = get_object_or_404(Project, pk=self.kwargs["pk"])
+        instruction = project.instructions.get(stage=self.stage)
 
         context = super().get_context_data(**kwargs)
-        context["instruction"] = project.instructions.get(stage=Stage.SURVEY)
+        context["instruction"] = instruction
+        context["notes"] = instruction.notes.order_by("created_at")
+        context["cuts"] = Cut.choices
+        context["project_specifications"] = ProjectSpecification.choices
+        context["special_cases"] = SpecialCase.choices
+        context["dr_specifications"] = DRSpecification.choices
+        context["contact_methods"] = ContactMethod.choices
+        context["surveyors"] = User.surveyors.all()
         context["error"] = self.request.GET.get("error")
 
         return context

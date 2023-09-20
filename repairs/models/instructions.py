@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 from customers.models import Contact
-from repairs.models.constants import Cut, ReferenceImageMethod, Stage
+from repairs.models.constants import ContactMethod, Cut, ReferenceImageMethod, Stage
 from repairs.models.projects import Project
 
 User = get_user_model()
@@ -34,6 +34,9 @@ class Instruction(models.Model):
     reference_images_curbs = models.BooleanField(default=False)
     po_number = models.CharField(max_length=50, blank=True, null=True)
     cut = models.IntegerField(choices=Cut.choices, default=Cut.ONE_EIGHT)
+    contact_method = models.IntegerField(
+        choices=ContactMethod.choices, default=ContactMethod.CALL
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -90,6 +93,7 @@ class InstructionSpecification(models.Model):
         HAZARD = ("H", "Hazard")
         SPECIAL_CASE = ("SC", "Special case")
         DR = ("DR", "D&R specification")
+        PROJECT = ("P", "Project specification")
 
     instruction = models.ForeignKey(
         Instruction, on_delete=models.CASCADE, related_name="specifications"

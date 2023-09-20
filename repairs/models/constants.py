@@ -85,3 +85,10 @@ class Cut(models.IntegerChoices):
     ONE_TEN = (2, "1:10")
     ONE_TWELVE = (3, "1:12")
     MULTIPLE = (4, "MS & S 1:12, LS 1:8")
+
+
+class ContactMethod(models.IntegerChoices):
+    """Contact method type choices"""
+
+    CALL = (1, "Call")
+    TEXT = (2, "Text")
