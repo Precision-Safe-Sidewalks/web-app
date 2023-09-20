@@ -187,28 +187,12 @@ class ProjectMeasurementsClearView(View):
         return redirect(redirect_url)
 
 
-class SurveyInstructionsView(TemplateView):
-    template_name = "projects/survey_instructions.html"
-
-    def get_context_data(self, **kwargs):
-        project = get_object_or_404(Project, pk=self.kwargs["pk"])
-        instruction = project.instructions.get(stage=Stage.SURVEY)
-
-        context = super().get_context_data(**kwargs)
-        context["instruction"] = instruction
-        context["notes"] = instruction.notes.order_by("created_at")
-        context["hazards"] = Hazard.choices
-        context["special_cases"] = SpecialCase.choices
-        context["dr_specifications"] = DRSpecification.choices
-        context["surveyors"] = User.surveyors.all()
-        context["reference_image_methods"] = ReferenceImageMethod.choices
-        context["error"] = self.request.GET.get("error")
-
-        return context
+class BaseInstructionsView(TemplateView):
+    stage = None
 
     def post(self, request, pk):
         project = get_object_or_404(Project, pk=pk)
-        instruction = project.instructions.get(project=project, stage=Stage.SURVEY)
+        instruction = project.instructions.get(project=project, stage=self.stage)
 
         with transaction.atomic():
             self._errors = []
@@ -368,17 +352,36 @@ class SurveyInstructionsView(TemplateView):
         instruction.notes.exclude(pk__in=keep).delete()
 
 
-class ProjectInstructionsView(TemplateView):
-    template_name = "projects/project_instructions.html"
+class SurveyInstructionsView(BaseInstructionsView):
+    template_name = "projects/survey_instructions.html"
+    stage = Stage.SURVEY
 
     def get_context_data(self, **kwargs):
         project = get_object_or_404(Project, pk=self.kwargs["pk"])
+        instruction = project.instructions.get(stage=Stage.SURVEY)
+
         context = super().get_context_data(**kwargs)
-        context["instruction"] = project.instructions.get(stage=Stage.SURVEY)
+        context["instruction"] = instruction
+        context["notes"] = instruction.notes.order_by("created_at")
         context["hazards"] = Hazard.choices
         context["special_cases"] = SpecialCase.choices
         context["dr_specifications"] = DRSpecification.choices
-        context["pricing_models"] = InstructionSpecification.PricingModel.choices
         context["surveyors"] = User.surveyors.all()
+        context["reference_image_methods"] = ReferenceImageMethod.choices
         context["error"] = self.request.GET.get("error")
+
+        return context
+
+
+class ProjectInstructionsView(BaseInstructionsView):
+    template_name = "projects/project_instructions.html"
+    stage = Stage.PRODUCTION
+
+    def get_context_data(self, **kwargs):
+        project = get_object_or_404(Project, pk=self.kwargs["pk"])
+
+        context = super().get_context_data(**kwargs)
+        context["instruction"] = project.instructions.get(stage=Stage.SURVEY)
+        context["error"] = self.request.GET.get("error")
+
         return context
