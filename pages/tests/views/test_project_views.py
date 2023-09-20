@@ -217,3 +217,15 @@ class TestSurveyInstructionsView(IntegrationTestBase):
 
 class TestProjectInstructionsView(IntegrationTestBase):
     """Unit tests for the project instructions view"""
+
+    def test_defaults(self):
+        """Test saving only the required data"""
+        project = ProjectFactory()
+
+        url = reverse("project-pi", kwargs={"pk": project.pk})
+        redirect_url = reverse("project-detail", kwargs={"pk": project.pk})
+        data = {}
+
+        resp = self.client.post(url, data)
+        self.assertEqual(resp.status_code, 302)
+        self.assertEqual(resp.url, redirect_url)
