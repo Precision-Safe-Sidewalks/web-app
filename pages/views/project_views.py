@@ -211,6 +211,7 @@ class BaseInstructionsView(TemplateView):
             self.process_reference_images(instruction)
             self.process_notes(instruction)
             self.process_checklist(instruction)
+            self.process_published(instruction)
 
             instruction.save()
 
@@ -377,6 +378,11 @@ class BaseInstructionsView(TemplateView):
                 obj = instruction.checklist.get(pk=pk)
                 obj.response = self.request.POST.get(form_key, "").strip()
                 obj.save()
+
+    def process_published(self, instruction):
+        """Process the instruction published status"""
+        published = self.request.POST.get("published") == "on"
+        instruction.published = published
 
 
 class SurveyInstructionsView(BaseInstructionsView):
