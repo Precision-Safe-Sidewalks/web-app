@@ -20,6 +20,7 @@ from django.views.generic import (
 from pydantic import ValidationError
 
 from customers.models import Customer
+from pages.forms.pricing import PricingSheetInchFootForm
 from pages.forms.projects import ProjectForm, ProjectMeasurementsForm
 from repairs.models import (
     InstructionContactNote,
@@ -33,6 +34,7 @@ from repairs.models.constants import (
     Cut,
     DRSpecification,
     Hazard,
+    PricingModel,
     ProjectSpecification,
     ReferenceImageMethod,
     SpecialCase,
@@ -426,4 +428,33 @@ class ProjectInstructionsView(BaseInstructionsView):
         context["surveyors"] = User.surveyors.all()
         context["error"] = self.request.GET.get("error")
 
+        return context
+
+
+class PricingSheetView(FormView):
+    def get_object(self):
+        """Return the Project object"""
+        return get_object_or_404(Project, pk=self.kwargs["pk"])
+
+    def get_template_names(self):
+        """Return the template based on the pricing model"""
+        project = self.get_object()
+
+        if project.pricing_model == PricingModel.SQUARE_FOOT:
+            return "projects/pricing_sheet_square_foot.html"
+
+        return "projects/pricing_sheet_inch_foot.html"
+
+    def get_form_class(self):
+        """Return the form class"""
+        project = self.get_object()
+
+        if project.pricing_model == PricingModel.SQUARE_FOOT:
+            raise NotImplementedError
+
+        return PricingSheetInchFootForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["project"] = self.get_object()
         return context

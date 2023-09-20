@@ -167,7 +167,18 @@
           <td align="center">{{ project.has_pricing_sheet|status_icon }}</td>
           <td align="center">---</td>
           <td align="center">---</td>
-          <td></td>
+          <td>
+            <div class="flex--center">
+              <a href="{% url 'project-pricing-sheet' pk=project.pk %}" class="btn--icon-sm">
+                <span class="icon">edit</span>
+              </a>
+              {% if exists %}
+              <a href="#" class="btn--icon-sm ml-1">
+                <span class="icon">download</span>
+              </a>
+              {% endif %}
+            </div>
+          </td>
         </tr>
         <tr>
 

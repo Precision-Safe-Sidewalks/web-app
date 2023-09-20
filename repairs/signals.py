@@ -5,6 +5,7 @@ from repairs.models import (
     Instruction,
     InstructionChecklist,
     InstructionChecklistQuestion,
+    PricingSheet,
     Project,
 )
 from repairs.models.constants import Stage
@@ -19,3 +20,5 @@ def initialize_instructions(sender, instance, created, **kwargs):
 
     for question in InstructionChecklistQuestion.objects.all():
         InstructionChecklist.objects.get_or_create(instruction=pi, question=question)
+
+    PricingSheet.objects.get_or_create(project=instance)

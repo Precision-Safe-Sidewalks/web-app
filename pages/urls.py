@@ -77,6 +77,11 @@ urlpatterns = [
         name="project-pi",
     ),
     path(
+        "projects/<int:pk>/pricing-sheet/",
+        project_views.PricingSheetView.as_view(),
+        name="project-pricing-sheet",
+    ),
+    path(
         "contacts/<int:pk>/edit/",
         contact_views.ContactUpdateView.as_view(),
         name="contact-update",
