@@ -39,6 +39,15 @@ class Hazard(models.TextChoices):
     SEVERE = ("S", 'Severe 1/2" to 1"')
     MOST_SEVERE = ("MS", 'Most Severe 1" to 1 1/2"')
 
+    @staticmethod
+    def get_size(value):
+        """Return the corresponding size"""
+        if value == "LS":
+            return "S"
+        if value == "S":
+            return "M"
+        return "MS"
+
 
 class DRSpecification(models.TextChoices):
     """Standard D&R specification type choices"""

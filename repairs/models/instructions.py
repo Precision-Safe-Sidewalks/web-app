@@ -46,6 +46,18 @@ class Instruction(models.Model):
             return self.needed_by.strftime("%m/%d/%Y")
         return None
 
+    def get_cut_display(self):
+        """Return the cut for display"""
+        if self.cut:
+            return Cut(self.cut).label
+        return None
+
+    def get_contact_method_display(self):
+        """Return the contact method for display"""
+        if self.contact_method:
+            return ContactMethod(self.contact_method).label
+        return None
+
     def get_primary_contact_notes(self):
         """Return any notes for the primary contact"""
         return self.contact_notes.filter(contact=self.project.primary_contact).order_by(
@@ -69,7 +81,7 @@ class Instruction(models.Model):
             .order_by("measured_at")
             .first()
         )
-        return measurement.measured_at if measurement else None
+        return measurement.measured_at.strftime("%-m/%-d/%Y") if measurement else None
 
     def get_checklist(self):
         """Return the checklist in order"""

@@ -5,14 +5,14 @@
   <body>
     <div class="header">
       <img src="{{ logo }}" alt="logo">
-      <h2>SURVEY INSTRUCTIONS</h2>
+      <h2>PROJECT IMPLEMENTATION</h2>
     </div>
     <table class="table">
       <tbody>
         <!-- General information -->
         <tr>
           <td colspan="12" class="bg-blue bold">
-            SURVEY INSTRUCTIONS
+            PROJECT DETAILS
           </td>
         </tr>
         <tr>
@@ -28,6 +28,11 @@
         <tr>
           <td colspan="12" class="center">
             {% if instruction.details %}{{ instruction.details }}{% endif %}
+          </td>
+        </tr>
+        <tr>
+          <td colspan="12" class="center">
+            {% if instruction.po_number %}{{ instruction.po_number }}{% endif %}
           </td>
         </tr>
         
@@ -155,87 +160,95 @@
 
         <!-- Survey specifications -->
         <tr>
-          <td colspan="12" class="bg-blue bold center">
+          <td colspan="8" class="bg-blue bold center">
             SURVEY SPECIFICATIONS
           </td>
-        </tr>
-        <tr>
-          <td colspan="1">
-            HAZARDS
+          <td colspan="2" class="bg-blue bold">
+            Survey Date
           </td>
-          <td colspan="2" class="bg-grey bold center">
-            LEAST SEVERE
-          </td>
-          <td colspan="2" class="bg-grey bold center">
-            SEVERE
-          </td>
-          <td colspan="2" class="bg-grey bold center">
-            MOST SEVERE
-          </td>
-          <td colspan="5" class="bg-grey bold center">
-            SURVEY METHOD
+          <td colspan="2" class="bg-blue bold center">
+            {{ instruction.get_survey_date }}
           </td>
         </tr>
-        <tr>
-          <td colspan="1">
-            Size
-          </td>
-          <td colspan="2" class="bg-grey bold center">
-            1/4" to 1/2"
-          </td>
-          <td colspan="2" class="bg-grey bold center">
-            1/2" to 1"
-          </td>
-          <td colspan="2" class="bg-grey bold center">
-            1" to 1 1/2"
-          </td>
-          <td colspan="5" class="bg-grey bold center italic">
-            If less than 30 hazards - H1, H2, Sqft for ALL
-          </td>
-        </tr>
-        <tr>
-          <td colspan="1">
-            Survey
-          </td>
 
-          {% for key, value in hazards.items %}
-          <td colspan="2" class="center" {% if value.obj %}data-highlight="true"{% endif %}>
-            {% if value.obj %}YES{% else %}NO{% endif %}
+        <tr>
+          <td colspan="12" class="bg-yellow bold center text-red">
+            CUT: {{ instruction.get_cut_display }}
           </td>
+        </tr>
+
+        <tr>
+          <td colspan="1" class="bg-grey">Size</td>
+          {% for label in hazards.labels %}
+            {% if forloop.counter0 < 3 %}
+            <td colspan="2" class="bg-grey center">{{ label }}</td>
+            {% else %}
+            <td colspan="5" class="bg-grey bold center">{{ label }}</td>
+            {% endif %}
           {% endfor %}
-
-          <td colspan="5" class="center">
-            {% if instruction.survey_method %}{{ instruction.survey_method }}{% endif %}
-          </td>
         </tr>
+        
         <tr>
-          <td colspan="1">
-            Sq. Feet
-          </td>
-          
-          {% for key, value in hazards.items %}
-          <td colspan="2" class="center" {% if instruction.project.pricing_model == 2 %}data-highlight="true"{% endif %}>
-            {% if instruction.project.pricing_model == 2 %}YES{% endif %}
-          </td>
+          <td colspan="1" class="bg-lightorange">Hazards</td>
+          {% for count in hazards.counts %}
+            {% if forloop.counter0 < 3 %}
+            <td colspan="2" class="bg-lightorange center">{{ count }}</td>
+            {% else %}
+            <td colspan="5" class="bg-lightorange bold center">{{ count }}</td>
+            {% endif %}
           {% endfor %}
-
-          <td colspan="5" class="center">
-            {% if instruction.survey_method_note %}{{ instruction.survey_method_note }}{% endif %}
-          </td>
         </tr>
-
-        {% for key, value in special_cases.items %}
+        
+        <tr>
+          <td colspan="1" class="bg-lightgreen">Sq. Feet</td>
+          {% for area in hazards.sqft %}
+            {% if forloop.counter0 < 3 %}
+            <td colspan="2" class="bg-lightgreen center">{{ area }}</td>
+            {% else %}
+            <td colspan="5" class="bg-lightgreen bold center">{{ area }}</td>
+            {% endif %}
+          {% endfor %}
+        </tr>
+        
+        <tr>
+          <td colspan="1" class="bg-lightred">Inch Feet</td>
+          {% for area in hazards.inft %}
+            {% if forloop.counter0 < 3 %}
+            <td colspan="2" class="bg-lightred center">{{ area }}</td>
+            {% else %}
+            <td colspan="5" class="bg-lightred bold center">{{ area }}</td>
+            {% endif %}
+          {% endfor %}
+        </tr>
+        
+        {% for key, value in project_specifications.items %}
         <tr>
           <td colspan="1" class="center" {% if value.obj %}data-highlight="true"{% endif %}>
             {% if value.obj %}YES{% else %}NO{% endif %}
           </td>
-          <td colspan="2" data-special-case="{{ key }}">
+          <td colspan="2">
             {{ value.label }}
           </td>
           <td colspan="9">
             {% if value.obj.note %}{{ value.obj.note }}{% endif %}
           </td>
         </tr>
+        {% endfor %}
+
+        {% for key, value in special_cases.items %}
+          {% if key != 'R' %}
+          <tr>
+            <td colspan="1" class="center" {% if value.obj %}data-highlight="true"{% endif %}>
+              {% if value.obj %}YES{% else %}NO{% endif %}
+            </td>
+            <td colspan="2" data-special-case="{{ key }}">
+              {{ value.label }}
+            </td>
+            <td colspan="9">
+              {% if value.obj.note %}{{ value.obj.note }}{% endif %}
+            </td>
+          </tr>
+          {% endif %}
         {% endfor %}
 
         <tr>
@@ -287,19 +300,14 @@
         <tr>
           <td colspan="12" class="bg-yellow">
             <strong>PICTURES</strong> &#8212; 
-            {% if instruction.reference_images_method == 1 %}
-            <span class="text-red">
-              Pictures of everything
-            </span>
-            {% else %}
             <span class="text-red">
               {{ instruction.reference_images_required }} minimum for ESTIMATE;
               Size: {{ instruction.reference_images_sizes }};
-              {% if instruction.reference_images_curbs %}Curbs{% endif %}
             </span>
-            {% endif %}
           </td>
         </tr>
+
+        <br/>
 
         <!-- Notes -->
         <tr>
@@ -321,6 +329,89 @@
             {% endif %}
           {% endfor %}
         {% endwith %}
+
+        <!-- Required operations protocols -->
+        <tr>
+          <td colspan="12" class="bg-blue bold">
+            REQUIRED OPERATIONS PROTOCOLS (Crew Leader):
+            <span class="text-red">{{ instruction.get_contact_method_display }}</span>
+            Customer contact
+            <span class="text-red">{{ instruction.project.primary_contact.name }}</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td colspan="6" class="bg-lightgrey">
+            1 - 24 hours before project start
+          </td>
+          <td colspan="6" class="bg-lightgrey">
+            4 - Morning check in LAST work day mention final walk through
+          </td>
+        </tr>
+        <tr>
+          <td colspan="6" class="bg-lightgrey">
+            2 - Daily on arrival before start of work
+          </td>
+          <td colspan="6" class="bg-lightgrey">
+            5 - Before leaving FINAL workday offer walk through
+          </td>
+        </tr>
+        <tr>
+          <td colspan="6" class="bg-lightgrey">
+            3 - Daily end of work day
+          </td>
+          <td colspan="6" class="bg-lightgrey">
+            6 - BDM with any project exceptions before leaving
+          </td>
+        </tr>
+
+        <tr>
+          <td colspan="6" class="bg-lightgrey bold">
+            Email when project is complete:
+          </td>
+          <td colspan="6" class="bg-yellow">
+            {{ instruction.project.primary_contact.email }}
+          </td>
+        </tr>
+        <tr>
+          <td colspan="6" class="bg-lightgrey">
+            j.helgerson@precisionsafesidewalks.com
+          </td>
+          <td colspan="6" class="bg-lightgrey">
+            r.brooks@precisionsafesidewalks.com
+          </td>
+        </tr>
+        <tr>
+          {% if instruction.project.secondary_contact %}
+          <td colspan="6" class="bg-yellow">
+            {{ instruction.project.secondary_contact.email }}
+          </td>
+          <td colspan="6" class="bg-lightgrey"></td>
+          {% else %}
+          <td colspan="6" class="bg-lightgrey"></td>
+          <td colspan="6" class="bg-lightgrey"></td>
+          {% endif %}
+        </tr>
+
+        <!-- Checklist -->
+        <tr>
+          <td colspan="12" class="bg-blue bold">
+            No-Survey PI Checklist
+          </td>
+        </tr>
+
+        {% for obj in instruction.get_checklist %}
+        <tr>
+          <td colspan="12" class="bg-grey bold">
+            {{ obj.question.question }}
+          </td>
+        </tr>
+        <tr>
+          <td colspan="12" class="checklist">
+            {% if obj.response %}{{ obj.response }}{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
 
       </tbody>
     </table>
