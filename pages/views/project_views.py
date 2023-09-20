@@ -20,7 +20,11 @@ from django.views.generic import (
 from pydantic import ValidationError
 
 from customers.models import Customer
-from pages.forms.projects import ProjectForm, ProjectMeasurementsForm, PricingSheetInchFootForm
+from pages.forms.projects import (
+    PricingSheetInchFootForm,
+    ProjectForm,
+    ProjectMeasurementsForm,
+)
 from repairs.models import (
     InstructionContactNote,
     InstructionNote,

@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 
 from customers.models import Contact, Customer
-from repairs.models import Project, PricingSheet
+from repairs.models import PricingSheet, Project
 
 User = get_user_model()
 
