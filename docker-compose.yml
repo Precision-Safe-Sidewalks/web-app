@@ -55,3 +55,13 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+
+  lambda-pricing-sheet:
+    image: pss-lambda-pricing-sheet:latest
+    environment:
+      - DB_HOST=db
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=pss_dev
+    ports:
+      - 8001:8080
