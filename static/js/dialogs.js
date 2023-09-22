@@ -1,5 +1,5 @@
 $(document).ready(() => {
-  $(`div[class="dialog"]`).each((_, dialog) => {
+  $(`div[class="dialog"]:not([data-no-click-away])`).each((_, dialog) => {
     const controlId = $(dialog).data("control")
     const control = document.getElementById(controlId)
       

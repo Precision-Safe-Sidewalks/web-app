@@ -2,3 +2,5 @@ DJANGO_SETTINGS_MODULE=app.settings.development
 DJANGO_SECRET_KEY=fake-secret
 
 AWS_DEFAULT_REGION=us-east-1
+
+PRICING_SHEET_LAMBDA_URL=http://localhost:8001/2015-03-31/functions/function/invocations

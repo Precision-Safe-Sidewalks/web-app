@@ -162,6 +162,7 @@
         {% endwith %}
 
         <!-- Pricing sheet -->
+        {% with exists=project.has_pricing_sheet %}
         <tr>
           <td>Pricing sheet</td>
           <td align="center">{{ project.has_pricing_sheet|status_icon }}</td>
@@ -173,14 +174,26 @@
                 <span class="icon">edit</span>
               </a>
               {% if exists %}
-              <a href="#" class="btn--icon-sm ml-1">
+              <button class="btn--icon-sm" onclick="onDownloadPricingSheet()">
                 <span class="icon">download</span>
-              </a>
+              </button>
+              
+              <!-- Modal for downloading -->
+              <div class="dialog" id="id_modal_pricing_sheet" data-no-click-away="true">
+                <div class="dialog-content">
+                  <div class="dialog-title">
+                    {{ project.name }} - Pricing sheet
+                  </div>
+                  <div class="dialog-body">
+                    Generating the pricing sheet. This may take a moment.
+                  </div>
+                </div>
               {% endif %}
             </div>
           </td>
         </tr>
         <tr>
+        {% endwith %}
 
         <!-- Project instructions -->
         {% with exists=project.has_project_instructions %}
@@ -328,6 +341,44 @@
 
     fetch(url, { method: "POST", body: data, credentials: "include" })
   })
+
+  // Handler to generate the pricing sheet (asynchronous)
+  const onDownloadPricingSheet = async () => {
+    const modal = $("#id_modal_pricing_sheet")
+    $(modal).addClass("open")
+
+    const url = "{% url 'documents-pricing-sheet' pk=project.pk %}"
+    const resp = await fetch(url, { credentials: "include" })
+
+    if (resp.ok) {
+      const { request_id } = await resp.json()
+      await downloadPricingSheet(request_id)
+      $(modal).removeClass("open")
+    }
+  }
+
+  // Handler to download the pricing sheet
+  const downloadPricingSheet = async (requestId) => {
+    const url = "{% url 'documents-pricing-sheet' pk=project.pk %}" + `?request_id=${requestId}`
+    const resp = await fetch(url, { mode: "no-cors", credentials: "include" })
+
+    // Receiving a 202 Accepted means the report is still generating
+    // so the request needs to be retried after a period of time
+    if (resp.status === 202) {
+      setTimeout(() => downloadPricingSheet(requestId), 5000)
+      return
+    }
+
+    // If receiving a 200, download the file
+    if (resp.status === 200) {
+      const data = await resp.json()
+      const anchor = document.createElement("a")
+      anchor.href = data.url
+      anchor.target = "_blank"
+      anchor.click()
+      anchor.remove()
+    }
+  }
 
 </script>
 {% endblock %}

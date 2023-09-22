@@ -63,5 +63,7 @@ services:
       - DB_USER=postgres
       - DB_PASSWORD=postgres
       - DB_NAME=pss_dev
+    env_file:
+      - docker/env.secrets
     ports:
       - 8001:8080

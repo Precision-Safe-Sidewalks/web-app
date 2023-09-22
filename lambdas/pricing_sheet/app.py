@@ -1,4 +1,3 @@
-import io
 import json
 import os
 import uuid
@@ -8,13 +7,14 @@ import boto3
 import openpyxl
 import psycopg2
 
+BUCKET = "precision-safe-sidewalks"
+
 
 def handler(event, context):
     """Pricing sheet generator handler"""
+    request_id = event["request_id"]
 
-    print(f"GENERATING PRICING SHEET FOR {event}")
-
-    generator = PricingSheetGenerator(event["project_id"])
+    generator = PricingSheetGenerator(request_id)
     generator.generate()
     url = generator.upload_to_s3()
 
@@ -30,8 +30,9 @@ def handler(event, context):
 class PricingSheetGenerator:
     """Pricing sheet generator for a project"""
 
-    def __init__(self, project_id):
-        self.project_id = project_id
+    def __init__(self, request_id):
+        self.request_id = request_id
+        self.project_id = self.get_project_id()
         self.pricing_model = self.get_pricing_model()
         self.filename = None
 
@@ -43,6 +44,21 @@ class PricingSheetGenerator:
         template = self.get_template()
         data = self.get_data()
         self.insert_data(template, data)
+
+    def get_project_id(self):
+        """Return the project id from the request id"""
+
+        sql = """
+            SELECT
+                p.id
+            FROM repairs_project p
+                JOIN repairs_pricingsheet ps ON p.id = ps.project_id
+                JOIN repairs_pricingsheetrequest psr ON ps.id = psr.pricing_sheet_id
+        """
+
+        with self.get_db().cursor() as cursor:
+            cursor.execute(sql, (self.request_id,))
+            return cursor.fetchone()[0]
 
     def get_pricing_model(self):
         """Return the pricing model of the project"""
@@ -113,10 +129,28 @@ class PricingSheetGenerator:
         """Upload the file to S3 and return the presigned URL"""
         generated_at = datetime.now().date()
         _, ext = os.path.splitext(self.filename)
-        key = f"{generated_at}_pricing_sheet_{self.pricing_model.lower()}{ext}"
-        print(key)
+        key = f"pricing_sheets/{generated_at}_{self.request_id}_pricing_sheet{ext}"
 
-        # s3 = boto3.client("s3")
-        # s3.upload_file(self.filename, BUCKET, key)
+        s3 = boto3.client("s3")
+        s3.upload_file(self.filename, BUCKET, key)
+
+        self.update_request(key)
 
         return key
+
+    def update_request(self, key):
+        """Update the request's S3 bucket/key"""
+
+        sql = """
+            UPDATE repairs_pricingsheetrequest SET
+                s3_bucket = %s,
+                s3_key = %s,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE request_id = %s
+        """
+
+        with self.get_db() as conn:
+            with conn.cursor() as cursor:
+                params = (BUCKET, key, self.request_id)
+                cursor.execute(sql, params)
+                conn.commit()
