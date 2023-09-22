@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 
 from repairs.models.constants import HazardDensity, HazardTier, PanelSize
@@ -26,3 +28,16 @@ class PricingSheet(models.Model):
     commission_rate = models.FloatField(default=0)
     base_rate = models.FloatField(default=0, help_text="Base cost/square foot")
     number_of_technicians = models.PositiveIntegerField(default=0)
+
+
+class PricingSheetRequest(models.Model):
+    """Pricing sheet generation/download request"""
+
+    pricing_sheet = models.ForeignKey(
+        PricingSheet, on_delete=models.CASCADE, related_name="requests"
+    )
+    request_id = models.UUIDField(default=uuid.uuid4, editable=False)
+    s3_bucket = models.CharField(max_length=255, blank=True, null=True)
+    s3_key = models.CharField(max_length=255, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
