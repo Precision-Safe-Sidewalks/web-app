@@ -122,30 +122,3 @@ class ProjectInstructionsGenerator(BaseInstructionsGenerator):
         hazards["inft"].append(sum(hazards["inft"]))
 
         return hazards
-
-
-class PricingSheetGenerator(AbstractDocumentGenerator):
-    """Pricing sheet document generator"""
-
-    def __init__(self, project):
-        self.project = project
-
-    def generate(self, file_obj):
-        """Generate the Excel file"""
-        pass
-
-    def get_cell_data(self):
-        """Return the dictionary of cell data to insert"""
-        return {}
-
-
-class PricingSheetInchFootGenerator(PricingSheetGenerator):
-    """Pricing sheet (inch foot) document generator"""
-
-    template_name = (
-        "repairs/templates/documents/TEMP Pricing Inch Foot  - 8-29-2023- FINAL.xltx"
-    )
-
-    def get_cell_data(self):
-        """Return the dictionary of cell data to insert"""
-        return {}
