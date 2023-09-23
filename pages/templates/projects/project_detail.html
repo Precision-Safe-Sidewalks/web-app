@@ -181,11 +181,13 @@
               <!-- Modal for downloading -->
               <div class="dialog" id="id_modal_pricing_sheet" data-no-click-away="true">
                 <div class="dialog-content">
-                  <div class="dialog-title">
-                    {{ project.name }} - Pricing sheet
-                  </div>
                   <div class="dialog-body">
-                    Generating the pricing sheet. This may take a moment.
+                    <div class="flex--center flex--column m-4">
+                      <div class="m-8">
+                        <div class="progress-circle">progress_activity</div>
+                      </div>
+                      Generating the pricing sheet. This may take a moment.
+                    </div>
                   </div>
                 </div>
               {% endif %}
@@ -374,7 +376,7 @@
       const data = await resp.json()
       const anchor = document.createElement("a")
       anchor.href = data.url
-      anchor.target = "_blank"
+      anchor.target = "_self"
       anchor.click()
       anchor.remove()
     }
