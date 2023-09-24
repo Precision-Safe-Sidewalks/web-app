@@ -1,7 +1,5 @@
 import json
 import os
-import uuid
-from datetime import datetime
 
 import boto3
 import openpyxl
@@ -67,6 +65,7 @@ class PricingSheetGenerator:
 
         sql = """
             SELECT 
+                p.name,
                 CASE
                     WHEN p.pricing_model = 1 THEN 'INCH_FOOT'
                     WHEN p.pricing_model = 2 THEN 'SQUARE_FOOT'
@@ -160,8 +159,6 @@ class PricingSheetGenerator:
             sheet_name = str(len(data) + 1)
             data[sheet_name] = sheet_data
 
-        print(data)
-
         return {
             "Projected Survey Cost": {
                 "D4": self.raw_data["estimated_sidewalk_miles"],
@@ -238,7 +235,7 @@ class PricingSheetGenerator:
                 worksheet[cell].value = value
 
         _, ext = os.path.splitext(template)
-        self.filename = f"/tmp/{uuid.uuid4()}{ext}"
+        self.filename = f"/tmp/{self.request_id}{ext}"
 
         workbook.save(self.filename)
         workbook.close()
@@ -255,9 +252,10 @@ class PricingSheetGenerator:
 
     def upload_to_s3(self):
         """Upload the file to S3 and return the presigned URL"""
-        generated_at = datetime.now().date()
+        project_name = self.project["name"]
+
         _, ext = os.path.splitext(self.filename)
-        key = f"pricing_sheets/{generated_at}_{self.request_id}_pricing_sheet{ext}"
+        key = f"pricing_sheets/{self.request_id}/{project_name} - Pricing Sheet{ext}"
 
         s3 = boto3.client("s3")
         s3.upload_file(self.filename, BUCKET, key)
