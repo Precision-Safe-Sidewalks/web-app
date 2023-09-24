@@ -29,7 +29,7 @@ image_pricing_sheet:
 release_images:
 	@docker tag ${PROJECT}:latest ${APP_IMAGE_URI}
 	@docker tag ${PROJECT}-lambda-geocoding:latest ${GEO_IMAGE_URI}
-	@docker tag ${PROJECT}-lambda-pricing_sheet:latest ${PRI_iMAGE_URI}
+	@docker tag ${PROJECT}-lambda-pricing_sheet:latest ${PRI_IMAGE_URI}
 	@docker push ${APP_IMAGE_URI}
 	@docker push ${GEO_IMAGE_URI}
 	@docker push ${PRI_IMAGE_URI}
