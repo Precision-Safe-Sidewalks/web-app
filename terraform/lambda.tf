@@ -4,6 +4,7 @@ resource "aws_lambda_function" "geocoding" {
   package_type  = "Image"
   image_uri     = "${data.aws_ecr_repository.lambda-geocoding.repository_url}:${var.app_version}"
   timeout       = 300
+  memory_size   = 512
 
   environment {
     variables = {
