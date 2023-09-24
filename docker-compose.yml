@@ -22,6 +22,7 @@ services:
       - DB_USER=postgres
       - DB_PASSWORD=postgres
       - DB_NAME=pss_dev
+      - GEOCODING_ENABLED=true
     env_file:
       - docker/env
       - docker/env.secrets
@@ -55,6 +56,18 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+  
+  lambda-geocoding:
+    image: pss-lambda-geocoding:latest
+    environment:
+      - DB_HOST=db
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=pss_dev
+    env_file:
+      - docker/env.secrets
+    ports:
+      - 8001:8080
 
   lambda-pricing-sheet:
     image: pss-lambda-pricing-sheet:latest
@@ -66,4 +79,4 @@ services:
     env_file:
       - docker/env.secrets
     ports:
-      - 8001:8080
+      - 8002:8080

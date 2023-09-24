@@ -1,14 +1,12 @@
 import csv
-import json
 
-import boto3
-from django.conf import settings
 from django.contrib.gis.db.models.fields import PointField
 from django.db import models, transaction
 
 from repairs.models.constants import QuickDescription, SpecialCase, Stage
 from repairs.models.projects import Project
 from repairs.parsers import get_parser_class
+from utils.aws import invoke_lambda_function
 
 
 class Measurement(models.Model):
@@ -59,16 +57,11 @@ class Measurement(models.Model):
                 kwargs = data.model_dump()
                 Measurement.objects.create(project=project, stage=stage, **kwargs)
 
-        # FIXME: move this to its own function
         # Trigger the Lambda function to reverse geocode the addresses
         # based on the coordinates by adding the (project_id, stage) to
         # the SQS queue
-        queue_url = settings.MEASUREMENT_GEOCODING_QUEUE_URL
-
-        if queue_url:
-            payload = json.dumps({"project_id": project.pk, "stage": stage})
-            sqs = boto3.client("sqs")
-            sqs.send_message(QueueUrl=queue_url, MessageBody=payload)
+        payload = {"project_id": project.pk, "stage": stage}
+        invoke_lambda_function("geocoding", payload)
 
         return Measurement.objects.filter(project=project, stage=stage)
 

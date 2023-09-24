@@ -1,7 +1,3 @@
-import json
-
-import boto3
-from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
@@ -14,6 +10,7 @@ from repairs.models import (
     Project,
 )
 from repairs.models.constants import Stage
+from utils.aws import invoke_lambda_function
 
 
 @receiver(post_save, sender=Project)
@@ -34,11 +31,5 @@ def generate_pricing_sheet(sender, instance, created, **kwargs):
     """Trigger the pricing sheet generation Lambda function"""
 
     if created:
-        payload = json.dumps({"request_id": str(instance.request_id)})
-
-        client = boto3.client("lambda", endpoint_url=settings.LAMBDA_ENDPOINT_URL)
-        client.invoke(
-            FunctionName=settings.PRICING_SHEET_LAMBDA_FUNCTION_NAME,
-            InvocationType="Event",
-            Payload=payload,
-        )
+        payload = {"request_id": instance.request_id}
+        invoke_lambda_function("pricing_sheet", payload=payload)
