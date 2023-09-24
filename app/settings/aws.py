@@ -1,13 +1,16 @@
+import json
 import os
 
-# Lambda endpoint url
-LAMBDA_ENDPOINT_URL = os.environ.get("LAMBDA_ENDPOINT_URL")
+import boto3
 
-# Measurement geocoding queue
-# FIXME: remove in favor of async invocation
-MEASUREMENT_GEOCODING_QUEUE_URL = os.environ.get("MEASUREMENT_GEOCODING_QUEUE_URL")
 
-# Pricing sheet Lambda function
-PRICING_SHEET_LAMBDA_FUNCTION_NAME = os.environ.get(
-    "PRICING_SHEET_LAMBDA_FUNCTION_NAME"
-)
+LAMBDA = {
+    "geocoding": {
+        "endpoint_url": os.environ.get("GEOCODING_LAMBDA_URL"),
+        "function_name": os.environ.get("GEOCODING_LAMBDA_FUNCTION_NAME"),
+    },
+    "pricing_sheet": {
+        "endpoint_url": os.environ.get("PRICING_SHEET_LAMBDA_URL"),
+        "function_name": os.environ.get("PRICING_SHEET_LAMBDA_FUNCTION_NAME"),
+    },
+}
