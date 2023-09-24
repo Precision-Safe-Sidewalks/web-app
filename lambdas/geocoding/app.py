@@ -11,9 +11,13 @@ def handler(event, context):
     project_id = event["project_id"]
     stage = event["stage"]
 
+    print(f"Processing project_id={project_id} stage={stage}")
     measurements = get_measurements(project_id, stage)
+    print(f"Found {len(measurements)} measurements")
     addresses = get_geocoded_addresses(measurements)
+    print(f"Geocoded {len(addresses)} addresses")
     update_measurements(addresses)
+    print("Updated measurements")
 
     return {
         "StatusCode": 200,
