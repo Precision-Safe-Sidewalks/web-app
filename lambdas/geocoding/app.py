@@ -60,6 +60,7 @@ def get_geocoded_addresses(measurements):
 
         address = None
         resp = geocoder.reverse(lat=lat, lon=lon, limit=1, types=["address"])
+        print(resp)
 
         if resp.ok:
             features = resp.json()["features"]
@@ -67,6 +68,12 @@ def get_geocoded_addresses(measurements):
             if features:
                 feature = features[0]
                 address = f"{feature['address']} {feature['text']}"
+            else:
+                print(f"No features found for measurement={pk}")
+
+        else:
+            error = resp.json()
+            print(f"Error geocoding measurement={pk}: {error}")
 
         addresses.append({"id": pk, "address": address})
 
