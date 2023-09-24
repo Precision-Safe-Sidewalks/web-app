@@ -3,6 +3,7 @@ import uuid
 import boto3
 from django.db import models
 
+from core.models.constants import States
 from repairs.models.constants import HazardDensity, HazardTier, PanelSize
 from repairs.models.projects import Project
 
@@ -29,6 +30,39 @@ class PricingSheet(models.Model):
     commission_rate = models.FloatField(default=0)
     base_rate = models.FloatField(default=0, help_text="Base cost/square foot")
     number_of_technicians = models.PositiveIntegerField(default=0)
+
+    def get_contact(self):
+        """Return the pricing sheet contact"""
+        try:
+            return self.contact
+        except PricingSheetContact.DoesNotExist:
+            return None
+
+
+class PricingSheetContact(models.Model):
+    """Pricing sheet contact (denormalized)"""
+
+    class ContactType(models.TextChoices):
+        """Pricing sheet contact type"""
+
+        PRIMARY = ("PRIMARY", "Primary")
+        SECONDARY = ("SECONDARY", "Secondary")
+        OTHER = ("OTHER", "Other")
+
+    pricing_sheet = models.OneToOneField(
+        PricingSheet, on_delete=models.CASCADE, related_name="contact"
+    )
+    contact_type = models.CharField(
+        max_length=25, choices=ContactType.choices, default=ContactType.PRIMARY
+    )
+    name = models.CharField(max_length=255)
+    title = models.CharField(max_length=255, blank=True, null=True)
+    street = models.CharField(max_length=255)
+    city = models.CharField(max_length=255)
+    state = models.CharField(max_length=2, choices=States.choices)
+    zip_code = models.CharField(max_length=6)
+    email = models.EmailField(max_length=255, blank=True, null=True)
+    phone_number = models.CharField(max_length=25, blank=True, null=True)
 
 
 class PricingSheetRequest(models.Model):

@@ -21,6 +21,7 @@ from pydantic import ValidationError
 
 from customers.models import Customer
 from pages.forms.projects import (
+    PricingSheetContactForm,
     PricingSheetInchFootForm,
     ProjectForm,
     ProjectMeasurementsForm,
@@ -459,19 +460,43 @@ class PricingSheetView(TemplateView):
 
     def get_context_data(self, **kwargs):
         project = self.get_object()
+        pricing_sheet = project.pricing_sheet
+        contact = pricing_sheet.get_contact()
+
         context = super().get_context_data(**kwargs)
         context["project"] = project
-        context["form"] = self.get_form_class()(instance=project.pricing_sheet)
+        context["form"] = self.get_form_class()(instance=pricing_sheet)
+        context["contact_form"] = PricingSheetContactForm(instance=contact)
+        context["contact_type"] = contact.contact_type if contact else None
+        context["contact_exists"] = contact is not None
+
         return context
 
     def post(self, request, pk):
         project = self.get_object()
-        form = self.get_form_class()(request.POST, instance=project.pricing_sheet)
+        pricing_sheet = project.pricing_sheet
+        contact = pricing_sheet.get_contact()
 
-        if form.is_valid():
-            form.save()
+        # TODO: find a better way to do this
+        request.POST._mutable = True
+        request.POST["pricing_sheet"] = pricing_sheet.pk
+        request.POST._mutable = False
+
+        form = self.get_form_class()(request.POST, instance=project.pricing_sheet)
+        contact_form = PricingSheetContactForm(request.POST, instance=contact)
+
+        if form.is_valid() and contact_form.is_valid():
+            with transaction.atomic():
+                form.save()
+
+                contact_form.cleaned_data["pricing_sheet"] = pricing_sheet
+                contact_form.save()
+
             redirect_url = reverse("project-detail", kwargs={"pk": self.kwargs["pk"]})
             return redirect(redirect_url)
+        else:
+            print("form", form.errors)
+            print("contact_form", contact_form.errors)
 
         # TODO: improve the errors for context
         redirect_url = request.path + "?errors=Unable to save the pricing sheet"
