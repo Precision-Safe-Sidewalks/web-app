@@ -8,14 +8,20 @@ from psycopg2.extras import execute_batch
 
 def handler(event, context):
     """Measurement reverse geocoding Lambda function"""
-    for record in event["Records"]:
-        body = json.loads(record["body"])
-        project_id = int(body["project_id"])
-        stage = body["stage"]
+    project_id = event["project_id"]
+    stage = event["stage"]
 
-        measurements = get_measurements(project_id, stage)
-        addresses = get_geocoded_addresses(measurements)
-        update_measurements(addresses)
+    measurements = get_measurements(project_id, stage)
+    addresses = get_geocoded_addresses(measurements)
+    update_measurements(addresses)
+
+    return {
+        "StatusCode": 200,
+        "headers": {
+            "Content-Type": "application/json",
+        },
+        "body": json.dumps({"count": len(addresses)}),
+    }
 
 
 def get_measurements(project_id, stage):
