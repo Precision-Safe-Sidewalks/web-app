@@ -1,3 +1,4 @@
 boto3==1.28.39
 openpyxl==3.1.2
+pandas==1.5.2
 psycopg2-binary==2.9.7
