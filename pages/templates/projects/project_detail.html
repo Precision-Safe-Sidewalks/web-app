@@ -192,13 +192,13 @@
                 </div>
               </div>
 
-              <!-- Modal for downloading erro -->
+              <!-- Modal for downloading error -->
               <div class="dialog" id="id_modal_pricing_sheet_error">
                 <div class="dialog-content">
                   <div class="dialog-body">
                     <div class="flex--center flex--column m-4">
                       <div class="m-8">
-                        <div class="icon--error">error</div>
+                        <span class="icon--lg icon--filled icon--error">error</span>
                       </div>
                       An error occurred generating the pricing sheet.
                     </div>
@@ -387,15 +387,18 @@
       return
     }
 
-    // If receiving a 200, download the file
+    // If the presigned url is present, then the generation was
+    // a success and the file can be downloaded
     if (resp.status === 200) {
       const data = await resp.json()
       const anchor = document.createElement("a")
+
       anchor.href = data.url
       anchor.target = "_self"
       anchor.click()
       anchor.remove()
       $(modal).removeClass("open")
+
       return true
     }
 

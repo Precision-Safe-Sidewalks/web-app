@@ -2,6 +2,7 @@ import io
 
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -67,7 +68,14 @@ class PricingSheetAPIView(APIView):
         url = req.get_download_url()
 
         if not url:
-            data = {"status": "Generating"}
+            elapsed = timezone.now() - req.created_at
+            data = {"elapsed": elapsed.seconds}
+
+            # If the maximum timeout has been reached, indicate to the client
+            # that the request has failed and polling should be terminated
+            if elapsed.seconds >= 120:
+                return Response(data, status=status.HTTP_408_REQUEST_TIMEOUT)
+
             return Response(data, status=status.HTTP_202_ACCEPTED)
 
         return Response({"url": url})

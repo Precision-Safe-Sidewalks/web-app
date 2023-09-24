@@ -34,4 +34,10 @@
 
     font-family: "Material Icons";
   }
+
+  &--lg {
+    @extend .icon;
+
+    font-size: 48px;
+  }
 }
