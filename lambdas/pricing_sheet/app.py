@@ -90,6 +90,7 @@ class PricingSheetGenerator:
 
     def get_template(self):
         """Return the template for the pricing model"""
+
         pricing_model = self.project["pricing_model"]
 
         if pricing_model == "INCH_FOOT":
@@ -101,6 +102,7 @@ class PricingSheetGenerator:
 
     def get_data(self):
         """Return the data for the pricing model/project"""
+
         pricing_model = self.project["pricing_model"]
         self.raw_data = self.get_raw_data()
 
