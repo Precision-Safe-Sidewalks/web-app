@@ -26,12 +26,18 @@ image_geocoding:
 image_pricing_sheet:
 	@docker build -t ${PROJECT}-lambda-pricing-sheet:latest -f docker/Dockerfile.lambda.pricing_sheet .
 
-release_images:
+release_images: release_image_app release_image_geocoding release_image_pricing_sheet
+
+release_image_app:
 	@docker tag ${PROJECT}:latest ${APP_IMAGE_URI}
-	@docker tag ${PROJECT}-lambda-geocoding:latest ${GEO_IMAGE_URI}
-	@docker tag ${PROJECT}-lambda-pricing_sheet:latest ${PRI_IMAGE_URI}
 	@docker push ${APP_IMAGE_URI}
+
+release_image_geocoding:
+	@docker tag ${PROJECT}-lambda-geocoding:latest ${GEO_IMAGE_URI}
 	@docker push ${GEO_IMAGE_URI}
+
+release_image_pricing_sheet:
+	@docker tag ${PROJECT}-lambda-pricing-sheet:latest ${PRI_IMAGE_URI}
 	@docker push ${PRI_IMAGE_URI}
 	
 pull_image:
