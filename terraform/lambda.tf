@@ -1,7 +1,3 @@
-data "aws_sqs_queue" "geocoding" {
-  name = "${local.project}-geocoding-${local.env}"
-}
-
 resource "aws_lambda_function" "geocoding" {
   function_name = "${local.project}-geocoding-${local.env}"
   role          = aws_iam_role.lambda.arn
@@ -22,12 +18,6 @@ resource "aws_lambda_function" "geocoding" {
     Project     = local.project
     Environment = local.env
   }
-}
-
-resource "aws_lambda_event_source_mapping" "geocoding" {
-  event_source_arn = data.aws_sqs_queue.geocoding.arn
-  function_name    = aws_lambda_function.geocoding.function_name
-  batch_size       = 1
 }
 
 resource "aws_lambda_function" "pricing_sheet" {
