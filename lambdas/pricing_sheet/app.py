@@ -12,7 +12,6 @@ BUCKET = "precision-safe-sidewalks"
 def handler(event, context):
     """Pricing sheet generator handler"""
     request_id = event["request_id"]
-    print(f"Generating pricing sheet: {request_id}")
 
     generator = PricingSheetGenerator(request_id)
     generator.generate()
@@ -48,7 +47,6 @@ class PricingSheetGenerator:
 
     def get_project_id(self):
         """Return the project id from the request id"""
-        print("Fetching the project id")
 
         sql = """
             SELECT
@@ -64,7 +62,6 @@ class PricingSheetGenerator:
 
     def get_project(self):
         """Return the project data"""
-        print("Fetching the project")
 
         sql = """
             SELECT 
@@ -93,7 +90,6 @@ class PricingSheetGenerator:
 
     def get_template(self):
         """Return the template for the pricing model"""
-        print("Fetching the template")
 
         pricing_model = self.project["pricing_model"]
 
@@ -106,7 +102,6 @@ class PricingSheetGenerator:
 
     def get_data(self):
         """Return the data for the pricing model/project"""
-        print("Fetching the pricing sheet data")
 
         pricing_model = self.project["pricing_model"]
         self.raw_data = self.get_raw_data()
@@ -119,7 +114,6 @@ class PricingSheetGenerator:
 
     def get_raw_data(self):
         """Return the raw data"""
-        print("Fetching the raw data")
 
         sql = """
             SELECT
@@ -209,7 +203,6 @@ class PricingSheetGenerator:
 
     def get_measurements(self):
         """Return the survey measurements"""
-        print("Fetching the survey data")
 
         sql = """
             SELECT
@@ -233,13 +226,10 @@ class PricingSheetGenerator:
 
     def insert_data(self, template, data):
         """Insert the data into the pricing sheet template"""
-        print("Inserting the pricing sheet data")
 
         workbook = openpyxl.load_workbook(template, keep_vba=True)
-        print("Template loaded")
 
         for sheet_name, sheet_data in data.items():
-            print(f"Processing sheet {sheet_name}")
             worksheet = workbook[sheet_name]
 
             for cell, value in sheet_data.items():
@@ -248,7 +238,6 @@ class PricingSheetGenerator:
         _, ext = os.path.splitext(template)
         self.filename = f"/tmp/{self.request_id}{ext}"
 
-        print("Saving the workbook")
         workbook.save(self.filename)
         workbook.close()
 
@@ -268,8 +257,6 @@ class PricingSheetGenerator:
 
         _, ext = os.path.splitext(self.filename)
         key = f"pricing_sheets/{self.request_id}/{project_name} - Pricing Sheet{ext}"
-        
-        print(f"Uploading the workbook to S3: {key}")
 
         s3 = boto3.client("s3")
         s3.upload_file(self.filename, BUCKET, key)
@@ -280,7 +267,6 @@ class PricingSheetGenerator:
 
     def update_request(self, key):
         """Update the request's S3 bucket/key"""
-        print("Updating the pricing sheet bucket/key")
 
         sql = """
             UPDATE repairs_pricingsheetrequest SET
