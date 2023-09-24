@@ -1,6 +1,7 @@
 import json
 
 import boto3
+from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
@@ -35,7 +36,9 @@ def generate_pricing_sheet(sender, instance, created, **kwargs):
     if created:
         payload = json.dumps({"request_id": str(instance.request_id)})
 
-        client = boto3.client(
-            "lambda", endpoint_url="http://docker.for.mac.localhost:8001"
+        client = boto3.client("lambda", endpoint_url=settings.LAMBDA_ENDPOINT_URL)
+        client.invoke(
+            FunctionName=settings.PRICING_SHEET_LAMBDA_FUNCTION_NAME,
+            InvocationType="Event",
+            Payload=payload,
         )
-        client.invoke(FunctionName="function", InvocationType="Event", Payload=payload)

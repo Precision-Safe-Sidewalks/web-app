@@ -3,4 +3,5 @@ DJANGO_SECRET_KEY=fake-secret
 
 AWS_DEFAULT_REGION=us-east-1
 
-PRICING_SHEET_LAMBDA_URL=http://localhost:8001/2015-03-31/functions/function/invocations
+LAMBDA_ENDPOINT_URL=http://docker.for.mac.localhost:8001
+PRICING_SHEET_LAMBDA_FUNCTION_NAME=function
