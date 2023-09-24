@@ -1,8 +1,4 @@
-import json
 import os
-
-import boto3
-
 
 LAMBDA = {
     "geocoding": {
