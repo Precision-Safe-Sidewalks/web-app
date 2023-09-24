@@ -20,7 +20,11 @@ from django.views.generic import (
 from pydantic import ValidationError
 
 from customers.models import Customer
-from pages.forms.projects import ProjectForm, ProjectMeasurementsForm
+from pages.forms.projects import (
+    PricingSheetInchFootForm,
+    ProjectForm,
+    ProjectMeasurementsForm,
+)
 from repairs.models import (
     InstructionContactNote,
     InstructionNote,
@@ -33,6 +37,7 @@ from repairs.models.constants import (
     Cut,
     DRSpecification,
     Hazard,
+    PricingModel,
     ProjectSpecification,
     ReferenceImageMethod,
     SpecialCase,
@@ -427,3 +432,47 @@ class ProjectInstructionsView(BaseInstructionsView):
         context["error"] = self.request.GET.get("error")
 
         return context
+
+
+class PricingSheetView(TemplateView):
+    def get_object(self):
+        """Return the Project object"""
+        return get_object_or_404(Project, pk=self.kwargs["pk"])
+
+    def get_template_names(self):
+        """Return the template based on the pricing model"""
+        project = self.get_object()
+
+        if project.pricing_model == PricingModel.SQUARE_FOOT:
+            return "projects/pricing_sheet_square_foot.html"
+
+        return "projects/pricing_sheet_inch_foot.html"
+
+    def get_form_class(self):
+        """Return the form class"""
+        project = self.get_object()
+
+        if project.pricing_model == PricingModel.SQUARE_FOOT:
+            raise NotImplementedError
+
+        return PricingSheetInchFootForm
+
+    def get_context_data(self, **kwargs):
+        project = self.get_object()
+        context = super().get_context_data(**kwargs)
+        context["project"] = project
+        context["form"] = self.get_form_class()(instance=project.pricing_sheet)
+        return context
+
+    def post(self, request, pk):
+        project = self.get_object()
+        form = self.get_form_class()(request.POST, instance=project.pricing_sheet)
+
+        if form.is_valid():
+            form.save()
+            redirect_url = reverse("project-detail", kwargs={"pk": self.kwargs["pk"]})
+            return redirect(redirect_url)
+
+        # TODO: improve the errors for context
+        redirect_url = request.path + "?errors=Unable to save the pricing sheet"
+        return redirect(redirect_url)

@@ -121,7 +121,7 @@ class Project(models.Model):
     def has_pricing_sheet(self):
         """Return True if the pricing sheet exists"""
         # TODO: define logic
-        return False
+        return True
 
     @property
     def has_project_summary(self):

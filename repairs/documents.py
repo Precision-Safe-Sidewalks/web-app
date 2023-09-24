@@ -22,7 +22,7 @@ class AbstractDocumentGenerator:
         raise NotImplementedError
 
 
-class BaseInstructionsGenerator:
+class BaseInstructionsGenerator(AbstractDocumentGenerator):
     """Base instructions PDF generator"""
 
     stylesheet = "repairs/static/documents/instructions.css"

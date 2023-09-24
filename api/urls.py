@@ -38,4 +38,9 @@ urlpatterns = router.urls + [
         repairs.ProjectInstructionsAPIView.as_view(),
         name="documents-project-instructions",
     ),
+    path(
+        "documents/pricing-sheet/<int:pk>/",
+        repairs.PricingSheetAPIView.as_view(),
+        name="documents-pricing-sheet",
+    ),
 ]

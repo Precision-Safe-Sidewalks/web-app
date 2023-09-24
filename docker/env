@@ -2,3 +2,6 @@ DJANGO_SETTINGS_MODULE=app.settings.development
 DJANGO_SECRET_KEY=fake-secret
 
 AWS_DEFAULT_REGION=us-east-1
+
+LAMBDA_ENDPOINT_URL=http://docker.for.mac.localhost:8001
+PRICING_SHEET_LAMBDA_FUNCTION_NAME=function

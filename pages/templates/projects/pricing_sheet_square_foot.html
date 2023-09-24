@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load project_tags %}
+
+{% block content %}
+<div class="pane pane--full-height">
+  <div class="mb-12">
+    <h2>Pricing Sheet (Square Foot)</h2>
+    <h5 class="mt-2">
+      <a href="{% url 'project-detail' pk=project.pk %}">
+        {{ project.name }}
+      </a>
+    </h5>
+  </div>
+
+  <form id="id_form" method="POST">
+    {% csrf_token %}
+  </form>
+</div>
+
+{% endblock %}

@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 
 from customers.models import Contact, Customer
-from repairs.models import Project
+from repairs.models import PricingSheet, Project
 
 User = get_user_model()
 
@@ -65,3 +65,23 @@ class ProjectMeasurementsForm(forms.Form):
     """Project measurements CSV upload"""
 
     file = forms.FileField(widget=forms.FileInput(attrs={"accept": "text/csv"}))
+
+
+class PricingSheetInchFootForm(forms.ModelForm):
+    """Inch foot pricing sheet form"""
+
+    class Meta:
+        model = PricingSheet
+        fields = (
+            "project",
+            "estimated_sidewalk_miles",
+            "surveyor_speed",
+            "survey_hazards",
+            "hazard_density",
+            "panel_size",
+            "distance_from_surveyor",
+            "distance_from_ops",
+            "commission_rate",
+            "base_rate",
+            "number_of_technicians",
+        )
