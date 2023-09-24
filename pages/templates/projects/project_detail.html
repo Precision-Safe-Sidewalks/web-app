@@ -190,6 +190,20 @@
                     </div>
                   </div>
                 </div>
+              </div>
+
+              <!-- Modal for downloading error -->
+              <div class="dialog" id="id_modal_pricing_sheet_error">
+                <div class="dialog-content">
+                  <div class="dialog-body">
+                    <div class="flex--center flex--column m-4">
+                      <div class="m-8">
+                        <span class="icon--lg icon--filled icon--error">error</span>
+                      </div>
+                      An error occurred generating the pricing sheet.
+                    </div>
+                  </div>
+                </div>
               {% endif %}
             </div>
           </td>
@@ -355,12 +369,14 @@
     if (resp.ok) {
       const { request_id } = await resp.json()
       await downloadPricingSheet(request_id)
-      $(modal).removeClass("open")
     }
   }
 
   // Handler to download the pricing sheet
   const downloadPricingSheet = async (requestId) => {
+    const modal = $("#id_modal_pricing_sheet")
+    const modalError = $("#id_modal_pricing_sheet_error")
+
     const url = "{% url 'documents-pricing-sheet' pk=project.pk %}" + `?request_id=${requestId}`
     const resp = await fetch(url, { mode: "no-cors", credentials: "include" })
 
@@ -371,15 +387,25 @@
       return
     }
 
-    // If receiving a 200, download the file
+    // If the presigned url is present, then the generation was
+    // a success and the file can be downloaded
     if (resp.status === 200) {
       const data = await resp.json()
       const anchor = document.createElement("a")
+
       anchor.href = data.url
       anchor.target = "_self"
       anchor.click()
       anchor.remove()
+      $(modal).removeClass("open")
+
+      return true
     }
+
+    // If an error occurred, let the user know
+    $(modal).removeClass("open")
+    $(modalError).addClass("open")
+    return false
   }
 
 </script>
