@@ -1,7 +1,11 @@
 import json
+import logging
 
 import boto3
 from django.conf import settings
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 def invoke_lambda_function(function, payload=None):
@@ -10,6 +14,10 @@ def invoke_lambda_function(function, payload=None):
 
     if not params:
         raise ValueError(f"Invalid function {function}")
+
+    if not params["enabled"]:
+        LOGGER.info(f"Lambda function {function} disabled")
+        return
 
     client = boto3.client("lambda", endpoint_url=params["endpoint_url"])
     client.invoke(
