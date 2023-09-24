@@ -11,13 +11,9 @@ def handler(event, context):
     project_id = event["project_id"]
     stage = event["stage"]
 
-    print(f"Processing project_id={project_id} stage={stage}")
     measurements = get_measurements(project_id, stage)
-    print(f"Found {len(measurements)} measurements")
     addresses = get_geocoded_addresses(measurements)
-    print(f"Geocoded {len(addresses)} addresses")
     update_measurements(addresses)
-    print("Updated measurements")
 
     return {
         "StatusCode": 200,
@@ -67,6 +63,12 @@ def get_geocoded_addresses(measurements):
             if features:
                 feature = features[0]
                 address = f"{feature['address']} {feature['text']}"
+            else:
+                print(f"No features found for measurement={pk}")
+
+        else:
+            error = resp.json()
+            print(f"Error geocoding measurement={pk}: {error}")
 
         addresses.append({"id": pk, "address": address})
 
