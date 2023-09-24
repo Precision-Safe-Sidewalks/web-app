@@ -150,7 +150,7 @@ class PricingSheetGenerator:
                 sheet_data[f"C{offset}"] = int(row.quick_description == "M")
                 sheet_data[f"D{offset}"] = int(row.quick_description == "L")
                 sheet_data[f"E{offset}"] = int(row.special_case == "C")
-                sheet_data[f"F{offset}"] = row.survey_address
+                sheet_data[f"F{offset}"] = row.geocoded_address
                 sheet_data[f"G{offset}"] = row.length
                 sheet_data[f"H{offset}"] = row.width
 
@@ -201,20 +201,19 @@ class PricingSheetGenerator:
 
     def get_measurements(self):
         """Return the survey measurements"""
-        # TODO: use geocoded address
 
         sql = """
             SELECT
                 quick_description,
                 special_case,
-                survey_address,
+                geocoded_address,
                 length,
                 width,
-                TRIM(REGEXP_REPLACE(survey_address, '[[:digit:]]', '', 'g')) AS survey_group 
+                TRIM(REGEXP_REPLACE(geocoded_address, '[[:digit:]]', '', 'g')) AS survey_group 
             FROM repairs_measurement
             WHERE project_id = %s
                 AND stage = 'SURVEY'
-                AND survey_address IS NOT NULL
+                AND geocoded_address IS NOT NULL
         """
 
         with self.get_db() as con:

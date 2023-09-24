@@ -22,6 +22,7 @@ services:
       - DB_USER=postgres
       - DB_PASSWORD=postgres
       - DB_NAME=pss_dev
+      - GEOCODING_ENABLED=true
     env_file:
       - docker/env
       - docker/env.secrets

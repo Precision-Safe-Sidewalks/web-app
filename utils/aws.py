@@ -4,7 +4,6 @@ import logging
 import boto3
 from django.conf import settings
 
-
 LOGGER = logging.getLogger(__name__)
 
 
