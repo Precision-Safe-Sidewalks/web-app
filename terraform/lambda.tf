@@ -3,7 +3,7 @@ resource "aws_lambda_function" "geocoding" {
   role          = aws_iam_role.lambda.arn
   package_type  = "Image"
   image_uri     = "${data.aws_ecr_repository.lambda-geocoding.repository_url}:${var.app_version}"
-  timeout       = 900
+  timeout       = 300
 
   environment {
     variables = {
@@ -26,7 +26,8 @@ resource "aws_lambda_function" "pricing_sheet" {
   role          = aws_iam_role.lambda.arn
   package_type  = "Image"
   image_uri     = "${data.aws_ecr_repository.lambda-pricing-sheet.repository_url}:${var.app_version}"
-  timeout       = 900
+  timeout       = 300
+  memory_size   = 1024
 
   environment {
     variables = {
