@@ -168,6 +168,13 @@
         <div class="form-control w-64">
           {{ contact_form.email }}
         </div>
+        
+        <div class="text--body-md">
+          Phone Number
+        </div>
+        <div class="form-control w-64">
+          {{ contact_form.phone_number }}
+        </div>
       </div>
     </div>
 
@@ -205,6 +212,7 @@
     $(`select[name="contact:state"]`).val("{{ project.primary_contact.state }}")
     $(`input[name="contact:zip_code"]`).val("{{ project.primary_contact.zip_code }}")
     $(`input[name="contact:email"]`).val("{{ project.primary_contact.email }}")
+    $(`input[name="contact:phone_number"]`).val("{{ project.primary_contact.get_phone_number }}")
   }
 
   const setSecondaryContact = (form) => {
@@ -214,7 +222,8 @@
     $(`input[name="contact:city"]`).val("{{ project.secondary_contact.city }}")
     $(`select[name="contact:state"]`).val("{{ project.secondary_contact.state }}")
     $(`input[name="contact:zip_code"]`).val("{{ project.secondary_contact.zip_code }}")
-    $(`input[name="contact:email"]`).val("{{ project.primary_contact.email }}")
+    $(`input[name="contact:email"]`).val("{{ project.secondary_contact.email }}")
+    $(`input[name="contact:phone_number"]`).val("{{ project.secondary_contact.get_phone_number }}")
   }
 
   const setOtherContact = (form) => {

@@ -64,6 +64,13 @@ class Contact(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def get_phone_number(self):
+        """Return the Work or Cell phone number"""
+        if phone := self.get_work_phone():
+            return phone
+
+        return self.get_cell_phone()
+
     def get_work_phone(self):
         """Return the work phone number"""
         return self.phone_numbers.filter(number_type=PhoneNumberType.WORK).first()
