@@ -83,7 +83,7 @@ class PricingSheetGenerator:
                 JOIN customers_customer customer ON project.customer_id = customer.id
                 JOIN repairs_instruction instruction ON project.id = instruction.project_id AND instruction.stage = 'SURVEY'
                 JOIN repairs_pricingsheet pricing ON project.id = pricing.project_id
-                JOIN repairs_pricingsheetcontact contact ON pricing.id = contact.pricing_sheet_id
+                LEFT OUTER JOIN repairs_pricingsheetcontact contact ON pricing.id = contact.pricing_sheet_id
                 LEFT OUTER JOIN accounts_user user_a ON project.business_development_manager_id = user_a.id
                 LEFT OUTER JOIN accounts_user user_b ON instruction.surveyed_by_id = user_b.id
             WHERE project.id = %s
