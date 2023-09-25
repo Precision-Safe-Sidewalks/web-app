@@ -144,10 +144,10 @@ class PricingSheetGenerator:
             results = cursor.fetchone()
             return dict(zip(columns, results))
 
-    def get_data_inch_foot(self, max_groups=20):
+    def get_data_inch_foot(self):
         """Return the data for the inch foot pricing model"""
 
-        df = self.get_measurements()
+        df = self.get_measurements(max_groups=20)
         data = {}
 
         for group, group_df in df.groupby("survey_group", sort=True):
@@ -208,7 +208,7 @@ class PricingSheetGenerator:
         """Return the data for the square foot pricing model"""
         return {}
 
-    def get_measurements(self):
+    def get_measurements(self, max_groups=None):
         """Return the survey measurements"""
 
         sql = """
@@ -228,6 +228,22 @@ class PricingSheetGenerator:
         with self.get_db() as con:
             params = (self.project_id,)
             df = pandas.read_sql_query(sql, con, params=params)
+
+        # If max_groups is specified, ensure that the number of survey
+        # groups is less than or equal. Merge the smallest groups together
+        # to reach the goal.
+        if max_groups:
+            groups = df.survey_group.unique()
+
+            while len(groups) > max_groups:
+                counts = df.survey_group.value_counts(ascending=True)
+                values = counts.iloc[:2].index.values
+                merged = " & ".join(values)
+
+                df.loc[df.survey_group == values[0], "survey_group"] = merged
+                df.loc[df.survey_group == values[1], "survey_group"] = merged
+
+                groups = df.survey_group.unique()
 
         return df
 
