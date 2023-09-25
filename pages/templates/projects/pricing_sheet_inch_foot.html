@@ -100,17 +100,17 @@
         </div>
         <div class="form-control w-64">
           <select id="id_contact_type" name="contact:contact_type" onchange="onChangeContactType(event)">
-            <option value="Primary" {% if contact_type == "Primary" %}selected{% endif %}>
+            <option value="PRIMARY" {% if contact_type == "PRIMARY" %}selected{% endif %}>
               {{ project.primary_contact.name }}
             </option>
             
             {% if project.secondary_contact %}
-              <option value="Secondary" {% if contact_type == "Secondary" %}selected{% endif %}>
+              <option value="SECONDARY" {% if contact_type == "SECONDARY" %}selected{% endif %}>
                 {{ project.secondary_contact.name }}
               </option>
             {% endif %}
 
-            <option value="Other" {% if contact_type == "Other" %}selected{% endif %}>
+            <option value="OTHER" {% if contact_type == "OTHER" %}selected{% endif %}>
               Other
             </option>
           </select>
@@ -193,18 +193,18 @@
     const contactForm = $("#id_contact_form")
   
     switch (contactType) {
-      case "Primary":
-        setPrimaryContact(contactForm)
+      case "PRIMARY":
+        setPRIMARYContact(contactForm)
         break
-      case "Secondary":
-        setSecondaryContact(contactForm)
+      case "SECONDARY":
+        setSECONDARYContact(contactForm)
         break
       default:
-        setOtherContact(contactForm)
+        setOTHERContact(contactForm)
     }
   }
 
-  const setPrimaryContact = (form) => {
+  const setPRIMARYContact = (form) => {
     $(`input[name="contact:name"]`).val("{{ project.primary_contact.name }}")
     $(`input[name="contact:title"]`).val("{{ project.primary_contact.title }}")
     $(`input[name="contact:street"]`).val("{{ project.primary_contact.street }}")
@@ -215,7 +215,7 @@
     $(`input[name="contact:phone_number"]`).val("{{ project.primary_contact.get_phone_number }}")
   }
 
-  const setSecondaryContact = (form) => {
+  const setSECONDARYContact = (form) => {
     $(`input[name="contact:name"]`).val("{{ project.secondary_contact.name }}")
     $(`input[name="contact:title"]`).val("{{ project.secondary_contact.title }}")
     $(`input[name="contact:street"]`).val("{{ project.secondary_contact.street }}")
@@ -226,12 +226,15 @@
     $(`input[name="contact:phone_number"]`).val("{{ project.secondary_contact.get_phone_number }}")
   }
 
-  const setOtherContact = (form) => {
+  const setOTHERContact = (form) => {
     $(form).find("input").val("")
     $(form).find("select").val("")
   }
 
   $(document).ready(() => {
+    // Fix for inputs display "None" when empty
+    $(`input[name^="contact:"][value="None"]`).val("")
+
     const contactExists = "{{ contact_exists|lower }}" === "true"
 
     if (!contactExists) {

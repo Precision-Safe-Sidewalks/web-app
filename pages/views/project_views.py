@@ -479,7 +479,7 @@ class PricingSheetView(TemplateView):
 
         # TODO: find a better way to do this
         request.POST._mutable = True
-        request.POST["pricing_sheet"] = pricing_sheet.pk
+        request.POST["contact:pricing_sheet"] = pricing_sheet.pk
         request.POST._mutable = False
 
         form = self.get_form_class()(request.POST, instance=project.pricing_sheet)

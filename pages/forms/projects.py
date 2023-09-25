@@ -92,11 +92,7 @@ class PricingSheetContactForm(forms.ModelForm):
 
     def add_prefix(self, field_name):
         field_name = super().add_prefix(field_name)
-
-        if field_name != "pricing_sheet":
-            return f"contact:{field_name}"
-
-        return field_name
+        return f"contact:{field_name}"
 
     class Meta:
         model = PricingSheetContact

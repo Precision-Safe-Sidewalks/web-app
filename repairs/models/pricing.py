@@ -57,10 +57,12 @@ class PricingSheetContact(models.Model):
     )
     name = models.CharField(max_length=255)
     title = models.CharField(max_length=255, blank=True, null=True)
-    street = models.CharField(max_length=255)
-    city = models.CharField(max_length=255)
-    state = models.CharField(max_length=2, choices=States.choices)
-    zip_code = models.CharField(max_length=6)
+    street = models.CharField(max_length=255, blank=True, null=True)
+    city = models.CharField(max_length=255, blank=True, null=True)
+    state = models.CharField(
+        max_length=2, choices=States.choices, blank=True, null=True
+    )
+    zip_code = models.CharField(max_length=6, blank=True, null=True)
     email = models.EmailField(max_length=255, blank=True, null=True)
     phone_number = models.CharField(max_length=25, blank=True, null=True)
 
