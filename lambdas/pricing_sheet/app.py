@@ -65,21 +65,27 @@ class PricingSheetGenerator:
 
         sql = """
             SELECT 
-                p.name,
+                project.name AS name,
+                user_a.full_name AS bdm,
+                user_b.full_name AS surveyor,
+                customer.name AS organization_name,
+                contact.name AS contact_name,
+                contact.title AS contact_title,
+                contact.email AS contact_email,
+                contact.phone_number AS contact_phone_number,
                 CASE
-                    WHEN p.pricing_model = 1 THEN 'INCH_FOOT'
-                    WHEN p.pricing_model = 2 THEN 'SQUARE_FOOT'
+                    WHEN project.pricing_model = 1 THEN 'INCH_FOOT'
+                    WHEN project.pricing_model = 2 THEN 'SQUARE_FOOT'
                     ELSE NULL
-                END AS pricing_model,
-                ubdm.full_name AS bdm,
-                usur.full_name AS surveyor,
-                c.name AS organization_name
-            FROM repairs_project p
-                JOIN customers_customer c ON p.customer_id = c.id
-                JOIN repairs_instruction i ON p.id = i.project_id AND i.stage = 'SURVEY'
-                LEFT OUTER JOIN accounts_user ubdm ON p.business_development_manager_id = ubdm.id
-                LEFT OUTER JOIN accounts_user usur ON i.surveyed_by_id = usur.id
-            WHERE p.id = %s
+                END AS pricing_model
+            FROM repairs_project project
+                JOIN customers_customer customer ON project.customer_id = customer.id
+                JOIN repairs_instruction instruction ON project.id = instruction.project_id AND instruction.stage = 'SURVEY'
+                JOIN repairs_pricingsheet pricing ON project.id = pricing.project_id
+                JOIN repairs_pricingsheetcontact contact ON pricing.id = contact.pricing_sheet_id
+                LEFT OUTER JOIN accounts_user user_a ON project.business_development_manager_id = user_a.id
+                LEFT OUTER JOIN accounts_user user_b ON instruction.surveyed_by_id = user_b.id
+            WHERE project.id = %s
         """
 
         with self.get_db().cursor() as cursor:
@@ -185,10 +191,10 @@ class PricingSheetGenerator:
                 "F3": self.project["bdm"],  # FIXME: make initials
                 "G3": self.project["surveyor"],  # FIXME: make initials
                 "H3": "",  # alt deal owner
-                "I3": "",  # client name
-                "J3": "",  # client title
-                "K3": "",  # client email
-                "L3": "",  # client phone number
+                "I3": self.project["contact_name"],
+                "J3": self.project["contact_title"],
+                "K3": self.project["contact_email"],
+                "L3": self.project["contact_phone_number"],
             },
             "GREEN SAVINGS": {
                 "E44": self.raw_data["number_of_technicians"],
