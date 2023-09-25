@@ -246,7 +246,7 @@ class PricingSheetGenerator:
                 groups = df.survey_group.unique()
 
         # Sort by the survey address for consistent ordering
-        df.sort_values("survey_address", inplace=True)
+        df.sort_values("geocoded_address", inplace=True)
 
         return df
 
