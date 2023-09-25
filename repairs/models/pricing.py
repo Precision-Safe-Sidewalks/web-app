@@ -68,7 +68,7 @@ class PricingSheetContact(models.Model):
     address = models.TextField(blank=True, null=True)
 
     def save(self, *args, **kwargs):
-        self.address = self.format_addres()
+        self.address = self.format_address()
         super().save(*args, **kwargs)
 
     def format_address(self):

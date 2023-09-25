@@ -66,13 +66,14 @@ class PricingSheetGenerator:
         sql = """
             SELECT 
                 project.name AS name,
-                user_a.full_name AS bdm,
-                user_b.full_name AS surveyor,
+                user_a.initials AS bdm,
+                user_b.initials AS surveyor,
                 customer.name AS organization_name,
                 contact.name AS contact_name,
                 contact.title AS contact_title,
                 contact.email AS contact_email,
                 contact.phone_number AS contact_phone_number,
+                contact.address AS contact_address,
                 CASE
                     WHEN project.pricing_model = 1 THEN 'INCH_FOOT'
                     WHEN project.pricing_model = 2 THEN 'SQUARE_FOOT'
@@ -187,10 +188,10 @@ class PricingSheetGenerator:
             },
             "SUMMARY": {
                 "D3": self.project["organization_name"],
-                "E3": "",  # address
-                "F3": self.project["bdm"],  # FIXME: make initials
-                "G3": self.project["surveyor"],  # FIXME: make initials
-                "H3": "",  # alt deal owner
+                "E3": self.project["contact_address"],
+                "F3": self.project["bdm"],
+                "G3": self.project["surveyor"],
+                "H3": "",  # TODO: alt deal owner
                 "I3": self.project["contact_name"],
                 "J3": self.project["contact_title"],
                 "K3": self.project["contact_email"],
