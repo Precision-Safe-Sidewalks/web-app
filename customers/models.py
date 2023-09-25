@@ -54,8 +54,22 @@ class Contact(models.Model):
     name = models.CharField(max_length=255)
     title = models.CharField(max_length=255, blank=True, null=True)
     email = models.EmailField(max_length=200, blank=True, null=True)
+    title = models.CharField(max_length=255, blank=True, null=True)
+    street = models.CharField(max_length=255, blank=True, null=True)
+    city = models.CharField(max_length=255, blank=True, null=True)
+    state = models.CharField(
+        max_length=2, choices=States.choices, blank=True, null=True
+    )
+    zip_code = models.CharField(max_length=6, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def get_phone_number(self):
+        """Return the Work or Cell phone number"""
+        if phone := self.get_work_phone():
+            return phone
+
+        return self.get_cell_phone()
 
     def get_work_phone(self):
         """Return the work phone number"""

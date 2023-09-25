@@ -75,6 +75,10 @@ class ContactForm(forms.ModelForm):
             "phone_work_ext",
             "phone_cell",
             "phone_cell_ext",
+            "street",
+            "city",
+            "state",
+            "zip_code",
         )
         widgets = {
             "customer": forms.HiddenInput(),

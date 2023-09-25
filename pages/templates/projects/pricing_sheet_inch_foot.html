@@ -12,10 +12,10 @@
     </h5>
   </div>
 
-  <form id="id_form" method="POST">
+  <form id="id_form" method="POST" onsubmit="onSubmit(event)">
     {% csrf_token %}
 
-    <div class="my-12 grid" style="grid-template-columns: 256px auto;">
+    <div class="mt-12 grid" style="grid-template-columns: 256px auto;">
       {{ form.project.as_hidden }}
 
       <div class="text--body-md">
@@ -90,6 +90,94 @@
 
     </div>
 
+    <!-- Contact form (manual entry) -->
+    <div class="my-12">
+      <h4 class="mb-4">Contact</h4>
+      
+      <div class="grid mb-3" style="grid-template-columns: 256px auto;">
+        <div class="text--body-md">
+          Contact
+        </div>
+        <div class="form-control w-64">
+          <select id="id_contact_type" name="contact:contact_type" onchange="onChangeContactType(event)">
+            <option value="PRIMARY" {% if contact_type == "PRIMARY" %}selected{% endif %}>
+              {{ project.primary_contact.name }}
+            </option>
+            
+            {% if project.secondary_contact %}
+              <option value="SECONDARY" {% if contact_type == "SECONDARY" %}selected{% endif %}>
+                {{ project.secondary_contact.name }}
+              </option>
+            {% endif %}
+
+            <option value="OTHER" {% if contact_type == "OTHER" %}selected{% endif %}>
+              Other
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div id="id_contact_form" class="mb-12 grid" style="grid-template-columns: 256px auto;">
+        {{ contact_form.pricing_sheet.as_hidden }}
+
+        <div class="text--body-md">
+          Name
+        </div>
+        <div class="form-control w-64">
+          {{ contact_form.name }}
+        </div>
+
+        <div class="text--body-md">
+          Title
+        </div>
+        <div class="form-control w-64">
+          {{ contact_form.title }}
+        </div>
+        
+        <div class="text--body-md">
+          Street
+        </div>
+        <div class="form-control w-64">
+          {{ contact_form.street }}
+        </div>
+        
+        <div class="text--body-md">
+          City
+        </div>
+        <div class="form-control w-64">
+          {{ contact_form.city }}
+        </div>
+        
+        <div class="text--body-md">
+          State
+        </div>
+        <div class="form-control w-64">
+          {{ contact_form.state }}
+        </div>
+        
+        <div class="text--body-md">
+          Zip Code
+        </div>
+        <div class="form-control w-64">
+          {{ contact_form.zip_code }}
+        </div>
+        
+        <div class="text--body-md">
+          Email
+        </div>
+        <div class="form-control w-64">
+          {{ contact_form.email }}
+        </div>
+        
+        <div class="text--body-md">
+          Phone Number
+        </div>
+        <div class="form-control w-64">
+          {{ contact_form.phone_number }}
+        </div>
+      </div>
+    </div>
+
     <div class="flex">
       <button type="submit" class="btn--filled">Save</button>
     </div>
@@ -97,5 +185,63 @@
     {{ form.errors }}
   </form>
 </div>
+
+<script>
+  // Handler for changing the contact type
+  const onChangeContactType = (event) => {
+    const contactType = event.target.value
+    const contactForm = $("#id_contact_form")
+  
+    switch (contactType) {
+      case "PRIMARY":
+        setPRIMARYContact(contactForm)
+        break
+      case "SECONDARY":
+        setSECONDARYContact(contactForm)
+        break
+      default:
+        setOTHERContact(contactForm)
+    }
+  }
+
+  const setPRIMARYContact = (form) => {
+    $(`input[name="contact:name"]`).val("{{ project.primary_contact.name }}")
+    $(`input[name="contact:title"]`).val("{{ project.primary_contact.title }}")
+    $(`input[name="contact:street"]`).val("{{ project.primary_contact.street }}")
+    $(`input[name="contact:city"]`).val("{{ project.primary_contact.city }}")
+    $(`select[name="contact:state"]`).val("{{ project.primary_contact.state }}")
+    $(`input[name="contact:zip_code"]`).val("{{ project.primary_contact.zip_code }}")
+    $(`input[name="contact:email"]`).val("{{ project.primary_contact.email }}")
+    $(`input[name="contact:phone_number"]`).val("{{ project.primary_contact.get_phone_number }}")
+  }
+
+  const setSECONDARYContact = (form) => {
+    $(`input[name="contact:name"]`).val("{{ project.secondary_contact.name }}")
+    $(`input[name="contact:title"]`).val("{{ project.secondary_contact.title }}")
+    $(`input[name="contact:street"]`).val("{{ project.secondary_contact.street }}")
+    $(`input[name="contact:city"]`).val("{{ project.secondary_contact.city }}")
+    $(`select[name="contact:state"]`).val("{{ project.secondary_contact.state }}")
+    $(`input[name="contact:zip_code"]`).val("{{ project.secondary_contact.zip_code }}")
+    $(`input[name="contact:email"]`).val("{{ project.secondary_contact.email }}")
+    $(`input[name="contact:phone_number"]`).val("{{ project.secondary_contact.get_phone_number }}")
+  }
+
+  const setOTHERContact = (form) => {
+    $(form).find("input").val("")
+    $(form).find("select").val("")
+  }
+
+  $(document).ready(() => {
+    // Fix for inputs display "None" when empty
+    $(`input[name^="contact:"][value="None"]`).val("")
+
+    const contactExists = "{{ contact_exists|lower }}" === "true"
+
+    if (!contactExists) {
+      $("#id_contact_type").trigger("change")
+    }
+  })
+
+</script>
 
 {% endblock %}

@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 
 from customers.models import Contact, Customer
-from repairs.models import PricingSheet, Project
+from repairs.models import PricingSheet, PricingSheetContact, Project
 
 User = get_user_model()
 
@@ -85,3 +85,15 @@ class PricingSheetInchFootForm(forms.ModelForm):
             "base_rate",
             "number_of_technicians",
         )
+
+
+class PricingSheetContactForm(forms.ModelForm):
+    """Pricing sheet contact form"""
+
+    def add_prefix(self, field_name):
+        field_name = super().add_prefix(field_name)
+        return f"contact:{field_name}"
+
+    class Meta:
+        model = PricingSheetContact
+        fields = "__all__"
