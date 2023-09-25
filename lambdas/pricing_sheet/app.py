@@ -245,6 +245,9 @@ class PricingSheetGenerator:
 
                 groups = df.survey_group.unique()
 
+        # Sort by the survey address for consistent ordering
+        df.sort_values("survey_address", inplace=True)
+
         return df
 
     def insert_data(self, template, data):
