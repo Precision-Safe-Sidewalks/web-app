@@ -9,15 +9,17 @@ from core.models.constants import PhoneNumberType
 class User(AbstractUser):
     full_name = models.CharField(max_length=255, blank=True, null=True)
     is_active = models.BooleanField(default=False)
+    initials = models.CharField(max_length=2, blank=True, null=True)
 
     objects = UserManager()
     bdm = BDMManager()
     bda = BDAManager()
     surveyors = SurveyorManager()
 
-    @property
-    def initials(self):
-        return self.first_name[0].upper() + self.last_name[0].upper()
+    def get_initials(self):
+        if self.first_name and self.last_name:
+            return self.first_name[0].upper() + self.last_name[0].upper()
+        return None
 
     def __str__(self):
         return self.full_name
@@ -27,6 +29,7 @@ class User(AbstractUser):
             self.username = self.email
 
         self.full_name = f"{self.first_name} {self.last_name}"
+        self.initials = self.get_initials()
 
         return super().save(**kwargs)
 

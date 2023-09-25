@@ -65,21 +65,28 @@ class PricingSheetGenerator:
 
         sql = """
             SELECT 
-                p.name,
+                project.name AS name,
+                user_a.initials AS bdm,
+                user_b.initials AS surveyor,
+                customer.name AS organization_name,
+                contact.name AS contact_name,
+                contact.title AS contact_title,
+                contact.email AS contact_email,
+                contact.phone_number AS contact_phone_number,
+                contact.address AS contact_address,
                 CASE
-                    WHEN p.pricing_model = 1 THEN 'INCH_FOOT'
-                    WHEN p.pricing_model = 2 THEN 'SQUARE_FOOT'
+                    WHEN project.pricing_model = 1 THEN 'INCH_FOOT'
+                    WHEN project.pricing_model = 2 THEN 'SQUARE_FOOT'
                     ELSE NULL
-                END AS pricing_model,
-                ubdm.full_name AS bdm,
-                usur.full_name AS surveyor,
-                c.name AS organization_name
-            FROM repairs_project p
-                JOIN customers_customer c ON p.customer_id = c.id
-                JOIN repairs_instruction i ON p.id = i.project_id AND i.stage = 'SURVEY'
-                LEFT OUTER JOIN accounts_user ubdm ON p.business_development_manager_id = ubdm.id
-                LEFT OUTER JOIN accounts_user usur ON i.surveyed_by_id = usur.id
-            WHERE p.id = %s
+                END AS pricing_model
+            FROM repairs_project project
+                JOIN customers_customer customer ON project.customer_id = customer.id
+                JOIN repairs_instruction instruction ON project.id = instruction.project_id AND instruction.stage = 'SURVEY'
+                JOIN repairs_pricingsheet pricing ON project.id = pricing.project_id
+                JOIN repairs_pricingsheetcontact contact ON pricing.id = contact.pricing_sheet_id
+                LEFT OUTER JOIN accounts_user user_a ON project.business_development_manager_id = user_a.id
+                LEFT OUTER JOIN accounts_user user_b ON instruction.surveyed_by_id = user_b.id
+            WHERE project.id = %s
         """
 
         with self.get_db().cursor() as cursor:
@@ -137,10 +144,10 @@ class PricingSheetGenerator:
             results = cursor.fetchone()
             return dict(zip(columns, results))
 
-    def get_data_inch_foot(self, max_groups=20):
+    def get_data_inch_foot(self):
         """Return the data for the inch foot pricing model"""
 
-        df = self.get_measurements()
+        df = self.get_measurements(max_groups=20)
         data = {}
 
         for group, group_df in df.groupby("survey_group", sort=True):
@@ -181,14 +188,14 @@ class PricingSheetGenerator:
             },
             "SUMMARY": {
                 "D3": self.project["organization_name"],
-                "E3": "",  # address
-                "F3": self.project["bdm"],  # FIXME: make initials
-                "G3": self.project["surveyor"],  # FIXME: make initials
-                "H3": "",  # alt deal owner
-                "I3": "",  # client name
-                "J3": "",  # client title
-                "K3": "",  # client email
-                "L3": "",  # client phone number
+                "E3": self.project["contact_address"],
+                "F3": self.project["bdm"],
+                "G3": self.project["surveyor"],
+                "H3": "",  # TODO: alt deal owner
+                "I3": self.project["contact_name"],
+                "J3": self.project["contact_title"],
+                "K3": self.project["contact_email"],
+                "L3": self.project["contact_phone_number"],
             },
             "GREEN SAVINGS": {
                 "E44": self.raw_data["number_of_technicians"],
@@ -201,7 +208,7 @@ class PricingSheetGenerator:
         """Return the data for the square foot pricing model"""
         return {}
 
-    def get_measurements(self):
+    def get_measurements(self, max_groups=None):
         """Return the survey measurements"""
 
         sql = """
@@ -221,6 +228,25 @@ class PricingSheetGenerator:
         with self.get_db() as con:
             params = (self.project_id,)
             df = pandas.read_sql_query(sql, con, params=params)
+
+        # If max_groups is specified, ensure that the number of survey
+        # groups is less than or equal. Merge the smallest groups together
+        # to reach the goal.
+        if max_groups:
+            groups = df.survey_group.unique()
+
+            while len(groups) > max_groups:
+                counts = df.survey_group.value_counts(ascending=True)
+                values = counts.iloc[:2].index.values
+                merged = " & ".join(values)
+
+                df.loc[df.survey_group == values[0], "survey_group"] = merged
+                df.loc[df.survey_group == values[1], "survey_group"] = merged
+
+                groups = df.survey_group.unique()
+
+        # Sort by the survey address for consistent ordering
+        df.sort_values("survey_address", inplace=True)
 
         return df
 

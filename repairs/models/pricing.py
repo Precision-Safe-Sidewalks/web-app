@@ -65,6 +65,21 @@ class PricingSheetContact(models.Model):
     zip_code = models.CharField(max_length=6, blank=True, null=True)
     email = models.EmailField(max_length=255, blank=True, null=True)
     phone_number = models.CharField(max_length=25, blank=True, null=True)
+    address = models.TextField(blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        self.address = self.format_address()
+        super().save(*args, **kwargs)
+
+    def format_address(self):
+        """Return the formatted address as a string"""
+        required = ("street", "city", "state", "zip_code")
+        has_required = all((getattr(self, k, None) for k in required))
+
+        if not has_required:
+            return None
+
+        return f"{self.street}, {self.city}, {self.state} {self.zip_code}"
 
 
 class PricingSheetRequest(models.Model):
