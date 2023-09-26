@@ -9,7 +9,6 @@ from repairs.models.constants import (
     Hazard,
     ProjectSpecification,
     SpecialCase,
-    Stage,
 )
 
 
@@ -99,16 +98,14 @@ class ProjectInstructionsGenerator(BaseInstructionsGenerator):
     def get_hazards(self):
         """Return the matrix of hazards data"""
         hazards = {"labels": [], "counts": [], "sqft": [], "inft": []}
-        queryset = self.instruction.project.measurements.filter(stage=Stage.SURVEY)
 
         for value, name in Hazard.choices:
-            size = Hazard.get_size(value)
-            data = queryset.filter(quick_description=size)
+            data = self.instruction.hazards.get(value, {})
 
             label = name.split("Severe")[-1].strip()
-            count = data.count()
-            sqft = sum([m.length * m.width for m in data if m.length and m.width])
-            inft = sum([m.inch_feet for m in data if m.inch_feet])
+            count = data.get("count", 0)
+            sqft = data.get("square_feet", 0)
+            inft = data.get("inch_feet", 0)
 
             hazards["labels"].append(label)
             hazards["counts"].append(count)

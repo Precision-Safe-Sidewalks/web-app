@@ -282,10 +282,13 @@ class BaseInstructionsView(TemplateView):
         if instruction.stage != Stage.PRODUCTION:
             return
 
+        dtypes = {"count": int, "square_feet": float, "inch_feet": float}
+
         for key, value in self.request.POST.items():
             if key.startswith("hazards:"):
                 _, metric, hazard = key.split(":")
-                instruction.hazards[hazard][metric] = value
+                dtype = dtypes[metric]
+                instruction.hazards[hazard][metric] = dtype(value)
 
     def process_contact_method(self, instruction):
         """Process the instruction contact method"""
