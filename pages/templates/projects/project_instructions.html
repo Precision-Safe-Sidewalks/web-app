@@ -107,6 +107,83 @@
       </div>
     </div>
 
+    <!-- Hazards aggregation table -->
+    <div class="mb-12">
+      <h4 class="mb-4">Survey Hazards</h4>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Size</th>
+            <th align="center">Least Severe 1/4" - 1/2"</th>
+            <th align="center">Severe 1/2" - 1"</th>
+            <th align="center">Most Severe 1" - 1 1/2"</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              Number of Hazards
+            </td>
+            <td align="center">
+              <div class="form-control w-32">
+                <input type="number" name="hazards:count:LS" value="{{ instruction.hazards.LS.count }}">
+              </div>
+            </td>
+            <td align="center">
+              <div class="form-control w-32">
+                <input type="number" name="hazards:count:S" value="{{ instruction.hazards.S.count }}">
+              </div>
+            </td>
+            <td align="center">
+              <div class="form-control w-32">
+                <input type="number" name="hazards:count:MS" value="{{ instruction.hazards.MS.count }}">
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Square Feet
+            </td>
+            <td align="center">
+              <div class="form-control w-32">
+                <input type="number" name="hazards:square_feet:LS" value="{{ instruction.hazards.LS.square_feet }}">
+              </div>
+            </td>
+            <td align="center">
+              <div class="form-control w-32">
+                <input type="number" name="hazards:square_feet:S" value="{{ instruction.hazards.S.square_feet }}">
+              </div>
+            </td>
+            <td align="center">
+              <div class="form-control w-32">
+                <input type="number" name="hazards:square_feet:MS" value="{{ instruction.hazards.MS.square_feet }}">
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Inch Feet
+            </td>
+            <td align="center">
+              <div class="form-control w-32">
+                <input type="number" name="hazards:inch_feet:LS" value="{{ instruction.hazards.LS.inch_feet }}">
+              </div>
+            </td>
+            <td align="center">
+              <div class="form-control w-32">
+                <input type="number" name="hazards:inch_feet:S" value="{{ instruction.hazards.S.inch_feet }}">
+              </div>
+            </td>
+            <td align="center">
+              <div class="form-control w-32">
+                <input type="number" name="hazards:inch_feet:MS" value="{{ instruction.hazards.MS.inch_feet }}">
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
     <!-- General/Project specifications -->
     <div class="mb-12">
       <h4 class="mb-1">Project specifications</h4>

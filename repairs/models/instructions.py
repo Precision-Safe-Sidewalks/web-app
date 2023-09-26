@@ -65,7 +65,7 @@ class Instruction(models.Model):
             sqft = sum([m.length * m.width for m in data if m.length and m.width])
             inft = sum([m.inch_feet for m in data if m.inch_feet])
 
-            hazards[size] = {"count": count, "square_feet": sqft, "inch_feet": inft}
+            hazards[value] = {"count": count, "square_feet": sqft, "inch_feet": inft}
 
         return hazards
 

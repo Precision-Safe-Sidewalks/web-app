@@ -211,6 +211,7 @@ class BaseInstructionsView(TemplateView):
             self.process_survey_details(instruction)
             self.process_survey_method(instruction)
             self.process_cut(instruction)
+            self.process_hazards(instruction)
             self.process_contact_method(instruction)
             self.process_contact_notes(instruction)
             self.process_specifications(instruction)
@@ -275,6 +276,16 @@ class BaseInstructionsView(TemplateView):
         """Process the cut"""
         cut = int(self.request.POST.get("cut", 1))
         instruction.cut = cut
+
+    def process_hazards(self, instruction):
+        """ "Process the instruction hazards aggregation"""
+        if instruction.stage != Stage.PRODUCTION:
+            return
+
+        for key, value in self.request.POST.items():
+            if key.startswith("hazards:"):
+                _, metric, hazard = key.split(":")
+                instruction.hazards[hazard][metric] = value
 
     def process_contact_method(self, instruction):
         """Process the instruction contact method"""
@@ -419,6 +430,11 @@ class ProjectInstructionsView(BaseInstructionsView):
     def get_context_data(self, **kwargs):
         project = get_object_or_404(Project, pk=self.kwargs["pk"])
         instruction = project.instructions.get(stage=self.stage)
+
+        # TODO: find a better location to update the hazard defaults
+        if not instruction.hazards:
+            instruction.hazards = instruction.get_default_hazards()
+            instruction.save()
 
         context = super().get_context_data(**kwargs)
         context["instruction"] = instruction
