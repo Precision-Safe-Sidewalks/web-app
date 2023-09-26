@@ -22,10 +22,13 @@ class BaseMeasurement(BaseModel):
     coordinate: Optional[Point] = None
     h1: Optional[float] = Field(alias="H1")
     h2: Optional[float] = Field(alias="H2")
+    linear_feet: Optional[float] = Field(alias="Linear Feet")
+    square_feet: Optional[float] = Field(alias="SQFT")
     special_case: Optional[str] = Field(alias="Special Case")
     quick_description: Optional[str] = Field(alias="Quick Description")
     surveyor: str = Field(alias="Creator")
     note: Optional[str] = Field(alias="Notes")
+    group: Optional[str] = Field(alias="Start Street - Area")
     measured_at: datetime = Field(alias="CreationDate")
 
     class Config:
@@ -72,10 +75,19 @@ class BaseMeasurement(BaseModel):
         """Return a list of measurements parsed from a CSV file"""
         measurements = []
 
+        group = "default"
+        group_alias = None
+
+        if "group" in cls.__fields__:
+            group_alias = cls.__fields__["group"].alias
+
         for data in csv.DictReader(file_obj):
             for key, value in data.items():
                 if value.strip() == "":
                     data[key] = None
+
+            data[group_alias] = data.get(group_alias, group)
+            group = data[group_alias]
 
             measurement = cls.parse_obj(data)
             measurements.append(measurement)
@@ -90,16 +102,13 @@ class BaseMeasurement(BaseModel):
 class SurveyMeasurement(BaseMeasurement):
     """Measurement record from a survey CSV"""
 
-    curb_length: Optional[float] = Field(alias="Curb Length")
     survey_address: Optional[str] = Field(alias="Survey Address")
 
 
 class ProductionMeasurement(BaseMeasurement):
     """Measurement record from a production CSV"""
 
-    h1: float = Field(alias="H1")
     inch_feet: float = Field(alias="Inch Feet")
-    linear_feet: Optional[float] = Field(alias="Linear Feet")
     slope: Optional[str] = Field(alias="Slope")
 
 

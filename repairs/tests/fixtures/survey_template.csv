@@ -1,4 +1,4 @@
-﻿OBJECTID,GlobalID,CreationDate,Creator,Width,Length,Quick Description,Special Case,H1,H2,Survey Address,Notes,SQFT,Curb Length,x,y
+﻿OBJECTID,GlobalID,CreationDate,Creator,Width,Length,Quick Description,Special Case,H1,H2,Survey Address,Notes,SQFT,Linear Feet,x,y
 1,b1dfdc3c-ea82-4014-8f30-3761bfb519d0,8/3/2023 15:19,j.clapper_PSSPIMS,9,9,Small,,,,104 Aisling Ct,,81,,-78.76618822,35.80083209
 2,8d630dd8-28ec-4236-9cb8-75ae8065f21e,8/3/2023 15:20,j.clapper_PSSPIMS,,,,Curb,,,,,0,12,-78.76622133,35.80081487
 3,1176e222-922d-4f47-b20e-2257c673df77,8/3/2023 15:22,j.clapper_PSSPIMS,12,10,Large,,,,106 Aisling Ct,,120,,-78.76625303,35.80088632
