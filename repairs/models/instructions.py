@@ -2,7 +2,13 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 from customers.models import Contact
-from repairs.models.constants import ContactMethod, Cut, ReferenceImageMethod, Stage
+from repairs.models.constants import (
+    ContactMethod,
+    Cut,
+    Hazard,
+    ReferenceImageMethod,
+    Stage,
+)
 from repairs.models.projects import Project
 
 User = get_user_model()
@@ -37,9 +43,31 @@ class Instruction(models.Model):
     contact_method = models.IntegerField(
         choices=ContactMethod.choices, default=ContactMethod.CALL
     )
+    hazards = models.JSONField(default=dict, help_text="Aggregated hazard counts")
     published = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def get_default_hazards(self):
+        """Return the default hazards from the survey measurements"""
+
+        if self.stage != Stage.PRODUCTION:
+            return {}
+
+        hazards = {}
+        queryset = self.project.measurements.filter(stage=Stage.SURVEY)
+
+        for value, name in Hazard.choices:
+            size = Hazard.get_size(value)
+            data = queryset.filter(quick_description=size)
+
+            count = data.count()
+            sqft = sum([m.length * m.width for m in data if m.length and m.width])
+            inft = sum([m.inch_feet for m in data if m.inch_feet])
+
+            hazards[value] = {"count": count, "square_feet": sqft, "inch_feet": inft}
+
+        return hazards
 
     def get_needed_by_display(self):
         """Return the needed_by date for display"""

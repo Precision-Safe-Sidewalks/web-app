@@ -46,7 +46,7 @@ class Hazard(models.TextChoices):
             return "S"
         if value == "S":
             return "M"
-        return "MS"
+        return "L"
 
 
 class HazardTier(models.IntegerChoices):
