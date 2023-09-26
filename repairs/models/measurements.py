@@ -29,6 +29,7 @@ class Measurement(models.Model):
     )
     h1 = models.FloatField(blank=True, null=True)
     h2 = models.FloatField(blank=True, null=True)
+    square_feet = models.FloatField(blank=True, null=True)
     linear_feet = models.FloatField(blank=True, null=True)
     inch_feet = models.FloatField(blank=True, null=True)
     slope = models.CharField(max_length=10, blank=True, null=True)

@@ -90,7 +90,8 @@ class BaseMeasurement(BaseModel):
 class SurveyMeasurement(BaseMeasurement):
     """Measurement record from a survey CSV"""
 
-    curb_length: Optional[float] = Field(alias="Curb Length")
+    square_feet: Optional[float] = Field(alias="SQFT")
+    linear_feet: Optional[float] = Field(alias="Linear Feet")
     survey_address: Optional[str] = Field(alias="Survey Address")
 
 
@@ -98,6 +99,7 @@ class ProductionMeasurement(BaseMeasurement):
     """Measurement record from a production CSV"""
 
     h1: float = Field(alias="H1")
+    square_feet: Optional[float] = Field(alias="sqft")
     inch_feet: float = Field(alias="Inch Feet")
     linear_feet: Optional[float] = Field(alias="Linear Feet")
     slope: Optional[str] = Field(alias="Slope")
