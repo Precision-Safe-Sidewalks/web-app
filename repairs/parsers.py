@@ -28,7 +28,7 @@ class BaseMeasurement(BaseModel):
     quick_description: Optional[str] = Field(alias="Quick Description")
     surveyor: str = Field(alias="Creator")
     note: Optional[str] = Field(alias="Notes")
-    group: Optional[str] = Field(alias="Start Street - Area")
+    survey_group: Optional[str] = Field(alias="Start Street - Area")
     measured_at: datetime = Field(alias="CreationDate")
 
     class Config:
@@ -78,15 +78,15 @@ class BaseMeasurement(BaseModel):
         group = "default"
         group_alias = None
 
-        if "group" in cls.__fields__:
-            group_alias = cls.__fields__["group"].alias
+        if "survey_group" in cls.__fields__:
+            group_alias = cls.__fields__["survey_group"].alias
 
         for data in csv.DictReader(file_obj):
             for key, value in data.items():
                 if value.strip() == "":
                     data[key] = None
 
-            data[group_alias] = data.get(group_alias, group)
+            data[group_alias] = data.get(group_alias) or group
             group = data[group_alias]
 
             measurement = cls.parse_obj(data)
