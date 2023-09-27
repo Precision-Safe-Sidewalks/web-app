@@ -11,7 +11,7 @@ GIT_HASH := $(shell git rev-parse --short HEAD)
 APP_IMAGE_URI := ${ECR_REGISTRY_URL}/${PROJECT}:${GIT_HASH}
 GEO_IMAGE_URI := ${ECR_REGISTRY_URL}/${PROJECT}-lambda-geocoding:${GIT_HASH}
 PRI_IMAGE_URI := ${ECR_REGISTRY_URL}/${PROJECT}-lambda-pricing-sheet:${GIT_HASH}
-PRS_IMAGE_URL := ${ECR_REGISTRY_URL}/${PROJECT}-lambda-project-summary:${GIT_HASH}
+PRS_IMAGE_URI := ${ECR_REGISTRY_URL}/${PROJECT}-lambda-project-summary:${GIT_HASH}
 
 network:
 	@docker network create ${PROJECT}-dev || true
