@@ -14,3 +14,4 @@ from repairs.models.pricing import (
     PricingSheetRequest,
 )
 from repairs.models.projects import Project, ProjectContact
+from repairs.models.summary import ProjectSummaryRequest
