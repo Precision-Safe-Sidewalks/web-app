@@ -44,3 +44,26 @@ resource "aws_lambda_function" "pricing_sheet" {
     Environment = local.env
   }
 }
+
+resource "aws_lambda_function" "project_summary" {
+  function_name = "${local.project}-project_summary-${local.env}"
+  role          = aws_iam_role.lambda.arn
+  package_type  = "Image"
+  image_uri     = "${data.aws_ecr_repository.lambda-project-summary.repository_url}:${var.app_version}"
+  timeout       = 300
+  memory_size   = 1024
+
+  environment {
+    variables = {
+      DB_HOST     = local.secrets.DB_HOST
+      DB_USER     = local.secrets.DB_USER
+      DB_PASSWORD = local.secrets.DB_PASSWORD
+      DB_NAME     = local.secrets.DB_NAME
+    }
+  }
+
+  tags = {
+    Project     = local.project
+    Environment = local.env
+  }
+}
