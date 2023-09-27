@@ -8,6 +8,7 @@ from repairs.models import (
     PricingSheet,
     PricingSheetRequest,
     Project,
+    ProjectSummaryRequest,
 )
 from repairs.models.constants import Stage
 from utils.aws import invoke_lambda_function
@@ -33,3 +34,12 @@ def generate_pricing_sheet(sender, instance, created, **kwargs):
     if created:
         payload = {"request_id": instance.request_id}
         invoke_lambda_function("pricing_sheet", payload=payload)
+
+
+@receiver(post_save, sender=ProjectSummaryRequest)
+def generate_project_summary(sender, instance, created, **kwargs):
+    """Trigger the project summary generation Lambda function"""
+
+    if created:
+        payload = {"request_id": instance.request_id}
+        invoke_lambda_function("project_summary", payload=payload)
