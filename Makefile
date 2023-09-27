@@ -45,7 +45,7 @@ release_image_pricing_sheet:
 	@docker push ${PRI_IMAGE_URI}
 
 release_image_project_summary:
-	@docker tag ${PROJECT}-lambda-project_summary:latest ${PRS_IMAGE_URI}
+	@docker tag ${PROJECT}-lambda-project-summary:latest ${PRS_IMAGE_URI}
 	@docker push ${PRS_IMAGE_URI}
 	
 pull_image:
