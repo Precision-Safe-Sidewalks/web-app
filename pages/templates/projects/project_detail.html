@@ -174,7 +174,7 @@
                 <span class="icon">edit</span>
               </a>
               {% if exists %}
-              <button class="btn--icon-sm" onclick="onDownloadPricingSheet()">
+              <button class="btn--icon-sm" onclick="onDownloadDocument('pricing_sheet')">
                 <span class="icon">download</span>
               </button>
               
@@ -280,7 +280,7 @@
         {% endwith %}
 
         <!-- Project summary -->
-        {% with exists=projext.has_project_summary %}
+        {% with exists=project.has_project_summary %}
         <tr>
           <td>Project summary</td>
           <td align="center">{{ exists|status_icon }}</td>
@@ -289,9 +289,36 @@
           <td>
             <div class="flex--center">
               {% if exists %}
-              <a href="#" class="btn--icon-sm ml-1">
+              <button class="btn--icon-sm" onclick="onDownloadDocument('project_summary')">
                 <span class="icon">download</span>
-              </a>
+              </button>
+              
+              <!-- Modal for downloading -->
+              <div class="dialog" id="id_modal_project_summary" data-no-click-away="true">
+                <div class="dialog-content">
+                  <div class="dialog-body">
+                    <div class="flex--center flex--column m-4">
+                      <div class="m-8">
+                        <div class="progress-circle">progress_activity</div>
+                      </div>
+                      Generating the project summary. This may take a moment.
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Modal for downloading error -->
+              <div class="dialog" id="id_modal_project_summary_error">
+                <div class="dialog-content">
+                  <div class="dialog-body">
+                    <div class="flex--center flex--column m-4">
+                      <div class="m-8">
+                        <span class="icon--lg icon--filled icon--error">error</span>
+                      </div>
+                      An error occurred generating the project summary.
+                    </div>
+                  </div>
+                </div>
               {% endif %}
             </div>
           </td>
@@ -334,6 +361,10 @@
 </div>
 
 <script>
+  // Constants
+  const pricingSheetUrl = "{% url 'documents-pricing-sheet' pk=project.pk %}"
+  const projectSummaryUrl = "{% url 'documents-project-summary' pk=project.pk %}"
+
   $(document).ready(() => {
     const geojson = JSON.parse("{{ measurements|safe|escapejs }}")
 
@@ -358,32 +389,32 @@
     fetch(url, { method: "POST", body: data, credentials: "include" })
   })
 
-  // Handler to generate the pricing sheet (asynchronous)
-  const onDownloadPricingSheet = async () => {
-    const modal = $("#id_modal_pricing_sheet")
+  // Handler to generate a document (asynchronous)
+  const onDownloadDocument = async (documentType) => {
+    const modal = $(`#id_modal_${documentType}`)
     $(modal).addClass("open")
 
-    const url = "{% url 'documents-pricing-sheet' pk=project.pk %}"
+    const url = getDocumentUrl(documentType, null)
     const resp = await fetch(url, { credentials: "include" })
 
     if (resp.ok) {
       const { request_id } = await resp.json()
-      await downloadPricingSheet(request_id)
+      await downloadDocument(documentType, request_id)
     }
   }
 
-  // Handler to download the pricing sheet
-  const downloadPricingSheet = async (requestId) => {
-    const modal = $("#id_modal_pricing_sheet")
-    const modalError = $("#id_modal_pricing_sheet_error")
+  // Download a document (asynchronously)
+  const downloadDocument = async (documentType, requestId) => {
+    const modal = $(`#id_modal_${documentType}`)
+    const modalError = $(`#id_modal_${documentType}_error`)
 
-    const url = "{% url 'documents-pricing-sheet' pk=project.pk %}" + `?request_id=${requestId}`
+    const url = getDocumentUrl(documentType, requestId)
     const resp = await fetch(url, { mode: "no-cors", credentials: "include" })
 
     // Receiving a 202 Accepted means the report is still generating
     // so the request needs to be retried after a period of time
     if (resp.status === 202) {
-      setTimeout(() => downloadPricingSheet(requestId), 5000)
+      setTimeout(() => downloadDocument(documentType, requestId), 5000)
       return
     }
 
@@ -406,6 +437,22 @@
     $(modal).removeClass("open")
     $(modalError).addClass("open")
     return false
+  }
+
+  // Return the document download URL
+  const getDocumentUrl = (documentType, requestId) => {
+    let baseUrl = null
+    
+    switch (documentType) {
+      case "pricing_sheet":
+        baseUrl = pricingSheetUrl
+        break
+      case "project_summary":
+        baseUrl = projectSummaryUrl
+        break
+    }
+
+    return requestId ? `${baseUrl}?request_id=${requestId}` : baseUrl
   }
 
 </script>

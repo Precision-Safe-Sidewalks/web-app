@@ -120,14 +120,12 @@ class Project(models.Model):
     @property
     def has_pricing_sheet(self):
         """Return True if the pricing sheet exists"""
-        # TODO: define logic
-        return True
+        return self.has_survey_measurements
 
     @property
     def has_project_summary(self):
         """Return True if the project summary exists"""
-        # TODO: define logic
-        return False
+        return self.has_pricing_sheet
 
     @property
     def has_post_project_review(self):

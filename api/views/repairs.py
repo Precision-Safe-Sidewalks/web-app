@@ -97,9 +97,7 @@ class ProjectSummaryAPIView(APIView):
         # generate the pricing sheet. Trigger the lambda function and
         # return the request id for polling.
         if not request_id:
-            req = ProjectSummaryRequest.objects.create(
-                pricing_sheet=project.pricing_sheet
-            )
+            req = ProjectSummaryRequest.objects.create(project=project)
             data = {"request_id": req.request_id}
             return Response(data, status=status.HTTP_202_ACCEPTED)
 
