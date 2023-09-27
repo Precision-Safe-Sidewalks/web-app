@@ -38,7 +38,7 @@ class Measurement(models.Model):
     surveyor = models.CharField(max_length=100)
     note = models.TextField(blank=True, null=True)
     geocoded_address = models.CharField(max_length=255, blank=True, null=True)
-    group = models.CharField(max_length=255, blank=True, null=True)
+    survey_group = models.CharField(max_length=255, blank=True, null=True)
     measured_at = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
 

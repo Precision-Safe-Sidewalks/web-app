@@ -158,10 +158,13 @@ class PricingSheetGenerator:
                 sheet_data[f"B{offset}"] = int(row.quick_description == "S")
                 sheet_data[f"C{offset}"] = int(row.quick_description == "M")
                 sheet_data[f"D{offset}"] = int(row.quick_description == "L")
-                sheet_data[f"E{offset}"] = int(row.special_case == "C")
+                sheet_data[f"E{offset}"] = (
+                    row.linear_feet if row.special_case == "C" else ""
+                )
                 sheet_data[f"F{offset}"] = row.geocoded_address
                 sheet_data[f"G{offset}"] = row.length
                 sheet_data[f"H{offset}"] = row.width
+                sheet_data[f"T{offset}"] = row.object_id
 
                 offset += 1
 
@@ -213,16 +216,17 @@ class PricingSheetGenerator:
 
         sql = """
             SELECT
+                object_id,
                 quick_description,
                 special_case,
-                geocoded_address,
                 length,
                 width,
-                TRIM(REGEXP_REPLACE(geocoded_address, '[[:digit:]]', '', 'g')) AS survey_group 
+                linear_feet,
+                geocoded_address,
+                survey_group
             FROM repairs_measurement
             WHERE project_id = %s
                 AND stage = 'SURVEY'
-                AND geocoded_address IS NOT NULL
         """
 
         with self.get_db() as con:
@@ -245,8 +249,8 @@ class PricingSheetGenerator:
 
                 groups = df.survey_group.unique()
 
-        # Sort by the survey address for consistent ordering
-        df.sort_values("geocoded_address", inplace=True)
+        # Sort by the survey group and object id for consistent ordering
+        df.sort_values(["survey_group", "object_id"], inplace=True)
 
         return df
 
