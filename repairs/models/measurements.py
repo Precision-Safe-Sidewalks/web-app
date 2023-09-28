@@ -12,6 +12,8 @@ from utils.aws import invoke_lambda_function
 class Measurement(models.Model):
     """Survey measurement GIS data and metadata"""
 
+    # TODO: check if curb_length is different from linear_feet
+
     project = models.ForeignKey(
         Project, on_delete=models.CASCADE, related_name="measurements"
     )

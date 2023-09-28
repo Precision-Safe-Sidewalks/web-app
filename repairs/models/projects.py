@@ -125,7 +125,7 @@ class Project(models.Model):
     @property
     def has_project_summary(self):
         """Return True if the project summary exists"""
-        return self.has_pricing_sheet
+        return self.has_pricing_sheet and self.has_production_measurements
 
     @property
     def has_post_project_review(self):

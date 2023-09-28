@@ -4,6 +4,7 @@ from datetime import datetime
 
 import boto3
 import openpyxl
+import pandas
 import psycopg2
 
 BUCKET = "precision-safe-sidewalks"
@@ -36,6 +37,7 @@ class ProjectSummaryGenerator:
         self.pricing_sheet = {}
         self.survey_instructions = {}
         self.project_instructions = {}
+        self.production_data = pandas.DataFrame()
         self.filename = None
 
     def generate(self):
@@ -44,6 +46,7 @@ class ProjectSummaryGenerator:
         self.pricing_sheet = self.get_pricing_sheet()
         self.survey_instructions = self.get_survey_instructions()
         self.project_instructions = self.get_project_instructions()
+        self.production_data = self.get_production_data()
 
         data = self.get_data()
         self.insert_data(TEMPLATE, data)
@@ -115,12 +118,90 @@ class ProjectSummaryGenerator:
             results = cursor.fetchone()
             return dict(zip(columns, results))
 
+    def get_survey_date(self):
+        """Return the survey date from the survey measurements"""
+
+        sql = """
+            SELECT
+                TO_CHAR(MIN(measured_at), 'FMMM/FMDD/YYYY') AS survey_date
+            FROM repairs_measurement
+            WHERE project_id = %s
+                AND stage = 'SURVEY'
+        """
+
+        with self.get_db().cursor() as cursor:
+            cursor.execute(sql, (self.project["id"],))
+            return cursor.fetchone()[0]
+
     def get_project_instructions(self):
         """Return the project instructions data"""
-        return {}
+
+        sql = """
+            SELECT
+                id,
+                hazards::json AS hazards
+            FROM repairs_instruction
+            WHERE project_id = %s
+                AND stage = 'PRODUCTION'
+        """
+
+        with self.get_db().cursor() as cursor:
+            cursor.execute(sql, (self.project["id"],))
+            columns = [column.name for column in cursor.description]
+            results = cursor.fetchone()
+            return dict(zip(columns, results))
+
+    def get_production_data(self):
+        """Return the production survey measurements"""
+
+        sql = """
+            SELECT
+                object_id,
+                length,
+                width,
+                h1,
+                h2,
+                linear_feet,
+                special_case,
+                geocoded_address,
+                note,
+                TRIM(REGEXP_REPLACE(geocoded_address, '[[:alpha:]]', '')) AS survey_group,
+                UPPER(SUBSTRING(surveyor, 1, 1)) || UPPER(SUBSTRING(surveyor, 3, 1)) AS tech,
+                TO_CHAR(DATE(measured_at), 'FMMM/FMDD/YYYY') AS work_date
+            FROM repairs_measurement
+            WHERE project_id = %s
+                AND stage = 'PRODUCTION'
+            ORDER BY work_date, surveyor, survey_group, object_id
+        """
+
+        with self.get_db() as con:
+            params = (self.project["id"],)
+            return pandas.read_sql_query(sql, con, params=params)
 
     def get_data(self):
         """Return the map of data to insert"""
+        measurements = {}
+
+        for work_date, work_df in self.production_data.groupby("work_date"):
+            sheet_data = {"E11": work_date}
+
+            offset = 22
+            for _, row in work_df.iterrows():
+                sheet_data[f"A{offset}"] = row.width
+                sheet_data[f"B{offset}"] = row.length
+                sheet_data[f"D{offset}"] = row.h1
+                sheet_data[f"E{offset}"] = row.h2
+                sheet_data[f"F{offset}"] = (None,)  # TODO: input the correct field
+                sheet_data[f"G{offset}"] = row.geocoded_address
+                sheet_data[f"H{offset}"] = row.note
+                sheet_data[f"M{offset}"] = row.tech
+                sheet_data[f"N{offset}"] = row.object_id
+
+                offset += 1
+
+            sheet_name = str(len(measurements) + 1)
+            measurements[sheet_name] = sheet_data
+
         return {
             "SUMMARY": {
                 "E1": datetime.today().strftime("%-m/%-d/%Y"),
@@ -129,7 +210,7 @@ class ProjectSummaryGenerator:
                 "P2": self.project["bdm"],
                 "P4": self.survey_instructions["surveyor"],
                 "Q2": self.project["territory"],
-                "Q4": None,  # TODO: replace with survey date (check where this comes from)
+                "Q4": self.get_survey_date(),
                 "R6": None,  # TODO: replace with PI hazards count
                 "R10": None,  # TODO: replace with PI hazards inch feet
                 "R17": None,  # TODO: replace with PI hazards linear feet (curbs)
@@ -141,6 +222,7 @@ class ProjectSummaryGenerator:
                 "BG39": self.pricing_sheet["contact_email"],
                 "BN39": self.pricing_sheet["estimated_sidewalk_miles"],
             },
+            **measurements,
         }
 
     def insert_data(self, template, data):
