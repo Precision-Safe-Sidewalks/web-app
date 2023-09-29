@@ -161,22 +161,24 @@ class ProjectSummaryGenerator:
                 width,
                 h1,
                 h2,
-                linear_feet,
+                COALESCE(inch_feet, 0.) AS inch_feet,
+                COALESCE(linear_feet, 0.) AS linear_feet,
                 special_case,
                 geocoded_address,
                 note,
-                TRIM(REGEXP_REPLACE(geocoded_address, '[[:alpha:]]', '')) AS survey_group,
                 UPPER(SUBSTRING(surveyor, 1, 1)) || UPPER(SUBSTRING(surveyor, 3, 1)) AS tech,
                 TO_CHAR(DATE(measured_at), 'FMMM/FMDD/YYYY') AS work_date
             FROM repairs_measurement
             WHERE project_id = %s
                 AND stage = 'PRODUCTION'
-            ORDER BY work_date, surveyor, survey_group, object_id
+            ORDER BY work_date, surveyor, measured_at
         """
 
         with self.get_db() as con:
             params = (self.project["id"],)
-            return pandas.read_sql_query(sql, con, params=params)
+            df = pandas.read_sql_query(sql, con, params=params)
+
+        return df
 
     def get_data(self):
         """Return the map of data to insert"""
@@ -191,7 +193,7 @@ class ProjectSummaryGenerator:
                 sheet_data[f"B{offset}"] = row.length
                 sheet_data[f"D{offset}"] = row.h1
                 sheet_data[f"E{offset}"] = row.h2
-                sheet_data[f"F{offset}"] = (None,)  # TODO: input the correct field
+                sheet_data[f"F{offset}"] = row.linear_feet
                 sheet_data[f"G{offset}"] = row.geocoded_address
                 sheet_data[f"H{offset}"] = row.note
                 sheet_data[f"M{offset}"] = row.tech
@@ -211,9 +213,9 @@ class ProjectSummaryGenerator:
                 "P4": self.survey_instructions["surveyor"],
                 "Q2": self.project["territory"],
                 "Q4": self.get_survey_date(),
-                "R6": None,  # TODO: replace with PI hazards count
-                "R10": None,  # TODO: replace with PI hazards inch feet
-                "R17": None,  # TODO: replace with PI hazards linear feet (curbs)
+                "R6": len(self.production_data),
+                "R10": self.production_data.inch_feet.sum(),
+                "R17": self.production_data.linear_feet.sum(),
                 "AO39": self.project["organization_name"],
                 "AQ39": self.pricing_sheet["contact_address"],
                 "AS39": self.pricing_sheet["contact_name"],
