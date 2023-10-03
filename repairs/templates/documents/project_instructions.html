@@ -17,7 +17,7 @@
         </tr>
         <tr>
           <td colspan="12" class="center">
-            {{ instruction.project.name }}
+            {{ instruction.project.customer.name }} - {{ instruction.project.name }}
           </td>
         </tr>
         <tr>
@@ -300,10 +300,17 @@
         <tr>
           <td colspan="12" class="bg-yellow">
             <strong>PICTURES</strong> &#8212; 
+            {% if instruction.reference_images_method == 1 %}
             <span class="text-red">
-              {{ instruction.reference_images_required }} minimum for ESTIMATE;
-              Size: {{ instruction.reference_images_sizes }};
+              Production - B&amp;A pictures of everything
             </span>
+            {% else %}
+            <span class="text-red">
+              {{ instruction.reference_images_required }} minimum for PPR;
+              Size: {{ instruction.reference_images_sizes }};
+              {% if instruction.reference_images_curbs %}Curbs{% endif %}
+            </span>
+            {% endif %}
           </td>
         </tr>
 
@@ -370,7 +377,7 @@
             Email when project is complete:
           </td>
           <td colspan="6" class="bg-yellow">
-            {{ instruction.project.primary_contact.email }}
+            {{ instruction.project.business_development_manager.email }}
           </td>
         </tr>
         <tr>
@@ -382,9 +389,9 @@
           </td>
         </tr>
         <tr>
-          {% if instruction.project.secondary_contact %}
+          {% if instruction.project.business_development_administrator %}
           <td colspan="6" class="bg-yellow">
-            {{ instruction.project.secondary_contact.email }}
+            {{ instruction.project.business_development_administrator.email }}
           </td>
           <td colspan="6" class="bg-lightgrey"></td>
           {% else %}
@@ -394,6 +401,7 @@
         </tr>
 
         <!-- Checklist -->
+        {% if instruction.get_checklist_visible %}
         <tr>
           <td colspan="12" class="bg-blue bold">
             No-Survey PI Checklist
@@ -412,6 +420,7 @@
           </td>
         </tr>
         {% endfor %}
+        {% endif %}
 
       </tbody>
     </table>

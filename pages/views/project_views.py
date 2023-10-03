@@ -449,6 +449,7 @@ class ProjectInstructionsView(BaseInstructionsView):
         context["contact_methods"] = ContactMethod.choices
         context["checklist"] = instruction.get_checklist()
         context["surveyors"] = User.surveyors.all()
+        context["reference_image_methods"] = ReferenceImageMethod.choices
         context["error"] = self.request.GET.get("error")
 
         return context
