@@ -2,9 +2,9 @@ import json
 import os
 
 import boto3
-import openpyxl
 import pandas
 import psycopg2
+from excel import Workbook
 
 BUCKET = "precision-safe-sidewalks"
 
@@ -147,7 +147,7 @@ class PricingSheetGenerator:
     def get_data_inch_foot(self):
         """Return the data for the inch foot pricing model"""
 
-        df = self.get_measurements(max_groups=20)
+        df = self.get_measurements(max_groups=20).fillna("")
         data = {}
 
         for group, group_df in df.groupby("survey_group", sort=True):
@@ -155,12 +155,12 @@ class PricingSheetGenerator:
             offset = 26
 
             for _, row in group_df.iterrows():
+                is_curb = row.special_case == "C"
+
                 sheet_data[f"B{offset}"] = int(row.quick_description == "S")
                 sheet_data[f"C{offset}"] = int(row.quick_description == "M")
                 sheet_data[f"D{offset}"] = int(row.quick_description == "L")
-                sheet_data[f"E{offset}"] = (
-                    row.linear_feet if row.special_case == "C" else ""
-                )
+                sheet_data[f"E{offset}"] = row.linear_feet if is_curb else ""
                 sheet_data[f"F{offset}"] = row.geocoded_address
                 sheet_data[f"G{offset}"] = row.length
                 sheet_data[f"H{offset}"] = row.width
@@ -257,18 +257,15 @@ class PricingSheetGenerator:
     def insert_data(self, template, data):
         """Insert the data into the pricing sheet template"""
 
-        workbook = openpyxl.load_workbook(template, keep_vba=True)
+        workbook = Workbook(template)
 
         for sheet_name, sheet_data in data.items():
-            worksheet = workbook[sheet_name]
-
             for cell, value in sheet_data.items():
-                worksheet[cell].value = value
+                workbook.update_cell(sheet_name, cell, value)
 
-        self.filename = f"/tmp/{self.request_id}.xlsx"
-
+        _, ext = os.path.splitext(template)
+        self.filename = f"/tmp/{self.request_id}{ext}"
         workbook.save(self.filename)
-        workbook.close()
 
     def get_db(self):
         """Return the database connection"""
@@ -283,7 +280,8 @@ class PricingSheetGenerator:
     def upload_to_s3(self):
         """Upload the file to S3 and return the presigned URL"""
         project_name = self.project["name"]
-        key = f"pricing_sheets/{self.request_id}/{project_name} - Pricing Sheet.xlsx"
+        _, ext = os.path.splitext(self.filename)
+        key = f"pricing_sheets/{self.request_id}/{project_name} - Pricing Sheet{ext}"
 
         s3 = boto3.client("s3")
         s3.upload_file(self.filename, BUCKET, key)
