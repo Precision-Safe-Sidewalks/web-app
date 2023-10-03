@@ -6,9 +6,9 @@ from repairs.models.constants import (
     ContactMethod,
     Cut,
     Hazard,
+    ProjectSpecification,
     ReferenceImageMethod,
     Stage,
-    ProjectSpecification,
 )
 from repairs.models.projects import Project
 
