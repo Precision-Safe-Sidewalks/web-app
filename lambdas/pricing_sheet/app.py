@@ -265,8 +265,9 @@ class PricingSheetGenerator:
             for cell, value in sheet_data.items():
                 worksheet[cell].value = value
 
-        self.filename = f"/tmp/{self.request_id}.xlsx"
+        self.filename = f"/tmp/{self.request_id}.xlsm"
 
+        workbook.active = workbook["Projected Survey Cost"]
         workbook.save(self.filename)
         workbook.close()
 
@@ -283,7 +284,8 @@ class PricingSheetGenerator:
     def upload_to_s3(self):
         """Upload the file to S3 and return the presigned URL"""
         project_name = self.project["name"]
-        key = f"pricing_sheets/{self.request_id}/{project_name} - Pricing Sheet.xlsx"
+        _, ext = os.path.splitext(self.filename)
+        key = f"pricing_sheets/{self.request_id}/{project_name} - Pricing Sheet{ext}"
 
         s3 = boto3.client("s3")
         s3.upload_file(self.filename, BUCKET, key)
