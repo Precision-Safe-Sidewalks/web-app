@@ -285,7 +285,7 @@ class PricingSheetGenerator:
 
         command = [
             "libreoffice7.6",
-            "-headless",
+            "--headless",
             "--convert-to",
             "xlsx",
             "--outdir",
