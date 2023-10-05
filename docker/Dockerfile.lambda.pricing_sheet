@@ -3,9 +3,25 @@ FROM public.ecr.aws/lambda/python:3.10
 ARG SRC=lambdas/pricing_sheet
 
 # Install the system dependencies
-RUN yum install -y postgresql-devel
+RUN yum update -y && yum install -y \
+  cairo \
+  cups \
+  cups-libs \
+  dbus-glib \
+  libXinerama.x86_64 \
+  postgresql-devel  \
+  tar \
+  wget
+
+# Install LibreOffice 7.6
+WORKDIR /usr/local
+RUN wget https://mirror1.cs-georgetown.net/tdf/libreoffice/stable/7.6.2/rpm/x86_64/LibreOffice_7.6.2_Linux_x86-64_rpm.tar.gz
+RUN tar -xzvf LibreOffice_7.6.2_Linux_x86-64_rpm.tar.gz 
+RUN cd LibreOffice_7.6.2.1_Linux_x86-64_rpm/RPMS && yum localinstall -y *.rpm --skip-broken
+RUN rm -rf /usr/local/LibreOffice*
 
 # Install the Python dependencies
+WORKDIR ${LAMBDA_TASK_ROOT}
 COPY ${SRC}/requirements.txt ${LAMBDA_TASK_ROOT}
 RUN pip install -r requirements.txt
 

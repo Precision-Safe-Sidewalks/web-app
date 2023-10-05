@@ -1,5 +1,7 @@
 import json
 import os
+import platform
+import subprocess
 
 import boto3
 import pandas
@@ -44,6 +46,7 @@ class PricingSheetGenerator:
         template = self.get_template()
         data = self.get_data()
         self.insert_data(template, data)
+        self.convert_to()
 
     def get_project_id(self):
         """Return the project id from the request id"""
@@ -155,12 +158,10 @@ class PricingSheetGenerator:
             offset = 26
 
             for _, row in group_df.iterrows():
-                is_curb = row.special_case == "C"
-
                 sheet_data[f"B{offset}"] = int(row.quick_description == "S")
                 sheet_data[f"C{offset}"] = int(row.quick_description == "M")
                 sheet_data[f"D{offset}"] = int(row.quick_description == "L")
-                sheet_data[f"E{offset}"] = row.linear_feet if is_curb else ""
+                sheet_data[f"E{offset}"] = row.linear_feet
                 sheet_data[f"F{offset}"] = row.geocoded_address
                 sheet_data[f"G{offset}"] = row.length
                 sheet_data[f"H{offset}"] = row.width
@@ -221,7 +222,7 @@ class PricingSheetGenerator:
                 special_case,
                 length,
                 width,
-                linear_feet,
+                COALESCE(linear_feet, 0) AS linear_feet,
                 geocoded_address,
                 survey_group
             FROM repairs_measurement
@@ -276,6 +277,23 @@ class PricingSheetGenerator:
             password=os.environ.get("DB_PASSWORD"),
             dbname=os.environ.get("DB_NAME"),
         )
+
+    def convert_to(self):
+        """Convert the file to use the extension"""
+        if platform.machine() == "aarch64":
+            return
+
+        command = [
+            "libreoffice7.6",
+            "-headless",
+            "--convert-to",
+            "xlsx",
+            "--outdir",
+            "/tmp",
+            self.filename,
+        ]
+        subprocess.call(command)
+        self.filename = self.filename.replace(".xltx", ".xlsx")
 
     def upload_to_s3(self):
         """Upload the file to S3 and return the presigned URL"""
