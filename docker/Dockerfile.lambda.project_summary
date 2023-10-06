@@ -1,16 +1,17 @@
-FROM public.ecr.aws/lambda/python:3.10
+# Stage 1: build the executable
+FROM golang:1.19 AS build
 
 ARG SRC=lambdas/project_summary
 
-# Install the system dependencies
-RUN yum install -y postgresql-devel
+WORKDIR /code
+ADD ${SRC} .
+RUN go get -d
+RUN go build -tags lambda.norpc -o ./main
 
-# Install the Python dependencies
-COPY ${SRC}/requirements.txt ${LAMBDA_TASK_ROOT}
-RUN pip install -r requirements.txt
+# Stage 2: AWS Lambda image
+FROM public.ecr.aws/lambda/provided:al2
 
-# Copy the function code
-COPY ${SRC}/ ${LAMBDA_TASK_ROOT}
+COPY --from=build /code/main ./main
+COPY --from=build /code/templates ./templates
 
-# Configure the handler
-CMD ["app.handler"]
+ENTRYPOINT ["./main"]
