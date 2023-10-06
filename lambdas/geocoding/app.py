@@ -62,9 +62,10 @@ def get_geocoded_addresses(measurements):
 
             if features:
                 feature = features[0]
-                address = f"{feature['address']} {feature['text']}"
-            else:
-                print(f"No features found for measurement={pk}")
+                address = feature.get("text")
+
+                if "address" in feature:
+                    address = f"{feature['address']} {address}"
 
         else:
             error = resp.json()

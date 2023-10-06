@@ -11,4 +11,9 @@ LAMBDA = {
         "function_name": os.environ.get("PRICING_SHEET_LAMBDA_FUNCTION_NAME"),
         "enabled": True,
     },
+    "project_summary": {
+        "endpoint_url": os.environ.get("PROJECT_SUMMARY_LAMBDA_URL"),
+        "function_name": os.environ.get("PROJECT_SUMMARY_LAMBDA_FUNCTION_NAME"),
+        "enabled": True,
+    },
 }
