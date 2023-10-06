@@ -28,7 +28,11 @@ resource "aws_lambda_function" "pricing_sheet" {
   package_type  = "Image"
   image_uri     = "${data.aws_ecr_repository.lambda-pricing-sheet.repository_url}:${var.app_version}"
   timeout       = 300
-  memory_size   = 1024
+  memory_size   = 2048
+
+  ephemeral_storage {
+    size = 1024
+  }
 
   environment {
     variables = {
@@ -51,7 +55,11 @@ resource "aws_lambda_function" "project_summary" {
   package_type  = "Image"
   image_uri     = "${data.aws_ecr_repository.lambda-project-summary.repository_url}:${var.app_version}"
   timeout       = 300
-  memory_size   = 1024
+  memory_size   = 2048
+
+  ephemeral_storage {
+    size = 1024
+  }
 
   environment {
     variables = {

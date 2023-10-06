@@ -109,8 +109,11 @@
 
     <!-- Hazards aggregation table -->
     <div class="mb-12">
-      <h4 class="mb-4">Survey Hazards</h4>
-      <table class="table">
+      <h4 class="mb-1">Survey Hazards</h4>
+      <h6 class="text--body-md text--error">
+        Cross-check values with the downloaded pricing sheet in Excel.
+      </h6>
+      <table class="table mt-4">
         <thead>
           <tr>
             <th>Size</th>
@@ -231,7 +234,7 @@
             <input 
               type="text" 
               name="special_case:note:{{ special_case.0 }}" 
-              placeholder="Add a note" 
+              placeholder="{% if special_case.0 == 'C' %}Specify the approved linear feet{% else %}Add a note{% endif %}"
               {% if spec and spec.note %}value="{{ spec.note }}"{% endif %}
               {% if not spec %}hidden{% endif %}>
           </div>
@@ -269,6 +272,19 @@
       <h4>Pictures</h4>
       <h6 class="text--body-md text--muted">Provided details about the required reference pictures.</h6>
       <div class="mt-4 grid" style="grid-template-columns: 256px auto;">
+        <div class="text--body-md">
+          Reference image method
+        </div>
+        <div class="form-control w-64">
+          <select name="reference_images_method" onchange="onChangeReferenceImageMethod(event)">
+          {% for value, label in reference_image_methods %}
+            <option value="{{ value }}" {% if instruction.reference_images_method == value %}selected{% endif %}>
+              {{ label }}
+            </option>
+          {% endfor %}
+          </select>
+        </div>
+
         <div class="text--body-md" id="id_reference_images_number_label">
           Number of required pictures
         </div>
@@ -324,7 +340,7 @@
     </div>
 
     <!-- Checklist -->
-    <div class="mb-12">
+    <div class="mb-12" id="id_checklist_container" style="display: {% if instruction.get_checklist_visible %}block{% else %}none{% endif %}">
       <h4>No-survey PI Checklist</h5>
       <h6 class="text--body-md text--muted">Provide responses to the checklist questions.</h6>
 
@@ -377,6 +393,12 @@
     const formControl = $(event.target).next()
     const input = $(formControl).children(`input[type="text"]`)
     $(input).attr("hidden", !checked)
+
+    // Special handler for NTE or No Survey
+    if ($(input).attr("name") === "project:note:2") {
+      const display = !checked ? "none" : "block"
+      $("#id_checklist_container").css("display", display)
+    }
   }
 
   /// Toggle handler for a special case chip filter
@@ -411,6 +433,15 @@
     event.preventDefault()
     $(`#note-container-${noteId}`).remove()
   }
+  
+  /// Handler for changing the reference image method
+  const onChangeReferenceImageMethod = (event) => {
+    const visibility = event.target.value == 1 ? "hidden" : "visible"
+
+    $(`div[id^="id_reference_images_sizes"]`).css("visibility", visibility)
+    $(`div[id^="id_reference_images_number"]`).css("visibility", visibility)
+    $(`div[id^="id_reference_images_curbs"]`).css("visibility", visibility)
+  }
 
   /// Handler for saving the form
   const onSave = (event, published) => {
@@ -423,6 +454,9 @@
   $(document).ready(() => {
     // If no notes exists, add a default element
     $("#notes").children().length === 0 ? onAddNote() : null
+
+    // Initialize the reference image method
+    $(`select[name="reference_images_method"]`).trigger("change")
   })
 
 </script>

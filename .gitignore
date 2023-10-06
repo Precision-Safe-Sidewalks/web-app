@@ -202,3 +202,6 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+
+# AWS
+.aws-lambda-rie

@@ -6,6 +6,7 @@ from repairs.models.constants import (
     ContactMethod,
     Cut,
     Hazard,
+    ProjectSpecification,
     ReferenceImageMethod,
     Stage,
 )
@@ -115,6 +116,13 @@ class Instruction(models.Model):
     def get_checklist(self):
         """Return the checklist in order"""
         return self.checklist.order_by("question__order", "question__suborder")
+
+    def get_checklist_visible(self):
+        """Return True if the checklist should be visible"""
+        return self.specifications.filter(
+            specification_type=InstructionSpecification.SpecificationType.PROJECT,
+            specification=ProjectSpecification.NTE,
+        ).exists()
 
 
 class InstructionContactNote(models.Model):
