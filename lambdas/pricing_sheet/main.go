@@ -280,7 +280,8 @@ func (p *PricingSheet) Complete() {
 	db := GetDatabase()
 	defer db.Close(ctx)
 
-	if err := db.QueryRow(ctx, query, S3_BUCKET, p.S3Key, p.RequestId.String()); err != nil {
+	_, err := db.Exec(ctx, query, S3_BUCKET, p.S3Key, p.RequestId.String())
+	if err != nil {
 		panic(err)
 	}
 }
