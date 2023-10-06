@@ -23,13 +23,16 @@ resource "aws_lambda_function" "geocoding" {
 }
 
 resource "aws_lambda_function" "pricing_sheet" {
-  function_name     = "${local.project}-pricing-sheet-${local.env}"
-  role              = aws_iam_role.lambda.arn
-  package_type      = "Image"
-  image_uri         = "${data.aws_ecr_repository.lambda-pricing-sheet.repository_url}:${var.app_version}"
-  timeout           = 300
-  memory_size       = 2048
-  ephemeral_storage = 1024
+  function_name = "${local.project}-pricing-sheet-${local.env}"
+  role          = aws_iam_role.lambda.arn
+  package_type  = "Image"
+  image_uri     = "${data.aws_ecr_repository.lambda-pricing-sheet.repository_url}:${var.app_version}"
+  timeout       = 300
+  memory_size   = 2048
+
+  ephemeral_storage {
+    size = 1024
+  }
 
   environment {
     variables = {
