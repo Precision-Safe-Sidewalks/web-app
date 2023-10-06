@@ -349,22 +349,13 @@ func (s *ProjectSummary) UpdateProductionData(f *excelize.File) {
 	sort.Slice(workDates, func(i, j int) bool { return workDates[i].Before(workDates[j]) })
 
 	for i, workDate := range workDates {
+		offset := 22
 		sheet := workDate.Format("2006-01-02")
 
 		f.SetSheetName(strconv.Itoa(i+1), sheet)
+		s.UpdateSummaryCompletedCurbs(f, sheet, i)
+		s.UpdateSummaryCompletedSidewalks(f, sheet, i)
 		f.SetCellValue(sheet, "E11", workDate.Format("1/2/2006"))
-
-		// Update the formula references on the "SUMMARY" worksheet
-		refOffset := 35
-
-		f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("E%d", refOffset-i), fmt.Sprintf("='%s'!O8", sheet))
-		f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("F%d", refOffset-i), fmt.Sprintf("='%s'!P8", sheet))
-		f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("G%d", refOffset-i), fmt.Sprintf("='%s'!Q8", sheet))
-		f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("H%d", refOffset-i), fmt.Sprintf("='%s'!R8", sheet))
-		f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("I%d", refOffset-i), fmt.Sprintf("='%s'!S8", sheet))
-
-		// Insert the measurement data
-		offset := 22
 
 		for _, item := range groups[workDate] {
 			f.SetCellValue(sheet, fmt.Sprintf("A%d", offset), item.Width)
@@ -380,6 +371,60 @@ func (s *ProjectSummary) UpdateProductionData(f *excelize.File) {
 			offset++
 		}
 	}
+}
+
+// Update the formula references on the SUMMARY worksheet (completed curbs)
+func (s *ProjectSummary) UpdateSummaryCompletedCurbs(f *excelize.File, sheet string, sheetId int) {
+	rowId := 35 - sheetId
+
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("E%d", rowId), fmt.Sprintf("='%s'!O8", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("F%d", rowId), fmt.Sprintf("='%s'!P8", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("G%d", rowId), fmt.Sprintf("='%s'!Q8", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("H%d", rowId), fmt.Sprintf("='%s'!R8", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("I%d", rowId), fmt.Sprintf("='%s'!S8", sheet))
+}
+
+// Update the formula references on the SUMMARY worksheet (completed sidewalks)
+func (s *ProjectSummary) UpdateSummaryCompletedSidewalks(f *excelize.File, sheet string, sheetId int) {
+	rowId := 59 - sheetId
+
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("A%d", rowId), fmt.Sprintf("='%s'!O5", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("B%d", rowId), fmt.Sprintf("='%s'!P5", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("C%d", rowId), fmt.Sprintf("='%s'!Q5", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("D%d", rowId), fmt.Sprintf("='%s'!R5", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("E%d", rowId), fmt.Sprintf("='%s'!S5", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("F%d", rowId), fmt.Sprintf("='%s'!T5", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("G%d", rowId), fmt.Sprintf("='%s'!U5", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("H%d", rowId), fmt.Sprintf("='%s'!V5", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("I%d", rowId), fmt.Sprintf("='%s'!W5", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("J%d", rowId), fmt.Sprintf("='%s'!X5", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("K%d", rowId), fmt.Sprintf("='%s'!Y5", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("L%d", rowId), fmt.Sprintf("='%s'!Z5", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("M%d", rowId), fmt.Sprintf("='%s'!AA5", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("N%d", rowId), fmt.Sprintf("='%s'!AB5", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("O%d", rowId), fmt.Sprintf("='%s'!AC5", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("P%d", rowId), fmt.Sprintf("='%s'!AD5", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("Q%d", rowId), fmt.Sprintf("='%s'!AE5", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("R%d", rowId), fmt.Sprintf("='%s'!AF5", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("S%d", rowId), fmt.Sprintf("='%s'!AG5", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("T%d", rowId), fmt.Sprintf("='%s'!AH5", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("U%d", rowId), fmt.Sprintf("='%s'!AI5", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("V%d", rowId), fmt.Sprintf("='%s'!AJ5", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("W%d", rowId), fmt.Sprintf("='%s'!AK5", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("X%d", rowId), fmt.Sprintf("='%s'!AL5", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("Y%d", rowId), fmt.Sprintf("='%s'!AM5", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("Z%d", rowId), fmt.Sprintf("='%s'!AN5", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("AA%d", rowId), fmt.Sprintf("='%s'!AO5", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("AB%d", rowId), fmt.Sprintf("='%s'!AP5", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("AC%d", rowId), fmt.Sprintf("='%s'!AQ5", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("AD%d", rowId), fmt.Sprintf("='%s'!AR5", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("AE%d", rowId), fmt.Sprintf("='%s'!AS5", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("AF%d", rowId), fmt.Sprintf("='%s'!AT5", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("AG%d", rowId), fmt.Sprintf("='%s'!AU5", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("AH%d", rowId), fmt.Sprintf("='%s'!AV5", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("AI%d", rowId), fmt.Sprintf("='%s'!AW5", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("AJ%d", rowId), fmt.Sprintf("='%s'!AX5", sheet))
+	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("AK%d", rowId), fmt.Sprintf("='%s'!AY5", sheet))
 }
 
 // Return the S3 key
