@@ -78,8 +78,8 @@ func (d *PricingSheetData) FetchProject(db *pgx.Conn) {
 			p.name,
 			p.pricing_model,
 			o.name AS organization_name,
-			up.initials AS bdm,
-			ui.initials AS surveyor,
+			COALESCE(up.initials, '') AS bdm,
+			COALESCE(ui.initials, '') AS surveyor,
 			ps.estimated_sidewalk_miles,
 			ps.surveyor_speed,
 			ps.survey_hazards,
@@ -90,7 +90,7 @@ func (d *PricingSheetData) FetchProject(db *pgx.Conn) {
 			ps.commission_rate,
 			ps.base_rate,
 			ps.number_of_technicians,
-			t.royalty_rate
+			COALESCE(t.royalty_rate, 0) AS royalty_rate
 		FROM repairs_project p
 			JOIN repairs_pricingsheet ps ON p.id = ps.project_id
 			JOIN repairs_pricingsheetrequest pr ON ps.id = pr.pricing_sheet_id
