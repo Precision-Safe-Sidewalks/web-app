@@ -176,11 +176,11 @@ func (s *ProjectSummary) FetchProjectInstructions(db *pgx.Conn) {
 		query := fmt.Sprintf(`
 			SELECT
 				COALESCE((hazards->'%s'->'count')::int, 0) AS hazards,
-				COALESCE((hazards->'%s'->'inch_feet')::float, 0) AS inch_feet,
+				COALESCE((hazards->'%s'->'inch_feet')::float, 0) AS inch_feet
 			FROM repairs_instruction i
 			WHERE i.project_id = $1
 				AND i.stage = 'PRODUCTION'
-		`, size, size, size)
+		`, size, size)
 
 		err := db.QueryRow(context.Background(), query, s.Project.Id).Scan(
 			&hazards,
