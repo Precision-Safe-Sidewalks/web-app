@@ -82,7 +82,7 @@ func (s *ProjectSummary) FetchProject(db *pgx.Conn) {
 		FROM repairs_project p
 			JOIN repairs_projectsummaryrequest r ON p.id = r.project_id
 			JOIN customers_customer c ON p.customer_id = c.id
-			JOIN core_territory t ON p.territory_id = p.id
+			JOIN core_territory t ON p.territory_id = t.id
 			LEFT JOIN accounts_user u ON p.business_development_manager_id = u.id
 		WHERE r.request_id = $1
 	`
