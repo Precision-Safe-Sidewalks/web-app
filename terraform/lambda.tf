@@ -50,7 +50,7 @@ resource "aws_lambda_function" "pricing_sheet" {
 }
 
 resource "aws_lambda_function" "project_summary" {
-  function_name = "${local.project}-project_summary-${local.env}"
+  function_name = "${local.project}-project-summary-${local.env}"
   role          = aws_iam_role.lambda.arn
   package_type  = "Image"
   image_uri     = "${data.aws_ecr_repository.lambda-project-summary.repository_url}:${var.app_version}"
