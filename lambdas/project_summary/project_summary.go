@@ -75,7 +75,7 @@ func (s *ProjectSummary) FetchProject(db *pgx.Conn) {
 		SELECT
 			p.id,
 			p.name,
-			p.po_number,
+			COALESCE(p.po_number, '') AS po_number,
 			COALESCE(u.initials, '') AS bdm,
 			t.name AS territory_name,
 			c.name AS organization_name
@@ -166,19 +166,17 @@ func (s *ProjectSummary) FetchSurveyInstructions(db *pgx.Conn) {
 }
 
 // Fetch the Project Instructions data
-// TODO: check if this is needed (data isn't used)
 func (s *ProjectSummary) FetchProjectInstructions(db *pgx.Conn) {
 	sizes := []string{"S", "M", "L"}
 
 	for _, size := range sizes {
 		var hazards int
-		var inchFeet, linearFeetCurbs float64
+		var inchFeet float64
 
 		query := fmt.Sprintf(`
 			SELECT
 				COALESCE((hazards->'%s'->'count')::int, 0) AS hazards,
 				COALESCE((hazards->'%s'->'inch_feet')::float, 0) AS inch_feet,
-				COALESCE((hazards->'%s'->'linear_feet')::float, 0) AS linear_feet_curbs
 			FROM repairs_instruction i
 			WHERE i.project_id = $1
 				AND i.stage = 'PRODUCTION'
@@ -187,7 +185,6 @@ func (s *ProjectSummary) FetchProjectInstructions(db *pgx.Conn) {
 		err := db.QueryRow(context.Background(), query, s.Project.Id).Scan(
 			&hazards,
 			&inchFeet,
-			&linearFeetCurbs,
 		)
 
 		if err != nil {
@@ -196,7 +193,6 @@ func (s *ProjectSummary) FetchProjectInstructions(db *pgx.Conn) {
 
 		s.ProjectInstructions.Hazards += hazards
 		s.ProjectInstructions.InchFeet += inchFeet
-		s.ProjectInstructions.LinearFeetCurbs += linearFeetCurbs
 	}
 }
 
@@ -258,29 +254,17 @@ func (s *ProjectSummary) FetchMeasurements(db *pgx.Conn) {
 
 // Return the total hazards count
 func (s *ProjectSummary) TotalHazards() int {
-	return len(s.Measurements)
+	return s.ProjectInstructions.Hazards
 }
 
 // Return the total inch feet
 func (s *ProjectSummary) TotalInchFeet() float64 {
-	var total float64
-
-	for _, item := range s.Measurements {
-		total += item.InchFeet
-	}
-
-	return total
+	return s.ProjectInstructions.InchFeet
 }
 
 // Return the total linear feet curbs
 func (s *ProjectSummary) TotalLinearFeetCurb() float64 {
-	var total float64
-
-	for _, item := range s.Measurements {
-		total += item.LinearFeetCurb
-	}
-
-	return total
+	return s.ProjectInstructions.LinearFeetCurb
 }
 
 // Generate the Project Summary Excel file
@@ -527,9 +511,9 @@ type SurveyInstructions struct {
 
 // Project Instructions
 type ProjectInstructions struct {
-	Hazards         int
-	InchFeet        float64
-	LinearFeetCurbs float64
+	Hazards        int
+	InchFeet       float64
+	LinearFeetCurb float64
 }
 
 // Measurement
