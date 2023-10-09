@@ -66,6 +66,13 @@
           {% endfor %}
           </select>
         </div>
+
+        <div class="text--body-md">
+          Approved linear feet
+        </div>
+        <div class="form-control w-64">
+          <input type="number" name="linear_feet_curb" value="{{ instruction.linear_feet_curb }}">
+        </div>
       </div>
     </div>
 
@@ -234,7 +241,7 @@
             <input 
               type="text" 
               name="special_case:note:{{ special_case.0 }}" 
-              placeholder="{% if special_case.0 == 'C' %}Specify the approved linear feet{% else %}Add a note{% endif %}"
+              placeholder="{% if special_case.0 != 'C' %}Add a note{% else %}Add a note. The approved linear feet will be prepended to the note automatically when the PI is generated.{% endif %}"
               {% if spec and spec.note %}value="{{ spec.note }}"{% endif %}
               {% if not spec %}hidden{% endif %}>
           </div>
