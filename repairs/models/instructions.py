@@ -45,6 +45,9 @@ class Instruction(models.Model):
         choices=ContactMethod.choices, default=ContactMethod.CALL
     )
     hazards = models.JSONField(default=dict, help_text="Aggregated hazard counts")
+    linear_feet_curb = models.FloatField(
+        default=0, help_text="Approved PI curb linear feet"
+    )
     published = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

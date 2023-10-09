@@ -211,6 +211,7 @@ class BaseInstructionsView(TemplateView):
             self.process_survey_details(instruction)
             self.process_survey_method(instruction)
             self.process_cut(instruction)
+            self.process_linear_feet_curb(instruction)
             self.process_hazards(instruction)
             self.process_contact_method(instruction)
             self.process_contact_notes(instruction)
@@ -277,6 +278,11 @@ class BaseInstructionsView(TemplateView):
         cut = int(self.request.POST.get("cut", 1))
         instruction.cut = cut
 
+    def process_linear_feet_curb(self, instruction):
+        """Process the linear feet curb"""
+        linear_feet_curb = float(self.request.POST.get("linear_feet_curb", 0))
+        instruction.linear_feet_curb = linear_feet_curb
+
     def process_hazards(self, instruction):
         """ "Process the instruction hazards aggregation"""
         if instruction.stage != Stage.PRODUCTION:
@@ -288,6 +294,7 @@ class BaseInstructionsView(TemplateView):
             if key.startswith("hazards:"):
                 _, metric, hazard = key.split(":")
                 dtype = dtypes[metric]
+                value = value or 0
                 instruction.hazards[hazard][metric] = dtype(value)
 
     def process_contact_method(self, instruction):

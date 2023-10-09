@@ -245,7 +245,13 @@
               {{ value.label }}
             </td>
             <td colspan="9">
-              {% if value.obj.note %}{{ value.obj.note }}{% endif %}
+              {% if value.obj and key == 'C' %}
+                {{ linear_feet_curb_note }}
+              {% endif %}
+              
+              {% if value.obj.note %}
+                {{ value.obj.note }}
+              {% endif %}
             </td>
           </tr>
           {% endif %}
