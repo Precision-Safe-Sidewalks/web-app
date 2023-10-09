@@ -294,6 +294,7 @@ class BaseInstructionsView(TemplateView):
             if key.startswith("hazards:"):
                 _, metric, hazard = key.split(":")
                 dtype = dtypes[metric]
+                value = value or 0
                 instruction.hazards[hazard][metric] = dtype(value)
 
     def process_contact_method(self, instruction):
