@@ -5,7 +5,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("repairs", "0026_rename_group_measurement_survey_group"),
+        ("repairs", "0027_projectsummaryrequest"),
     ]
 
     operations = [
