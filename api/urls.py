@@ -43,4 +43,9 @@ urlpatterns = router.urls + [
         repairs.PricingSheetAPIView.as_view(),
         name="documents-pricing-sheet",
     ),
+    path(
+        "documents/project-summary/<int:pk>/",
+        repairs.ProjectSummaryAPIView.as_view(),
+        name="documents-project-summary",
+    ),
 ]
