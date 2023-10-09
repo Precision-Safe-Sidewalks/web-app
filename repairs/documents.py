@@ -93,6 +93,9 @@ class ProjectInstructionsGenerator(BaseInstructionsGenerator):
         context["special_cases"] = self.get_specification("SC", SpecialCase.choices)
         context["dr_specs"] = self.get_specification("DR", DRSpecification.choices)
         context["notes_placeholder"] = list(range(5))
+        context[
+            "linear_feet_curb_note"
+        ] = f"{self.instruction.linear_feet_curb:g} linear feet."
         return context
 
     def get_hazards(self):
@@ -117,5 +120,11 @@ class ProjectInstructionsGenerator(BaseInstructionsGenerator):
         hazards["counts"].append(sum(hazards["counts"]))
         hazards["sqft"].append(sum(hazards["sqft"]))
         hazards["inft"].append(sum(hazards["inft"]))
+
+        # Coerce any floats to integers if applicable
+        for key in hazards:
+            for i, value in enumerate(hazards[key]):
+                if isinstance(value, float) and value.is_integer():
+                    hazards[key][i] = int(value)
 
         return hazards
