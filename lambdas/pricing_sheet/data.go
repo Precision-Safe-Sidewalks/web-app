@@ -162,13 +162,13 @@ func (d *PricingSheetData) FetchSurveyData(db *pgx.Conn) {
 		SELECT
 			m.object_id,
 			m.survey_group,
-			COALESCE(m.quick_description, '') AS quick_description,
-			COALESCE(m.linear_feet, 0) AS linear_feet,
+			COALESCE(m.size, '') AS size,
+			COALESCE(m.curb_length, 0) AS curb_length,
 			COALESCE(m.geocoded_address, '') AS geocoded_address,
 			COALESCE(m.length, 0) AS length,
 			COALESCE(m.width, 0) AS width,
-			0 AS measured_hazard_length,
-			0 AS measured_inch_feet
+			COALESCE(m.measured_hazard_length, 0) AS measured_hazard_length,
+			COALESCE(m.inch_feet, 0) AS measured_inch_feet
 		FROM repairs_measurement m
 		WHERE m.project_id = $1
 			AND m.stage = 'SURVEY'
@@ -190,8 +190,8 @@ func (d *PricingSheetData) FetchSurveyData(db *pgx.Conn) {
 		err = rows.Scan(
 			&r.ObjectId,
 			&r.SurveyGroup,
-			&r.QuickDescription,
-			&r.LinearFeetCurb,
+			&r.Size,
+			&r.CurbLength,
 			&r.Address,
 			&r.Length,
 			&r.Width,
@@ -211,8 +211,8 @@ func (d *PricingSheetData) FetchSurveyData(db *pgx.Conn) {
 type SurveyRecord struct {
 	ObjectId             int
 	SurveyGroup          string
-	QuickDescription     string
-	LinearFeetCurb       float64
+	Size                 string
+	CurbLength           float64
 	Address              string
 	Length               float64
 	Width                float64
