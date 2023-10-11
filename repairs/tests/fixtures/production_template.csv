@@ -1,60 +1,60 @@
-﻿OBJECTID,GlobalID,CreationDate,Creator,EditDate,Editor,Length,Width,Quick Description,Special Case,H1,H2,Accuracy,Notes,Slope,Inch Feet,SQFT,Linear Feet,Tech Address,Value Too Large,x,y
-1,42d0844d-6eff-4bb6-8a0d-1bc003a28dfe,2/2/2023 9:38:14 PM,a.hester@precisionsafesidewalks.com,2/3/2023 5:53:02 PM,c.leftwich_PSSPIMS,5,5,Large,,9,8,,,1:8,5.3125,,,,,-77.9063937734436,34.1639291924005
-2,63d2a208-34c8-45f3-88e0-9e8f8780e880,2/2/2023 9:38:54 PM,a.hester@precisionsafesidewalks.com,2/2/2023 9:38:54 PM,a.hester@precisionsafesidewalks.com,5,5,Large,,9,8,,,1:10,5.3125,,,,,-77.9064391509419,34.1638899381412
-3,8d515129-0719-47d2-8b26-f50e100100ce,2/2/2023 9:43:44 PM,a.hester@precisionsafesidewalks.com,2/7/2023 7:31:30 PM,a.hester@precisionsafesidewalks.com,5,5,Large,,9,8,,,1:8,5.3125,,,,,-77.9067528293881,34.1639446019783
-4,a9808573-a8eb-4adc-9475-2baf2e4126c5,2/3/2023 2:28:55 PM,c.leftwich_PSSPIMS,2/3/2023 2:28:55 PM,c.leftwich_PSSPIMS,8,1,Medium,,4,2,,,,3,,,,,-77.9064059842433,34.1639177106932
-5,08b47e1d-0626-48af-9018-50d3afba4bfb,2/3/2023 2:29:33 PM,c.leftwich_PSSPIMS,2/3/2023 2:29:33 PM,c.leftwich_PSSPIMS,5,6,Small,,3,3,,,,1.875,,,,,-77.9064059842433,34.1639177106932
-6,8f602400-8937-438b-b175-a3bc87a99a07,2/3/2023 5:57:02 PM,c.leftwich_PSSPIMS,2/3/2023 5:57:02 PM,c.leftwich_PSSPIMS,5,5,Medium,,6,5,,,,3.4375,25,60,,,-77.9064869314335,34.1638685794935
-7,f7613608-b991-43df-adad-d27ab9c18f67,2/27/2023 11:48:52 PM,a.hester@precisionsafesidewalks.com,2/27/2023 11:48:52 PM,a.hester@precisionsafesidewalks.com,5,5,Medium,,5,3,,,1:8,2.5,25,50,,,-78.7180199743556,35.8537570040513
-8,93b4206c-0c22-4d5c-80ab-1e91b1f91302,2/27/2023 11:49:35 PM,a.hester@precisionsafesidewalks.com,2/27/2023 11:49:35 PM,a.hester@precisionsafesidewalks.com,4,4,Medium,,5,4,,,1:8,2.25,16,40,,,-78.7184300175535,35.853771001728
-9,c8ad5081-aab3-4c9c-888f-6bf1766966f8,2/27/2023 11:50:13 PM,a.hester@precisionsafesidewalks.com,2/27/2023 11:50:13 PM,a.hester@precisionsafesidewalks.com,5,5,Medium,,5,0,,,1:8,1.5625,25,56,,,-80.460552962224,34.8627394419075
-10,69aaaddc-76a6-4514-be36-f4ebf6ebd826,2/27/2023 11:51:45 PM,a.hester@precisionsafesidewalks.com,2/27/2023 11:51:45 PM,a.hester@precisionsafesidewalks.com,5,5,Medium,,4,0,,,1:8,1.25,25,28,,,-78.7186610229221,35.8535200057169
-11,3a3323c0-c49c-4be5-a1b8-ccda3d250fde,2/27/2023 11:52:21 PM,a.hester@precisionsafesidewalks.com,2/27/2023 11:52:21 PM,a.hester@precisionsafesidewalks.com,4,3,Large,,8,6,,,1:10,3.5,12,36,,,-78.7185140037444,35.8531859870185
-12,a32f45ff-36e5-4b2d-8b40-5858429e9969,2/27/2023 11:53:03 PM,a.hester@precisionsafesidewalks.com,2/27/2023 11:53:03 PM,a.hester@precisionsafesidewalks.com,4,3,Medium,,4,0,,,1:8,1,12,32,,,-78.7189236849213,35.8530799030792
-13,8a327682-b51b-4e50-802f-b9c11d048c6b,2/27/2023 11:53:48 PM,a.hester@precisionsafesidewalks.com,2/27/2023 11:53:48 PM,a.hester@precisionsafesidewalks.com,4,3,Medium,,5,0,,,1:8,1.25,12,36,,,-78.7191360250949,35.8532760088852
-14,41953a4e-fc87-4be9-b235-50ecb7798503,2/27/2023 11:54:34 PM,a.hester@precisionsafesidewalks.com,2/27/2023 11:54:34 PM,a.hester@precisionsafesidewalks.com,5,3,Medium,,5,5,,,1:8,3.125,15,36,,,-78.7193360170266,35.8532060200399
-15,d8ec774b-d2e1-4bc3-86c1-7b46a580b6ff,2/27/2023 11:55:19 PM,a.hester@precisionsafesidewalks.com,2/27/2023 11:55:19 PM,a.hester@precisionsafesidewalks.com,3,4,Medium,,6,4,,,1:8,1.875,12,40,,,-78.7193360170266,35.8532060200399
-16,ca3eb9ac-afad-42cc-ae54-2218c2ad480a,2/27/2023 11:59:05 PM,a.hester@precisionsafesidewalks.com,2/27/2023 11:59:05 PM,a.hester@precisionsafesidewalks.com,5,5,Medium,,5,0,,,1:8,1.5625,25,51,,,-78.7194930101989,35.8531740009872
-17,9fafb889-0be2-413a-b209-e75edc6a4974,2/28/2023 12:00:04 AM,a.hester@precisionsafesidewalks.com,2/28/2023 12:00:04 AM,a.hester@precisionsafesidewalks.com,5,5,Medium,,4,0,,,1:8,1.25,25,27,,,-78.7197400253425,35.8531009947902
-18,fb3492c8-d8e7-45d9-be87-6c83d6e8ab04,2/28/2023 12:01:48 AM,a.hester@precisionsafesidewalks.com,2/28/2023 12:01:48 AM,a.hester@precisionsafesidewalks.com,5,5,Medium,,6,0,,,1:8,1.875,25,32,,,-78.7197400253425,35.8531009947902
-19,31c46b94-e9b8-4e24-aae3-7e3b88d279a3,2/28/2023 12:02:32 AM,a.hester@precisionsafesidewalks.com,2/28/2023 12:02:32 AM,a.hester@precisionsafesidewalks.com,5,5,Medium,,4,0,,,1:8,1.25,25,22,,,-78.7197400253425,35.8531009947902
-20,6a550099-1576-4ff1-bfaa-ebe1aca7dac7,2/28/2023 12:03:07 AM,a.hester@precisionsafesidewalks.com,2/28/2023 12:03:07 AM,a.hester@precisionsafesidewalks.com,5,5,Medium,,4,0,,,1:8,1.25,25,40,,,-78.7197400253425,35.8531009947902
-21,f2899e52-a9f6-4036-b8d0-531652d15c4c,2/28/2023 12:03:39 AM,a.hester@precisionsafesidewalks.com,2/28/2023 12:03:39 AM,a.hester@precisionsafesidewalks.com,5,5,Medium,,4,2,,,1:8,1.875,25,48,,,-78.7197929989948,35.8530900142574
-22,2dea6a90-e42f-49ce-acc3-3985eff5e895,2/28/2023 12:04:12 AM,a.hester@precisionsafesidewalks.com,2/28/2023 12:04:12 AM,a.hester@precisionsafesidewalks.com,5,4,Medium,,4,2,,,1:8,1.875,20,44,,,-78.7189910181434,35.8533350171698
-23,fc29d480-22ad-4d5d-ac7f-607ebf5655ac,2/28/2023 12:04:50 AM,a.hester@precisionsafesidewalks.com,2/28/2023 12:04:50 AM,a.hester@precisionsafesidewalks.com,5,4,Medium,,4,3,,,1:8,2.1875,20,42,,,-78.720245034839,35.8529709910386
-24,5bff7f82-1a4a-4fee-8d7d-454debc90f90,2/28/2023 12:05:26 AM,a.hester@precisionsafesidewalks.com,2/28/2023 12:05:26 AM,a.hester@precisionsafesidewalks.com,5,5,Large,,12,3,,,1:10,4.6875,25,60,,,-78.7205079753159,35.8529100129578
-25,93027b8f-4457-4169-87b5-5e61120ed294,2/28/2023 12:06:04 AM,a.hester@precisionsafesidewalks.com,2/28/2023 12:06:04 AM,a.hester@precisionsafesidewalks.com,4,4,Medium,,4,2,,,1:8,1.5,16,44,,,-78.7215589817405,35.8558669804892
-26,65bd95ba-b115-4296-b604-2c8b937fcdb4,2/28/2023 12:07:16 AM,a.hester@precisionsafesidewalks.com,2/28/2023 12:07:16 AM,a.hester@precisionsafesidewalks.com,4,4,Medium,,4,1,,,1:8,1.25,16,44,,,-78.7215106820226,35.8543053478103
-27,f55b9f7d-ceeb-4195-b345-89898aa1311f,2/28/2023 12:07:52 AM,a.hester@precisionsafesidewalks.com,2/28/2023 12:07:52 AM,a.hester@precisionsafesidewalks.com,4,3,Medium,,5,2,,,1:8,1.75,12,36,,,-78.721912027732,35.8541999876375
-28,3517053f-fc5b-4957-8920-ab3a49023caf,2/28/2023 12:08:34 AM,a.hester@precisionsafesidewalks.com,2/28/2023 12:08:34 AM,a.hester@precisionsafesidewalks.com,4,5,Medium,,6,3,,,1:8,2.25,20,50,,,-78.721912027732,35.8541999876375
-29,fdea5fa9-cff9-4557-96c5-c29c83aef064,2/28/2023 12:09:08 AM,a.hester@precisionsafesidewalks.com,2/28/2023 12:09:08 AM,a.hester@precisionsafesidewalks.com,4,4,Large,,9,0,,,1:10,2.25,16,46,,,-78.721912027732,35.8541999876375
-30,1150ca76-d6ba-4dfc-8120-78254d76ddfb,2/28/2023 12:09:46 AM,a.hester@precisionsafesidewalks.com,2/28/2023 12:09:46 AM,a.hester@precisionsafesidewalks.com,4,4,Medium,,5,4,,,1:8,2.25,16,48,,,-78.721912027732,35.8541999876375
-31,fc0d8015-9b34-477e-ad22-b2e921fbe7d3,2/28/2023 12:10:17 AM,a.hester@precisionsafesidewalks.com,2/28/2023 12:10:17 AM,a.hester@precisionsafesidewalks.com,3,4,Medium,,6,0,,,1:8,1.125,12,48,,,-78.7219980261491,35.853582995795
-32,3e66cad6-1054-44aa-ad34-96f5f7371832,2/28/2023 12:11:01 AM,a.hester@precisionsafesidewalks.com,2/28/2023 12:11:01 AM,a.hester@precisionsafesidewalks.com,5,5,Medium,,6,0,,,1:8,1.875,25,42,,,-78.7208300078706,35.8541600058227
-33,852bd8cd-cac3-4169-ae6d-ace7ffc18fea,2/28/2023 2:29:40 AM,a.hester@precisionsafesidewalks.com,2/28/2023 2:29:40 AM,a.hester@precisionsafesidewalks.com,3,4,Medium,,7,6,,,1:8,2.4375,12,36,,,-78.7172569705061,35.853630018617
-34,e7edaa83-0e82-4ab6-acf9-bbba7c08918e,2/28/2023 2:30:18 AM,a.hester@precisionsafesidewalks.com,2/28/2023 2:30:18 AM,a.hester@precisionsafesidewalks.com,3,4,Medium,,4,3,,,1:8,1.3125,12,36,,,-78.7172569705061,35.853630018617
-35,8b46186b-2800-4640-955b-38a56314a8c0,2/28/2023 2:31:30 AM,a.hester@precisionsafesidewalks.com,2/28/2023 2:31:30 AM,a.hester@precisionsafesidewalks.com,3,4,Medium,,4,2,,,1:8,1.125,12,36,,,-78.7172569705061,35.853630018617
-36,e08ab05c-d91a-40d0-b0af-35e03376a648,2/28/2023 2:32:03 AM,a.hester@precisionsafesidewalks.com,2/28/2023 2:32:03 AM,a.hester@precisionsafesidewalks.com,3,4,Medium,,4,2,,,1:8,1.125,12,36,,,-78.7172569705061,35.853630018617
-37,6987aaf4-468c-4d86-9ea5-bce7a6c49f42,2/28/2023 2:32:35 AM,a.hester@precisionsafesidewalks.com,2/28/2023 2:32:35 AM,a.hester@precisionsafesidewalks.com,3,4,Medium,,4,2,,,1:8,1.125,12,36,,,-78.7181690048612,35.8530480208591
-38,06b9db01-e875-4909-be4d-d26edfe16f43,2/28/2023 2:33:04 AM,a.hester@precisionsafesidewalks.com,2/28/2023 2:33:04 AM,a.hester@precisionsafesidewalks.com,5,5,Medium,,5,2,,,1:8,2.1875,25,60,,,-78.7181690048612,35.8530480208591
-39,dbc8e064-d6ec-4c0c-8229-4b6461acf4da,2/28/2023 2:33:36 AM,a.hester@precisionsafesidewalks.com,2/28/2023 2:33:36 AM,a.hester@precisionsafesidewalks.com,3,4,Medium,,5,4,,,1:8,1.6875,12,36,,,-78.7181690048612,35.8530480208591
-40,1382c746-5f95-4cd5-b48a-b112093ab45d,2/28/2023 2:34:01 AM,a.hester@precisionsafesidewalks.com,2/28/2023 2:34:01 AM,a.hester@precisionsafesidewalks.com,3,4,Large,,12,12,,,1:10,4.5,12,36,,,-78.7181690048612,35.8530480208591
-41,cc1c3a73-4bc9-4891-a570-23ae57d63132,2/28/2023 2:34:35 AM,a.hester@precisionsafesidewalks.com,2/28/2023 2:34:35 AM,a.hester@precisionsafesidewalks.com,3,4,Medium,,5,2,,,1:8,1.3125,12,36,,,-78.7180700150085,35.8525130037238
-42,74f8cac5-797f-4d7d-9719-44c855735254,2/28/2023 2:35:03 AM,a.hester@precisionsafesidewalks.com,2/28/2023 2:35:03 AM,a.hester@precisionsafesidewalks.com,4,5,Medium,,7,3,,,1:8,2.5,20,60,,,-78.7180700150085,35.8525130037238
-43,574c46cc-bc16-416f-96c4-17e75a1778a7,2/28/2023 2:35:43 AM,a.hester@precisionsafesidewalks.com,2/28/2023 2:35:43 AM,a.hester@precisionsafesidewalks.com,4,5,Medium,,4,3,,,1:8,1.75,20,60,,,-78.7180700150085,35.8525130037238
-44,91cbb2cf-3e7d-43fc-a601-bcf49c1b5736,2/28/2023 2:36:14 AM,a.hester@precisionsafesidewalks.com,2/28/2023 2:36:14 AM,a.hester@precisionsafesidewalks.com,3,4,Medium,,4,4,,,1:8,1.5,12,36,,,-78.7180700150085,35.8525130037238
-45,cb5d3b5c-837a-4da5-a3d0-bb2cc6ca350a,2/28/2023 2:36:46 AM,a.hester@precisionsafesidewalks.com,2/28/2023 2:36:46 AM,a.hester@precisionsafesidewalks.com,3,4,Medium,,4,2,,,1:8,1.125,12,36,,,-78.7180700150085,35.8525130037238
-46,81b39f95-f814-4351-ae6e-4e29580eaa54,2/28/2023 2:37:29 AM,a.hester@precisionsafesidewalks.com,2/28/2023 2:37:29 AM,a.hester@precisionsafesidewalks.com,4,5,Small,,3,0,,,1:8,0.75,20,36,,,-78.7186419957061,35.8528139983605
-47,9ca7b62a-4abb-4139-a75e-78e65e752aa5,2/28/2023 2:38:08 AM,a.hester@precisionsafesidewalks.com,2/28/2023 2:38:08 AM,a.hester@precisionsafesidewalks.com,3,4,Medium,,4,3,,,1:8,1.3125,12,36,,,-78.7186419957061,35.8528139983605
-48,c5986604-3acf-4919-9f5a-0393dd1b1ce8,2/28/2023 2:38:39 AM,a.hester@precisionsafesidewalks.com,2/28/2023 2:38:39 AM,a.hester@precisionsafesidewalks.com,3,4,Small,,3,2,,,1:8,0.9375,12,36,,,-78.7186419957061,35.8528139983605
-49,49e547ac-3861-48ff-bc84-4e69a694002e,2/28/2023 2:39:31 AM,a.hester@precisionsafesidewalks.com,2/28/2023 2:39:31 AM,a.hester@precisionsafesidewalks.com,3,4,Medium,,6,0,,,1:8,1.125,12,34,,,-78.7186419957061,35.8528139983605
-50,19f4146f-e95c-41aa-82d6-1050e738e853,2/28/2023 2:40:00 AM,a.hester@precisionsafesidewalks.com,2/28/2023 2:40:00 AM,a.hester@precisionsafesidewalks.com,4,5,Small,,3,0,,,1:8,0.75,20,35,,,-78.7186419957061,35.8528139983605
-51,16177251-3111-4702-827d-d86a0db6c6da,2/28/2023 2:40:51 AM,a.hester@precisionsafesidewalks.com,2/28/2023 2:43:10 AM,a.hester@precisionsafesidewalks.com,5,7,Medium,,5,2,,,1:8,2.1875,35,84,,,-78.7186419957061,35.8528139983605
-52,352f3c86-d86c-4d7e-acba-00dba54c00fb,2/28/2023 2:43:43 AM,a.hester@precisionsafesidewalks.com,2/28/2023 2:43:43 AM,a.hester@precisionsafesidewalks.com,3,4,Medium,,6,3,,,1:8,1.6875,12,36,,,-78.7215619991815,35.8535800200532
-53,9996f524-244f-4e57-9af3-f66483243789,2/28/2023 2:44:19 AM,a.hester@precisionsafesidewalks.com,2/28/2023 2:45:14 AM,a.hester@precisionsafesidewalks.com,3,4,Medium,,4,3,,,1:8,1.3125,12,36,,,-78.7215619991815,35.8535800200532
-54,a1cb32fb-32e9-44b5-a077-69b31e53f2cf,2/28/2023 2:45:56 AM,a.hester@precisionsafesidewalks.com,2/28/2023 2:45:56 AM,a.hester@precisionsafesidewalks.com,5,5,Medium,,6,0,,,1:8,1.875,25,51,,,-78.7215619991815,35.8535800200532
-55,54de5bf4-55a8-4c33-9bcd-696aaeddad46,2/28/2023 2:47:09 AM,a.hester@precisionsafesidewalks.com,2/28/2023 2:47:09 AM,a.hester@precisionsafesidewalks.com,5,5,Medium,,7,0,,,1:8,2.1875,25,38,,,-78.7215619991815,35.8535800200532
-56,50a3639f-a990-4239-8fc6-b935270b83c0,2/28/2023 2:47:41 AM,a.hester@precisionsafesidewalks.com,2/28/2023 2:47:41 AM,a.hester@precisionsafesidewalks.com,4,4,Medium,,5,3,,,1:8,2,16,42,,,-78.7215619991815,35.8535800200532
-57,0fc067c6-ee60-4803-bcc3-2d097465ee5e,2/28/2023 2:48:16 AM,a.hester@precisionsafesidewalks.com,2/28/2023 2:48:16 AM,a.hester@precisionsafesidewalks.com,4,4,Large,,12,5,,,1:10,4.25,16,42,,,-78.7215619991815,35.8535800200532
-58,ad53cfa8-7ad7-4bed-ac41-25026c6bf6f8,2/28/2023 2:48:54 AM,a.hester@precisionsafesidewalks.com,2/28/2023 2:48:54 AM,a.hester@precisionsafesidewalks.com,4,8,Medium,,5,3,,,1:8,2,32,42,,,-78.7215619991815,35.8535800200532
-59,6aaea812-54d1-470b-bde0-a7f0920ab07b,3/29/2023 2:17:51 PM,c.leftwich_PSSPIMS,3/29/2023 2:20:34 PM,c.leftwich_PSSPIMS,5,5,Large,,12,0,,,1:12,3.75,25,5,,,-78.1720494496353,35.5542057214788
+ObjectID,CreationDate,Creator,Length,Width,Size,Special Case,H1,H2,Notes,Slope,Inch Feet,SQFT,Curb Length,Measured Hazard Length,Long,Lat
+1,2/2/2023 9:38:14 PM,a.hester@precisionsafesidewalks.com,5,5,Large,,9,8,,1:8,5.3125,25,,,-77.90639377,34.16392919
+2,2/2/2023 9:38:54 PM,a.hester@precisionsafesidewalks.com,5,5,Large,,9,8,,1:10,5.3125,25,,,-77.90643915,34.16388994
+3,2/2/2023 9:43:44 PM,a.hester@precisionsafesidewalks.com,5,5,Large,,9,8,,1:8,5.3125,25,,,-77.90675283,34.1639446
+4,2/3/2023 2:28:55 PM,c.leftwich_PSSPIMS,8,1,Medium,,4,2,,,3,8,,,-77.90640598,34.16391771
+5,2/3/2023 2:29:33 PM,c.leftwich_PSSPIMS,5,6,Small,,3,3,,,1.875,30,,,-77.90640598,34.16391771
+6,2/3/2023 5:57:02 PM,c.leftwich_PSSPIMS,5,5,Medium,,6,5,,,3.4375,25,60,,-77.90648693,34.16386858
+7,2/27/2023 11:48:52 PM,a.hester@precisionsafesidewalks.com,5,5,Medium,,5,3,,1:8,2.5,25,50,,-78.71801997,35.853757
+8,2/27/2023 11:49:35 PM,a.hester@precisionsafesidewalks.com,4,4,Medium,,5,4,,1:8,2.25,16,40,,-78.71843002,35.853771
+9,2/27/2023 11:50:13 PM,a.hester@precisionsafesidewalks.com,5,5,Medium,,5,0,,1:8,1.5625,25,56,,-80.46055296,34.86273944
+10,2/27/2023 11:51:45 PM,a.hester@precisionsafesidewalks.com,5,5,Medium,,4,0,,1:8,1.25,25,28,,-78.71866102,35.85352001
+11,2/27/2023 11:52:21 PM,a.hester@precisionsafesidewalks.com,4,3,Large,,8,6,,1:10,3.5,12,36,,-78.718514,35.85318599
+12,2/27/2023 11:53:03 PM,a.hester@precisionsafesidewalks.com,4,3,Medium,,4,0,,1:8,1,12,32,,-78.71892368,35.8530799
+13,2/27/2023 11:53:48 PM,a.hester@precisionsafesidewalks.com,4,3,Medium,,5,0,,1:8,1.25,12,36,,-78.71913603,35.85327601
+14,2/27/2023 11:54:34 PM,a.hester@precisionsafesidewalks.com,5,3,Medium,,5,5,,1:8,3.125,15,36,,-78.71933602,35.85320602
+15,2/27/2023 11:55:19 PM,a.hester@precisionsafesidewalks.com,3,4,Medium,,6,4,,1:8,1.875,12,40,,-78.71933602,35.85320602
+16,2/27/2023 11:59:05 PM,a.hester@precisionsafesidewalks.com,5,5,Medium,,5,0,,1:8,1.5625,25,51,,-78.71949301,35.853174
+17,2/28/2023 12:00:04 AM,a.hester@precisionsafesidewalks.com,5,5,Medium,,4,0,,1:8,1.25,25,27,,-78.71974003,35.85310099
+18,2/28/2023 12:01:48 AM,a.hester@precisionsafesidewalks.com,5,5,Medium,,6,0,,1:8,1.875,25,32,,-78.71974003,35.85310099
+19,2/28/2023 12:02:32 AM,a.hester@precisionsafesidewalks.com,5,5,Medium,,4,0,,1:8,1.25,25,22,,-78.71974003,35.85310099
+20,2/28/2023 12:03:07 AM,a.hester@precisionsafesidewalks.com,5,5,Medium,,4,0,,1:8,1.25,25,40,,-78.71974003,35.85310099
+21,2/28/2023 12:03:39 AM,a.hester@precisionsafesidewalks.com,5,5,Medium,,4,2,,1:8,1.875,25,48,,-78.719793,35.85309001
+22,2/28/2023 12:04:12 AM,a.hester@precisionsafesidewalks.com,5,4,Medium,,4,2,,1:8,1.875,20,44,,-78.71899102,35.85333502
+23,2/28/2023 12:04:50 AM,a.hester@precisionsafesidewalks.com,5,4,Medium,,4,3,,1:8,2.1875,20,42,,-78.72024503,35.85297099
+24,2/28/2023 12:05:26 AM,a.hester@precisionsafesidewalks.com,5,5,Large,,12,3,,1:10,4.6875,25,60,,-78.72050798,35.85291001
+25,2/28/2023 12:06:04 AM,a.hester@precisionsafesidewalks.com,4,4,Medium,,4,2,,1:8,1.5,16,44,,-78.72155898,35.85586698
+26,2/28/2023 12:07:16 AM,a.hester@precisionsafesidewalks.com,4,4,Medium,,4,1,,1:8,1.25,16,44,,-78.72151068,35.85430535
+27,2/28/2023 12:07:52 AM,a.hester@precisionsafesidewalks.com,4,3,Medium,,5,2,,1:8,1.75,12,36,,-78.72191203,35.85419999
+28,2/28/2023 12:08:34 AM,a.hester@precisionsafesidewalks.com,4,5,Medium,,6,3,,1:8,2.25,20,50,,-78.72191203,35.85419999
+29,2/28/2023 12:09:08 AM,a.hester@precisionsafesidewalks.com,4,4,Large,,9,0,,1:10,2.25,16,46,,-78.72191203,35.85419999
+30,2/28/2023 12:09:46 AM,a.hester@precisionsafesidewalks.com,4,4,Medium,,5,4,,1:8,2.25,16,48,,-78.72191203,35.85419999
+31,2/28/2023 12:10:17 AM,a.hester@precisionsafesidewalks.com,3,4,Medium,,6,0,,1:8,1.125,12,48,,-78.72199803,35.853583
+32,2/28/2023 12:11:01 AM,a.hester@precisionsafesidewalks.com,5,5,Medium,,6,0,,1:8,1.875,25,42,,-78.72083001,35.85416001
+33,2/28/2023 2:29:40 AM,a.hester@precisionsafesidewalks.com,3,4,Medium,,7,6,,1:8,2.4375,12,36,,-78.71725697,35.85363002
+34,2/28/2023 2:30:18 AM,a.hester@precisionsafesidewalks.com,3,4,Medium,,4,3,,1:8,1.3125,12,36,,-78.71725697,35.85363002
+35,2/28/2023 2:31:30 AM,a.hester@precisionsafesidewalks.com,3,4,Medium,,4,2,,1:8,1.125,12,36,,-78.71725697,35.85363002
+36,2/28/2023 2:32:03 AM,a.hester@precisionsafesidewalks.com,3,4,Medium,,4,2,,1:8,1.125,12,36,,-78.71725697,35.85363002
+37,2/28/2023 2:32:35 AM,a.hester@precisionsafesidewalks.com,3,4,Medium,,4,2,,1:8,1.125,12,36,,-78.718169,35.85304802
+38,2/28/2023 2:33:04 AM,a.hester@precisionsafesidewalks.com,5,5,Medium,,5,2,,1:8,2.1875,25,60,,-78.718169,35.85304802
+39,2/28/2023 2:33:36 AM,a.hester@precisionsafesidewalks.com,3,4,Medium,,5,4,,1:8,1.6875,12,36,,-78.718169,35.85304802
+40,2/28/2023 2:34:01 AM,a.hester@precisionsafesidewalks.com,3,4,Large,,12,12,,1:10,4.5,12,36,,-78.718169,35.85304802
+41,2/28/2023 2:34:35 AM,a.hester@precisionsafesidewalks.com,3,4,Medium,,5,2,,1:8,1.3125,12,36,,-78.71807002,35.852513
+42,2/28/2023 2:35:03 AM,a.hester@precisionsafesidewalks.com,4,5,Medium,,7,3,,1:8,2.5,20,60,,-78.71807002,35.852513
+43,2/28/2023 2:35:43 AM,a.hester@precisionsafesidewalks.com,4,5,Medium,,4,3,,1:8,1.75,20,60,,-78.71807002,35.852513
+44,2/28/2023 2:36:14 AM,a.hester@precisionsafesidewalks.com,3,4,Medium,,4,4,,1:8,1.5,12,36,,-78.71807002,35.852513
+45,2/28/2023 2:36:46 AM,a.hester@precisionsafesidewalks.com,3,4,Medium,,4,2,,1:8,1.125,12,36,,-78.71807002,35.852513
+46,2/28/2023 2:37:29 AM,a.hester@precisionsafesidewalks.com,4,5,Small,,3,0,,1:8,0.75,20,36,,-78.718642,35.852814
+47,2/28/2023 2:38:08 AM,a.hester@precisionsafesidewalks.com,3,4,Medium,,4,3,,1:8,1.3125,12,36,,-78.718642,35.852814
+48,2/28/2023 2:38:39 AM,a.hester@precisionsafesidewalks.com,3,4,Small,,3,2,,1:8,0.9375,12,36,,-78.718642,35.852814
+49,2/28/2023 2:39:31 AM,a.hester@precisionsafesidewalks.com,3,4,Medium,,6,0,,1:8,1.125,12,34,,-78.718642,35.852814
+50,2/28/2023 2:40:00 AM,a.hester@precisionsafesidewalks.com,4,5,Small,,3,0,,1:8,0.75,20,35,,-78.718642,35.852814
+51,2/28/2023 2:40:51 AM,a.hester@precisionsafesidewalks.com,5,7,Medium,,5,2,,1:8,2.1875,35,84,,-78.718642,35.852814
+52,2/28/2023 2:43:43 AM,a.hester@precisionsafesidewalks.com,3,4,Medium,,6,3,,1:8,1.6875,12,36,,-78.721562,35.85358002
+53,2/28/2023 2:44:19 AM,a.hester@precisionsafesidewalks.com,3,4,Medium,,4,3,,1:8,1.3125,12,36,,-78.721562,35.85358002
+54,2/28/2023 2:45:56 AM,a.hester@precisionsafesidewalks.com,5,5,Medium,,6,0,,1:8,1.875,25,51,,-78.721562,35.85358002
+55,2/28/2023 2:47:09 AM,a.hester@precisionsafesidewalks.com,5,5,Medium,,7,0,,1:8,2.1875,25,38,,-78.721562,35.85358002
+56,2/28/2023 2:47:41 AM,a.hester@precisionsafesidewalks.com,4,4,Medium,,5,3,,1:8,2,16,42,,-78.721562,35.85358002
+57,2/28/2023 2:48:16 AM,a.hester@precisionsafesidewalks.com,4,4,Large,,12,5,,1:10,4.25,16,42,,-78.721562,35.85358002
+58,2/28/2023 2:48:54 AM,a.hester@precisionsafesidewalks.com,4,8,Medium,,5,3,,1:8,2,32,42,,-78.721562,35.85358002
+59,3/29/2023 2:17:51 PM,c.leftwich_PSSPIMS,5,5,Large,,12,0,,1:12,3.75,25,5,,-78.17204945,35.55420572

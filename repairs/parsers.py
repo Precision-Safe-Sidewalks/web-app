@@ -1,5 +1,4 @@
 import csv
-import uuid
 from datetime import datetime, timezone
 from typing import Optional
 
@@ -13,22 +12,21 @@ from repairs.models.constants import QuickDescription, SpecialCase, Stage
 class BaseMeasurement(BaseModel):
     """Base measurement record with common attributes"""
 
-    object_id: int = Field(alias="OBJECTID")
-    global_id: uuid.UUID = Field(alias="GlobalID")
+    object_id: int = Field(alias="ObjectID")
     length: Optional[float] = Field(alias="Length")
     width: Optional[float] = Field(alias="Width")
-    x: float = Field(alias="x")
-    y: float = Field(alias="y")
+    area: Optional[float] = Field(alias="SQFT")
+    long: float = Field(alias="Long")
+    lat: float = Field(alias="Lat")
     coordinate: Optional[Point] = None
     h1: Optional[float] = Field(alias="H1")
     h2: Optional[float] = Field(alias="H2")
-    linear_feet: Optional[float] = Field(alias="Linear Feet")
-    square_feet: Optional[float] = Field(alias="SQFT")
+    curb_length: Optional[float] = Field(alias="Curb Length")
+    measured_hazard_length: Optional[float] = Field(alias="Measured Hazard Length")
     special_case: Optional[str] = Field(alias="Special Case")
-    quick_description: Optional[str] = Field(alias="Quick Description")
-    surveyor: str = Field(alias="Creator")
+    size: Optional[str] = Field(alias="Size")
+    tech: str = Field(alias="Creator")
     note: Optional[str] = Field(alias="Notes")
-    survey_group: Optional[str] = Field(alias="Start Street - Area")
     measured_at: datetime = Field(alias="CreationDate")
 
     class Config:
@@ -37,7 +35,7 @@ class BaseMeasurement(BaseModel):
     @validator("coordinate", pre=False, always=True)
     @classmethod
     def validate_point(cls, _, values):
-        return Point(values["x"], values["y"])
+        return Point(values["long"], values["lat"])
 
     @validator("measured_at", pre=True)
     @classmethod
@@ -58,7 +56,7 @@ class BaseMeasurement(BaseModel):
 
         return None
 
-    @validator("quick_description", pre=True)
+    @validator("size", pre=True)
     @classmethod
     def validate_quick_description(cls, v):
         for key, alias in QuickDescription.choices:
@@ -66,7 +64,7 @@ class BaseMeasurement(BaseModel):
                 return key
 
         if v:
-            raise ValueError(f"Invalid quick_description: {v}")
+            raise ValueError(f"Invalid size: {v}")
 
         return None
 
@@ -95,7 +93,7 @@ class BaseMeasurement(BaseModel):
         return measurements
 
     def model_dump(self, **kwargs):
-        kwargs["exclude"] = kwargs.get("exclude", {"x", "y"})
+        kwargs["exclude"] = kwargs.get("exclude", {"long", "lat"})
         return super().model_dump(**kwargs)
 
 
@@ -103,6 +101,7 @@ class SurveyMeasurement(BaseMeasurement):
     """Measurement record from a survey CSV"""
 
     survey_address: Optional[str] = Field(alias="Survey Address")
+    survey_group: Optional[str] = Field(alias="Start Street - Area")
 
 
 class ProductionMeasurement(BaseMeasurement):

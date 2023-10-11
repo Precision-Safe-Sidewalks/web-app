@@ -12,35 +12,34 @@ from utils.aws import invoke_lambda_function
 class Measurement(models.Model):
     """Survey measurement GIS data and metadata"""
 
-    # TODO: check if curb_length is different from linear_feet
-
     project = models.ForeignKey(
         Project, on_delete=models.CASCADE, related_name="measurements"
     )
     stage = models.CharField(max_length=25, choices=Stage.choices)
-    object_id = models.IntegerField()
-    global_id = models.UUIDField()
     coordinate = PointField()
-    length = models.FloatField(blank=True, null=True)
-    width = models.FloatField(blank=True, null=True)
+    object_id = models.IntegerField()
+    length = models.FloatField(default=0)
+    width = models.FloatField(default=0)
+    curb_length = models.FloatField(default=0)
+    measured_hazard_length = models.FloatField(default=0)
+    h1 = models.FloatField(default=0)
+    h2 = models.FloatField(default=0)
+    size = models.CharField(
+        max_length=10, choices=QuickDescription.choices, blank=True, null=True
+    )
     special_case = models.CharField(
         max_length=10, choices=SpecialCase.choices, blank=True, null=True
     )
-    quick_description = models.CharField(
-        max_length=10, choices=QuickDescription.choices, blank=True, null=True
-    )
-    h1 = models.FloatField(blank=True, null=True)
-    h2 = models.FloatField(blank=True, null=True)
-    square_feet = models.FloatField(blank=True, null=True)
-    linear_feet = models.FloatField(blank=True, null=True)
-    inch_feet = models.FloatField(blank=True, null=True)
-    slope = models.CharField(max_length=10, blank=True, null=True)
-    curb_length = models.FloatField(blank=True, null=True)
-    survey_address = models.CharField(max_length=255, blank=True, null=True)
-    surveyor = models.CharField(max_length=100)
-    note = models.TextField(blank=True, null=True)
     geocoded_address = models.CharField(max_length=255, blank=True, null=True)
-    survey_group = models.CharField(max_length=255, blank=True, null=True)
+    survey_address = models.CharField(max_length=255, blank=True, null=True)
+    survey_group = models.CharField(max_length=100, blank=True, null=True)
+    tech = models.CharField(max_length=255, blank=True, null=True)
+    area = models.FloatField(
+        default=0, help_text="Length x Width (square feet)"
+    )  # TODO: calculate and save
+    note = models.TextField(blank=True, null=True)
+    slope = models.CharField(max_length=10, blank=True, null=True)
+    inch_feet = models.FloatField(default=0)
     measured_at = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -58,7 +57,7 @@ class Measurement(models.Model):
             Measurement.objects.filter(project=project, stage=stage).delete()
 
             for data in parser_cls.from_csv(file_obj):
-                kwargs = data.model_dump()
+                kwargs = data.model_dump(exclude_none=True)
                 Measurement.objects.create(project=project, stage=stage, **kwargs)
 
         # Trigger the Lambda function to reverse geocode the addresses
@@ -80,13 +79,13 @@ class Measurement(models.Model):
         measurements = list(
             Measurement.objects.filter(project=project, stage=stage)
             .annotate(
-                x=models.ExpressionWrapper(
+                long=models.ExpressionWrapper(
                     models.Func("coordinate", function="ST_X"),
                     output_field=models.FloatField(),
                 )
             )
             .annotate(
-                y=models.ExpressionWrapper(
+                lat=models.ExpressionWrapper(
                     models.Func("coordinate", function="ST_Y"),
                     output_field=models.FloatField(),
                 )
@@ -97,7 +96,7 @@ class Measurement(models.Model):
 
         encoders = {
             "special_case": SpecialCase,
-            "quick_description": QuickDescription,
+            "size": QuickDescription,
         }
 
         for measurement in measurements:
