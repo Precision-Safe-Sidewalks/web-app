@@ -168,7 +168,7 @@ func (d *PricingSheetData) FetchSurveyData(db *pgx.Conn) {
 			COALESCE(m.length, 0) AS length,
 			COALESCE(m.width, 0) AS width,
 			COALESCE(m.measured_hazard_length, 0) AS measured_hazard_length,
-			COALESCE(m.inch_feet, 0) AS measured_inch_feet
+			COALESCE(m.inch_feet, 0) AS inch_feet
 		FROM repairs_measurement m
 		WHERE m.project_id = $1
 			AND m.stage = 'SURVEY'
@@ -196,7 +196,7 @@ func (d *PricingSheetData) FetchSurveyData(db *pgx.Conn) {
 			&r.Length,
 			&r.Width,
 			&r.MeasuredHazardLength,
-			&r.MeasuredInchFeet,
+			&r.InchFeet,
 		)
 
 		if err != nil {
@@ -217,5 +217,5 @@ type SurveyRecord struct {
 	Length               float64
 	Width                float64
 	MeasuredHazardLength float64
-	MeasuredInchFeet     float64
+	InchFeet             float64
 }

@@ -175,7 +175,7 @@ func (p *PricingSheet) UpdateSurveyData(f *excelize.File) {
 			f.SetCellValue(sheet, fmt.Sprintf("G%d", i+offset), item.Width)
 			f.SetCellValue(sheet, fmt.Sprintf("H%d", i+offset), item.Length)
 			f.SetCellValue(sheet, fmt.Sprintf("J%d", i+offset), item.MeasuredHazardLength)
-			f.SetCellValue(sheet, fmt.Sprintf("K%d", i+offset), item.MeasuredInchFeet)
+			f.SetCellValue(sheet, fmt.Sprintf("K%d", i+offset), item.InchFeet)
 			f.SetCellValue(sheet, fmt.Sprintf("T%d", i+offset), item.ObjectId)
 		}
 
