@@ -23,6 +23,7 @@ class BaseMeasurement(BaseModel):
     h2: Optional[float] = Field(alias="H2")
     curb_length: Optional[float] = Field(alias="Curb Length")
     measured_hazard_length: Optional[float] = Field(alias="Measured Hazard Length")
+    inch_feet: Optional[float] = Field(alias="Inch Feet")
     special_case: Optional[str] = Field(alias="Special Case")
     size: Optional[str] = Field(alias="Size")
     tech: str = Field(alias="Creator")
