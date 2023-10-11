@@ -186,7 +186,7 @@ func (s *ProjectSummary) FetchProjectInstructions(db *pgx.Conn) {
 		err := db.QueryRow(context.Background(), query, s.Project.Id).Scan(
 			&hazards,
 			&inchFeet,
-			&s.ProjectInstructions.LinearFeetCurb,
+			&s.ProjectInstructions.CurbLength,
 		)
 
 		if err != nil {
@@ -208,16 +208,16 @@ func (s *ProjectSummary) FetchMeasurements(db *pgx.Conn) {
 			COALESCE(m.h1, 0) AS h1,
 			COALESCE(m.h2, 0) AS h2,
 			COALESCE(m.inch_feet, 0) AS inch_feet,
-			COALESCE(m.linear_feet, 0) AS linear_feet_curb,
-			0 AS measured_hazard_length,
+			COALESCE(m.curb_length, 0) AS curb_length,
+			COALESCE(m.measured_hazard_length, 0) AS measured_hazard_length,
 			COALESCE(m.geocoded_address, '') AS address,
 			COALESCE(m.note, '') AS note,
-			COALESCE(UPPER(SUBSTRING(m.surveyor, 1, 1)) || UPPER(SUBSTRING(m.surveyor, 3, 1)), '') AS tech,
+			COALESCE(UPPER(SUBSTRING(m.tech, 1, 1)) || UPPER(SUBSTRING(m.tech, 3, 1)), '') AS tech,
 			DATE(m.measured_at) AS work_date
 		FROM repairs_measurement m
 		WHERE m.project_id = $1
 			AND m.stage = 'PRODUCTION'
-		ORDER BY m.surveyor, m.measured_at
+		ORDER BY m.tech, m.object_id
 	`
 
 	rows, err := db.Query(context.Background(), query, s.Project.Id)
@@ -238,7 +238,7 @@ func (s *ProjectSummary) FetchMeasurements(db *pgx.Conn) {
 			&m.H1,
 			&m.H2,
 			&m.InchFeet,
-			&m.LinearFeetCurb,
+			&m.CurbLength,
 			&m.MeasuredHazardLength,
 			&m.Address,
 			&m.Note,
@@ -265,8 +265,8 @@ func (s *ProjectSummary) TotalInchFeet() float64 {
 }
 
 // Return the total linear feet curbs
-func (s *ProjectSummary) TotalLinearFeetCurb() float64 {
-	return s.ProjectInstructions.LinearFeetCurb
+func (s *ProjectSummary) TotalCurbLength() float64 {
+	return s.ProjectInstructions.CurbLength
 }
 
 // Generate the Project Summary Excel file
@@ -302,9 +302,9 @@ func (s *ProjectSummary) UpdateSummary(f *excelize.File) {
 	f.SetCellValue(sheet, "P4", s.SurveyInstructions.Surveyor)
 	f.SetCellValue(sheet, "Q2", s.Project.TerritoryName)
 	f.SetCellValue(sheet, "Q4", s.SurveyInstructions.SurveyDate)
-	f.SetCellValue(sheet, "R6", s.TotalHazards())         // TODO: check if this is correct
-	f.SetCellValue(sheet, "R10", s.TotalInchFeet())       // TODO: check if this is correct
-	f.SetCellValue(sheet, "R17", s.TotalLinearFeetCurb()) // TODO: check if this is correct
+	f.SetCellValue(sheet, "R6", s.TotalHazards())
+	f.SetCellValue(sheet, "R10", s.TotalInchFeet())
+	f.SetCellValue(sheet, "R17", s.TotalCurbLength())
 	f.SetCellValue(sheet, "AO39", s.Project.OrganizationName)
 	f.SetCellValue(sheet, "AQ39", s.PricingSheet.ContactAddress)
 	f.SetCellValue(sheet, "AS39", s.PricingSheet.ContactName)
@@ -348,7 +348,7 @@ func (s *ProjectSummary) UpdateProductionData(f *excelize.File) {
 			f.SetCellValue(sheet, fmt.Sprintf("B%d", offset), item.Length)
 			f.SetCellValue(sheet, fmt.Sprintf("D%d", offset), item.H1)
 			f.SetCellValue(sheet, fmt.Sprintf("E%d", offset), item.H2)
-			f.SetCellValue(sheet, fmt.Sprintf("F%d", offset), item.LinearFeetCurb)
+			f.SetCellValue(sheet, fmt.Sprintf("F%d", offset), item.CurbLength)
 			f.SetCellValue(sheet, fmt.Sprintf("G%d", offset), item.Address)
 			f.SetCellValue(sheet, fmt.Sprintf("H%d", offset), item.Note)
 			f.SetCellValue(sheet, fmt.Sprintf("M%d", offset), item.Tech)
@@ -513,9 +513,9 @@ type SurveyInstructions struct {
 
 // Project Instructions
 type ProjectInstructions struct {
-	Hazards        int
-	InchFeet       float64
-	LinearFeetCurb float64
+	Hazards    int
+	InchFeet   float64
+	CurbLength float64
 }
 
 // Measurement
@@ -526,7 +526,7 @@ type Measurement struct {
 	H1                   float64
 	H2                   float64
 	InchFeet             float64
-	LinearFeetCurb       float64
+	CurbLength           float64
 	MeasuredHazardLength float64
 	Address              string
 	Note                 string
