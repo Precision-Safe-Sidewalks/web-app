@@ -63,7 +63,7 @@ class Instruction(models.Model):
 
         for value, name in Hazard.choices:
             size = Hazard.get_size(value)
-            data = queryset.filter(quick_description=size)
+            data = queryset.filter(size=size)
 
             count = data.count()
             sqft = sum([m.length * m.width for m in data if m.length and m.width])

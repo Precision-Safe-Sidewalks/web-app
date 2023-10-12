@@ -167,15 +167,15 @@ func (p *PricingSheet) UpdateSurveyData(f *excelize.File) {
 		f.SetCellValue(sheet, "C1", group)
 
 		for i, item := range items {
-			f.SetCellValue(sheet, fmt.Sprintf("B%d", i+offset), BoolToInt(item.QuickDescription == "S"))
-			f.SetCellValue(sheet, fmt.Sprintf("C%d", i+offset), BoolToInt(item.QuickDescription == "M"))
-			f.SetCellValue(sheet, fmt.Sprintf("D%d", i+offset), BoolToInt(item.QuickDescription == "L"))
-			f.SetCellValue(sheet, fmt.Sprintf("E%d", i+offset), item.LinearFeetCurb)
+			f.SetCellValue(sheet, fmt.Sprintf("B%d", i+offset), BoolToInt(item.Size == "S"))
+			f.SetCellValue(sheet, fmt.Sprintf("C%d", i+offset), BoolToInt(item.Size == "M"))
+			f.SetCellValue(sheet, fmt.Sprintf("D%d", i+offset), BoolToInt(item.Size == "L"))
+			f.SetCellValue(sheet, fmt.Sprintf("E%d", i+offset), item.CurbLength)
 			f.SetCellValue(sheet, fmt.Sprintf("F%d", i+offset), item.Address)
 			f.SetCellValue(sheet, fmt.Sprintf("G%d", i+offset), item.Width)
 			f.SetCellValue(sheet, fmt.Sprintf("H%d", i+offset), item.Length)
 			f.SetCellValue(sheet, fmt.Sprintf("J%d", i+offset), item.MeasuredHazardLength)
-			f.SetCellValue(sheet, fmt.Sprintf("K%d", i+offset), item.MeasuredInchFeet)
+			f.SetCellValue(sheet, fmt.Sprintf("K%d", i+offset), item.InchFeet)
 			f.SetCellValue(sheet, fmt.Sprintf("T%d", i+offset), item.ObjectId)
 		}
 
