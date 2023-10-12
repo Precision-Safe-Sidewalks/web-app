@@ -133,10 +133,10 @@ func (d *PricingSheetData) FetchContact(db *pgx.Conn) {
 	query := `
 		SELECT
 			c.name,
-			c.title,
-			c.email,
-			c.phone_number,
-			c.address
+			COALESCE(c.title, ''),
+			COALESCE(c.email, ''),
+			COALESCE(c.phone_number, ''),
+			COALESCE(c.address, '')
 		FROM repairs_pricingsheetcontact c
 			JOIN repairs_pricingsheet ps ON c.pricing_sheet_id = ps.id
 		WHERE ps.project_id = $1
@@ -161,7 +161,7 @@ func (d *PricingSheetData) FetchSurveyData(db *pgx.Conn) {
 	query := `
 		SELECT
 			m.object_id,
-			m.survey_group,
+			COALESCE(m.survey_group, ''),
 			COALESCE(m.size, '') AS size,
 			COALESCE(m.curb_length, 0) AS curb_length,
 			COALESCE(m.geocoded_address, '') AS geocoded_address,
