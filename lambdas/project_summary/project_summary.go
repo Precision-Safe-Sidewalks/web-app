@@ -340,7 +340,7 @@ func (s *ProjectSummary) UpdateProductionData(f *excelize.File) {
 
 	for i, workDate := range workDates {
 		offset := 22
-		sheet := workDate.Format("2006-01-02")
+		sheet := workDate.Format("01-02-2006")
 
 		f.SetSheetName(strconv.Itoa(i+1), sheet)
 		s.UpdateSummaryCompletedCurbs(f, sheet, i)
