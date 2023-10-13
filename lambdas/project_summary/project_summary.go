@@ -128,7 +128,8 @@ func (s *ProjectSummary) FetchPricingSheet(db *pgx.Conn) {
 	)
 
 	if err != nil {
-		panic(err)
+		fmt.Sprintf("FetchPricingSheet error: %w", err)
+		return
 	}
 }
 
@@ -161,7 +162,8 @@ func (s *ProjectSummary) FetchSurveyInstructions(db *pgx.Conn) {
 	)
 
 	if err != nil {
-		panic(err)
+		fmt.Sprintf("FetchSurveyInstructions error: %w", err)
+		return
 	}
 }
 
@@ -190,7 +192,8 @@ func (s *ProjectSummary) FetchProjectInstructions(db *pgx.Conn) {
 		)
 
 		if err != nil {
-			panic(err)
+			fmt.Sprintf("FetchProjectInstructions error: %w", err)
+			return
 		}
 
 		s.ProjectInstructions.Hazards += hazards
@@ -223,7 +226,8 @@ func (s *ProjectSummary) FetchMeasurements(db *pgx.Conn) {
 	rows, err := db.Query(context.Background(), query, s.Project.Id)
 
 	if err != nil {
-		panic(err)
+		fmt.Sprintf("FetchMeasurements error: %w", err)
+		return
 	}
 
 	defer rows.Close()
