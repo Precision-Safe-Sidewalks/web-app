@@ -340,7 +340,7 @@ func (s *ProjectSummary) UpdateProductionData(f *excelize.File) {
 
 	for i, workDate := range workDates {
 		offset := 22
-		sheet := workDate.Format("2006-01-02")
+		sheet := workDate.Format("01-02-2006")
 
 		f.SetSheetName(strconv.Itoa(i+1), sheet)
 		s.UpdateSummaryCompletedCurbs(f, sheet, i)
@@ -352,7 +352,7 @@ func (s *ProjectSummary) UpdateProductionData(f *excelize.File) {
 			f.SetCellValue(sheet, fmt.Sprintf("B%d", offset), item.Length)
 			f.SetCellValue(sheet, fmt.Sprintf("D%d", offset), item.H1)
 			f.SetCellValue(sheet, fmt.Sprintf("E%d", offset), item.H2)
-			f.SetCellValue(sheet, fmt.Sprintf("F%d", offset), item.CurbLength)
+			f.SetCellValue(sheet, fmt.Sprintf("F%d", offset), item.MeasuredHazardLength)
 			f.SetCellValue(sheet, fmt.Sprintf("G%d", offset), item.Address)
 			f.SetCellValue(sheet, fmt.Sprintf("H%d", offset), item.Note)
 			f.SetCellValue(sheet, fmt.Sprintf("M%d", offset), item.Tech)
