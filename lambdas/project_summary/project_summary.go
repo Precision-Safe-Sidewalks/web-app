@@ -352,7 +352,7 @@ func (s *ProjectSummary) UpdateProductionData(f *excelize.File) {
 			f.SetCellValue(sheet, fmt.Sprintf("B%d", offset), item.Length)
 			f.SetCellValue(sheet, fmt.Sprintf("D%d", offset), item.H1)
 			f.SetCellValue(sheet, fmt.Sprintf("E%d", offset), item.H2)
-			f.SetCellValue(sheet, fmt.Sprintf("F%d", offset), item.CurbLength)
+			f.SetCellValue(sheet, fmt.Sprintf("F%d", offset), item.MeasuredHazardLength)
 			f.SetCellValue(sheet, fmt.Sprintf("G%d", offset), item.Address)
 			f.SetCellValue(sheet, fmt.Sprintf("H%d", offset), item.Note)
 			f.SetCellValue(sheet, fmt.Sprintf("M%d", offset), item.Tech)
