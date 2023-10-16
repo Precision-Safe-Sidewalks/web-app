@@ -6,6 +6,7 @@ import (
 	"os"
 	"sort"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -354,7 +355,7 @@ func (s *ProjectSummary) UpdateProductionData(f *excelize.File) {
 		sheet := workDate.Format("01-02-2006")
 		sheetData := groups[workDate]
 
-		f.SetSheetName(strconv.Itoa(i+1), sheet)
+		s.UpdateSheetName(f, strconv.Itoa(i+1), sheet)
 		s.UpdateSummaryCompletedCurbs(f, sheet, i)
 		s.UpdateSummaryCompletedSidewalks(f, sheet, i)
 		f.SetCellValue(sheet, "E11", workDate.Format("1/2/2006"))
@@ -384,6 +385,25 @@ func (s *ProjectSummary) UpdateProductionData(f *excelize.File) {
 		}
 
 		fmt.Printf("Completed worksheet %s\n", sheet)
+	}
+}
+
+// Update the sheet name and references
+func (s *ProjectSummary) UpdateSheetName(f *excelize.File, oldName string, newName string) {
+	f.SetSheetName(oldName, newName)
+
+	// Check for any defined names
+	for _, definedName := range f.GetDefinedName() {
+		if definedName.Scope == newName {
+			f.DeleteDefinedName(&definedName)
+
+			oldPattern := fmt.Sprintf("'%s'", oldName)
+			newPattern := fmt.Sprintf("'%s'", newName)
+			refersTo := strings.Replace(definedName.RefersTo, oldPattern, newPattern, 1)
+
+			definedName.RefersTo = refersTo
+			f.SetDefinedName(&definedName)
+		}
 	}
 }
 
