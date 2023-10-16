@@ -37,6 +37,7 @@ type ProjectSummary struct {
 	SurveyInstructions  SurveyInstructions
 	ProjectInstructions ProjectInstructions
 	Measurements        []Measurement
+	TechIndex           map[string]int
 }
 
 // Construct a new Project Summary
@@ -49,6 +50,7 @@ func NewProjectSummary(requestId uuid.UUID) *ProjectSummary {
 		SurveyInstructions:  SurveyInstructions{},
 		ProjectInstructions: ProjectInstructions{},
 		Measurements:        []Measurement{},
+		TechIndex:           map[string]int{},
 	}
 }
 
@@ -128,7 +130,7 @@ func (s *ProjectSummary) FetchPricingSheet(db *pgx.Conn) {
 	)
 
 	if err != nil {
-		fmt.Sprintf("FetchPricingSheet error: %w", err)
+		fmt.Sprintf("FetchPricingSheet error: %v", err)
 		return
 	}
 }
@@ -162,7 +164,7 @@ func (s *ProjectSummary) FetchSurveyInstructions(db *pgx.Conn) {
 	)
 
 	if err != nil {
-		fmt.Sprintf("FetchSurveyInstructions error: %w", err)
+		fmt.Sprintf("FetchSurveyInstructions error: %v", err)
 		return
 	}
 }
@@ -192,7 +194,7 @@ func (s *ProjectSummary) FetchProjectInstructions(db *pgx.Conn) {
 		)
 
 		if err != nil {
-			fmt.Sprintf("FetchProjectInstructions error: %w", err)
+			fmt.Sprintf("FetchProjectInstructions error: %v", err)
 			return
 		}
 
@@ -216,6 +218,7 @@ func (s *ProjectSummary) FetchMeasurements(db *pgx.Conn) {
 			COALESCE(m.geocoded_address, '') AS address,
 			COALESCE(m.note, '') AS note,
 			COALESCE(UPPER(SUBSTRING(m.tech, 1, 1)) || UPPER(SUBSTRING(m.tech, 3, 1)), '') AS tech,
+			COALESCE(m.tech, '') AS tech_email,
 			DATE(m.measured_at) AS work_date
 		FROM repairs_measurement m
 		WHERE m.project_id = $1
@@ -226,7 +229,7 @@ func (s *ProjectSummary) FetchMeasurements(db *pgx.Conn) {
 	rows, err := db.Query(context.Background(), query, s.Project.Id)
 
 	if err != nil {
-		fmt.Sprintf("FetchMeasurements error: %w", err)
+		fmt.Sprintf("FetchMeasurements error: %v", err)
 		return
 	}
 
@@ -247,6 +250,7 @@ func (s *ProjectSummary) FetchMeasurements(db *pgx.Conn) {
 			&m.Address,
 			&m.Note,
 			&m.Tech,
+			&m.TechEmail,
 			&m.WorkDate,
 		)
 
@@ -255,6 +259,14 @@ func (s *ProjectSummary) FetchMeasurements(db *pgx.Conn) {
 		}
 
 		s.Measurements = append(s.Measurements, m)
+	}
+
+	// Index all the technicians by their email address to the order they
+	// appear in the measurements
+	for _, item := range s.Measurements {
+		if _, ok := s.TechIndex[item.TechEmail]; !ok {
+			s.TechIndex[item.TechEmail] = len(s.TechIndex)
+		}
 	}
 }
 
@@ -285,9 +297,9 @@ func (s *ProjectSummary) Generate() {
 
 	defer workbook.Close()
 
+	workbook.UpdateLinkedValue()
 	s.UpdateSummary(workbook)
 	s.UpdateProductionData(workbook)
-
 	workbook.UpdateLinkedValue()
 
 	if err := workbook.SaveAs(s.Filename); err != nil {
@@ -339,27 +351,37 @@ func (s *ProjectSummary) UpdateProductionData(f *excelize.File) {
 	sort.Slice(workDates, func(i, j int) bool { return workDates[i].Before(workDates[j]) })
 
 	for i, workDate := range workDates {
-		offset := 22
 		sheet := workDate.Format("01-02-2006")
+		sheetData := groups[workDate]
 
 		f.SetSheetName(strconv.Itoa(i+1), sheet)
 		s.UpdateSummaryCompletedCurbs(f, sheet, i)
 		s.UpdateSummaryCompletedSidewalks(f, sheet, i)
 		f.SetCellValue(sheet, "E11", workDate.Format("1/2/2006"))
 
-		for _, item := range groups[workDate] {
-			f.SetCellValue(sheet, fmt.Sprintf("A%d", offset), item.Width)
-			f.SetCellValue(sheet, fmt.Sprintf("B%d", offset), item.Length)
-			f.SetCellValue(sheet, fmt.Sprintf("D%d", offset), item.H1)
-			f.SetCellValue(sheet, fmt.Sprintf("E%d", offset), item.H2)
-			f.SetCellValue(sheet, fmt.Sprintf("F%d", offset), item.MeasuredHazardLength)
-			f.SetCellValue(sheet, fmt.Sprintf("G%d", offset), item.Address)
-			f.SetCellValue(sheet, fmt.Sprintf("H%d", offset), item.Note)
-			f.SetCellValue(sheet, fmt.Sprintf("M%d", offset), item.Tech)
-			f.SetCellValue(sheet, fmt.Sprintf("N%d", offset), item.ObjectId)
+		for j, item := range sheetData {
+			rowId := 22 + j
+			currentTechId := s.TechIndex[item.TechEmail]
 
-			offset++
+			f.SetCellValue(sheet, fmt.Sprintf("A%d", rowId), item.Width)
+			f.SetCellValue(sheet, fmt.Sprintf("B%d", rowId), item.Length)
+			f.SetCellValue(sheet, fmt.Sprintf("D%d", rowId), item.H1)
+			f.SetCellValue(sheet, fmt.Sprintf("E%d", rowId), item.H2)
+			f.SetCellValue(sheet, fmt.Sprintf("F%d", rowId), item.MeasuredHazardLength)
+			f.SetCellValue(sheet, fmt.Sprintf("G%d", rowId), item.Address)
+			f.SetCellValue(sheet, fmt.Sprintf("H%d", rowId), item.Note)
+			f.SetCellValue(sheet, fmt.Sprintf("M%d", rowId), item.Tech)
+			f.SetCellValue(sheet, fmt.Sprintf("N%d", rowId), item.ObjectId)
+
+			for techId := 0; techId < 17; techId++ {
+				cell, _ := excelize.CoordinatesToCellName(techId+16, rowId)
+				enabled := currentTechId == techId
+				formula := fmt.Sprintf(`=IF(%v, J%d, 0.)`, enabled, rowId)
+				f.SetCellFormula(sheet, cell, formula)
+			}
 		}
+
+		fmt.Printf("Completed worksheet %s\n", sheet)
 	}
 }
 
@@ -535,5 +557,6 @@ type Measurement struct {
 	Address              string
 	Note                 string
 	Tech                 string
+	TechEmail            string
 	WorkDate             time.Time
 }
