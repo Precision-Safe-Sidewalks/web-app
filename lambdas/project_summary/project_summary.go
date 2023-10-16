@@ -377,6 +377,8 @@ func (s *ProjectSummary) UpdateProductionData(f *excelize.File) {
 				cell, _ := excelize.CoordinatesToCellName(techId+16, rowId)
 				enabled := currentTechId == techId
 				formula := fmt.Sprintf(`=IF(%v, J%d, 0.)`, enabled, rowId)
+
+				f.SetCellDefault(sheet, cell, "")
 				f.SetCellFormula(sheet, cell, formula)
 			}
 		}
