@@ -93,6 +93,11 @@ class BaseMeasurement(BaseModel):
 
         return measurements
 
+    @classmethod
+    def order(cls) -> list[str]:
+        """Return the field order"""
+        return list(cls.__fields__)
+
     def model_dump(self, **kwargs):
         return super().model_dump(**kwargs)
 
@@ -103,12 +108,58 @@ class SurveyMeasurement(BaseMeasurement):
     survey_address: Optional[str] = Field(alias="Survey Address")
     survey_group: Optional[str] = Field(alias="Start Street - Area")
 
+    @classmethod
+    def order(cls) -> list[str]:
+        """Return the field order"""
+        return [
+            "object_id",
+            "survey_group",
+            "width",
+            "length",
+            "area",
+            "hazard_size",
+            "special_case",
+            "curb_length",
+            "note",
+            "h1",
+            "h2",
+            "measured_hazard_length",
+            "inch_feet",
+            "lat",
+            "long",
+            "measured_at",
+            "tech",
+        ]
+
 
 class ProductionMeasurement(BaseMeasurement):
     """Measurement record from a production CSV"""
 
     inch_feet: float = Field(alias="Inch Feet")
     slope: Optional[str] = Field(alias="Slope")
+
+    @classmethod
+    def order(cls) -> list[str]:
+        """Return the field order"""
+        return [
+            "object_id",
+            "measured_at",
+            "tech",
+            "width",
+            "length",
+            "area",
+            "h1",
+            "h2",
+            "measured_hazard_length",
+            "hazard_size",
+            "slope",
+            "inch_feet",
+            "special_case",
+            "curb_length",
+            "note",
+            "long",
+            "lat",
+        ]
 
 
 def get_parser_class(stage):

@@ -57,7 +57,7 @@ class Measurement(models.Model):
             Measurement.objects.filter(project=project, stage=stage).delete()
 
             for data in parser_cls.from_csv(file_obj):
-                kwargs = data.model_dump(exclude_none=True)
+                kwargs = data.model_dump(exclude_none=True, exclude={"long", "lat"})
                 Measurement.objects.create(project=project, stage=stage, **kwargs)
 
         # Trigger the Lambda function to reverse geocode the addresses
@@ -99,19 +99,23 @@ class Measurement(models.Model):
             "hazard_size": QuickDescription,
         }
 
-        for measurement in measurements:
+        for i, measurement in enumerate(measurements):
             for column, encoding in encoders.items():
                 value = measurement[column]
 
                 if value and column in measurement:
                     measurement[column] = encoding(value).label
 
-            for column in list(measurement):
-                if column in aliases:
-                    alias = aliases[column]
-                    measurement[alias] = measurement.pop(column)
+            ordered = {}
 
-        fieldnames = list(aliases.values())
+            for column in parser_cls.order():
+                value = measurement.get(column)
+                alias = aliases.get(column, column)
+                ordered[alias] = value
+
+            measurements[i] = ordered
+
+        fieldnames = [aliases.get(key, key) for key in parser_cls.order()]
         writer = csv.DictWriter(file_obj, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(measurements)

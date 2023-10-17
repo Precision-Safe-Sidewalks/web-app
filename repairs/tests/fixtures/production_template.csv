@@ -1,4 +1,4 @@
-ObjectID,CreationDate,Creator,Length,Width,Size,Special Case,H1,H2,Notes,Slope,Inch Feet,SQFT,Curb Length,Measured Hazard Length,Long,Lat
+OBJECTID,CreationDate,Creator,Length,Width,Hazard Size,Special Case,H1,H2,Notes,Slope,Inch Feet,SQFT,Curb Length,Measured Hazard Length,x,y
 1,2/2/2023 9:38:14 PM,a.hester@precisionsafesidewalks.com,5,5,Large,,9,8,,1:8,5.3125,25,,,-77.90639377,34.16392919
 2,2/2/2023 9:38:54 PM,a.hester@precisionsafesidewalks.com,5,5,Large,,9,8,,1:10,5.3125,25,,,-77.90643915,34.16388994
 3,2/2/2023 9:43:44 PM,a.hester@precisionsafesidewalks.com,5,5,Large,,9,8,,1:8,5.3125,25,,,-77.90675283,34.1639446

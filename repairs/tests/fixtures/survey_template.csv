@@ -1,4 +1,4 @@
-ObjectID,CreationDate,Creator,Width,Length,Size,Special Case,H1,H2,Survey Address,Notes,SQFT,Curb Length,Measured Hazard Length,Long,Lat,Start Street - Area,Inch Feet
+OBJECTID,CreationDate,Creator,Width,Length,Hazard Size,Special Case,H1,H2,Survey Address,Notes,SQFT,Curb Length,Measured Hazard Length,x,y,Start Street - Area,Inch Feet
 1,8/3/2023 15:19,j.clapper_PSSPIMS,9,9,Small,,,,104 Aisling Ct,,81,,,-78.76618822,35.80083209,Aisling Ct,
 2,8/3/2023 15:20,j.clapper_PSSPIMS,,,,Curb,,,,,0,12,,-78.76622133,35.80081487,,
 3,8/3/2023 15:22,j.clapper_PSSPIMS,12,10,Large,,,,106 Aisling Ct,,120,,,-78.76625303,35.80088632,,
