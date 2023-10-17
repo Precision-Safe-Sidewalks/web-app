@@ -334,6 +334,12 @@ func (s *ProjectSummary) UpdateSummary(f *excelize.File) {
 	f.SetCellValue(sheet, "BG39", s.PricingSheet.ContactEmail)
 	f.SetCellValue(sheet, "BN39", s.PricingSheet.EstimatedSidewalkMiles)
 
+	// Force cells I8/I9/I10 to use COUNTA instead of COUNT because of
+	// issues with the default formatting for dates
+	f.SetCellValue(sheet, "I8", "=COUNTA(A44:A59)")
+	f.SetCellValue(sheet, "I9", "=COUNTA(A51:A60)")
+	f.SetCellValue(sheet, "10", "=COUNTA(A52:A61)")
+
 	// Set the tech initials in columns P - AF
 	for techEmail, techId := range s.TechIndex {
 		cell, _ := excelize.CoordinatesToCellName(techId+14, 43)
