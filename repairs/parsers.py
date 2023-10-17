@@ -12,12 +12,12 @@ from repairs.models.constants import QuickDescription, SpecialCase, Stage
 class BaseMeasurement(BaseModel):
     """Base measurement record with common attributes"""
 
-    object_id: int = Field(alias="ObjectID")
+    object_id: int = Field(alias="OBJECTID")
     length: Optional[float] = Field(alias="Length")
     width: Optional[float] = Field(alias="Width")
     area: Optional[float] = Field(alias="SQFT")
-    long: float = Field(alias="Long")
-    lat: float = Field(alias="Lat")
+    long: float = Field(alias="x")
+    lat: float = Field(alias="y")
     coordinate: Optional[Point] = None
     h1: Optional[float] = Field(alias="H1")
     h2: Optional[float] = Field(alias="H2")
@@ -25,7 +25,7 @@ class BaseMeasurement(BaseModel):
     measured_hazard_length: Optional[float] = Field(alias="Measured Hazard Length")
     inch_feet: Optional[float] = Field(alias="Inch Feet")
     special_case: Optional[str] = Field(alias="Special Case")
-    size: Optional[str] = Field(alias="Size")
+    hazard_size: Optional[str] = Field(alias="Hazard Size")
     tech: str = Field(alias="Creator")
     note: Optional[str] = Field(alias="Notes")
     measured_at: datetime = Field(alias="CreationDate")
@@ -57,15 +57,15 @@ class BaseMeasurement(BaseModel):
 
         return None
 
-    @validator("size", pre=True)
+    @validator("hazard_size", pre=True)
     @classmethod
-    def validate_quick_description(cls, v):
+    def validate_hazard_size(cls, v):
         for key, alias in QuickDescription.choices:
             if v == alias:
                 return key
 
         if v:
-            raise ValueError(f"Invalid size: {v}")
+            raise ValueError(f"Invalid hazard size: {v}")
 
         return None
 
@@ -93,8 +93,12 @@ class BaseMeasurement(BaseModel):
 
         return measurements
 
+    @classmethod
+    def order(cls) -> list[str]:
+        """Return the field order"""
+        return list(cls.__fields__)
+
     def model_dump(self, **kwargs):
-        kwargs["exclude"] = kwargs.get("exclude", {"long", "lat"})
         return super().model_dump(**kwargs)
 
 
@@ -104,12 +108,58 @@ class SurveyMeasurement(BaseMeasurement):
     survey_address: Optional[str] = Field(alias="Survey Address")
     survey_group: Optional[str] = Field(alias="Start Street - Area")
 
+    @classmethod
+    def order(cls) -> list[str]:
+        """Return the field order"""
+        return [
+            "object_id",
+            "survey_group",
+            "width",
+            "length",
+            "area",
+            "hazard_size",
+            "special_case",
+            "curb_length",
+            "note",
+            "h1",
+            "h2",
+            "measured_hazard_length",
+            "inch_feet",
+            "lat",
+            "long",
+            "measured_at",
+            "tech",
+        ]
+
 
 class ProductionMeasurement(BaseMeasurement):
     """Measurement record from a production CSV"""
 
     inch_feet: float = Field(alias="Inch Feet")
     slope: Optional[str] = Field(alias="Slope")
+
+    @classmethod
+    def order(cls) -> list[str]:
+        """Return the field order"""
+        return [
+            "object_id",
+            "measured_at",
+            "tech",
+            "width",
+            "length",
+            "area",
+            "h1",
+            "h2",
+            "measured_hazard_length",
+            "hazard_size",
+            "slope",
+            "inch_feet",
+            "special_case",
+            "curb_length",
+            "note",
+            "lat",
+            "long",
+        ]
 
 
 def get_parser_class(stage):

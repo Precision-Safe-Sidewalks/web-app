@@ -167,9 +167,9 @@ func (p *PricingSheet) UpdateSurveyData(f *excelize.File) {
 		f.SetCellValue(sheet, "C1", group)
 
 		for i, item := range items {
-			f.SetCellValue(sheet, fmt.Sprintf("B%d", i+offset), BoolToInt(item.Size == "S"))
-			f.SetCellValue(sheet, fmt.Sprintf("C%d", i+offset), BoolToInt(item.Size == "M"))
-			f.SetCellValue(sheet, fmt.Sprintf("D%d", i+offset), BoolToInt(item.Size == "L"))
+			f.SetCellValue(sheet, fmt.Sprintf("B%d", i+offset), BoolToInt(item.HazardSize == "S"))
+			f.SetCellValue(sheet, fmt.Sprintf("C%d", i+offset), BoolToInt(item.HazardSize == "M"))
+			f.SetCellValue(sheet, fmt.Sprintf("D%d", i+offset), BoolToInt(item.HazardSize == "L"))
 			f.SetCellValue(sheet, fmt.Sprintf("E%d", i+offset), item.CurbLength)
 			f.SetCellValue(sheet, fmt.Sprintf("F%d", i+offset), item.Address)
 			f.SetCellValue(sheet, fmt.Sprintf("G%d", i+offset), item.Width)
