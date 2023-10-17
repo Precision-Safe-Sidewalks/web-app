@@ -316,7 +316,10 @@ func (s *ProjectSummary) Generate() {
 func (s *ProjectSummary) UpdateSummary(f *excelize.File) {
 	sheet := WORKSHEET_SUMMARY
 
-	f.SetCellValue(sheet, "E1", time.Now().Format("01-02-2006"))
+	year, month, day := time.Now().Date()
+	reportDate := time.Date(year, month, day, 0, 0, 0, 0, time.UTC)
+
+	f.SetCellValue(sheet, "E1", reportDate)
 	f.SetCellValue(sheet, "D3", s.Project.Name)
 	f.SetCellValue(sheet, "C8", s.Project.PONumber)
 	f.SetCellValue(sheet, "P2", s.Project.BDM)
@@ -333,12 +336,6 @@ func (s *ProjectSummary) UpdateSummary(f *excelize.File) {
 	f.SetCellValue(sheet, "BC39", s.PricingSheet.ContactPhoneNumber)
 	f.SetCellValue(sheet, "BG39", s.PricingSheet.ContactEmail)
 	f.SetCellValue(sheet, "BN39", s.PricingSheet.EstimatedSidewalkMiles)
-
-	// Force cells I8/I9/I10 to use COUNTA instead of COUNT because of
-	// issues with the default formatting for dates
-	f.SetCellValue(sheet, "I8", "=COUNTA(A44:A59)")
-	f.SetCellValue(sheet, "I9", "=COUNTA(A51:A60)")
-	f.SetCellValue(sheet, "10", "=COUNTA(A52:A61)")
 
 	// Set the tech initials in columns P - AF
 	for techEmail, techId := range s.TechIndex {
@@ -374,7 +371,7 @@ func (s *ProjectSummary) UpdateProductionData(f *excelize.File) {
 		s.UpdateSheetName(f, strconv.Itoa(i+1), sheet)
 		s.UpdateSummaryCompletedCurbs(f, sheet, i)
 		s.UpdateSummaryCompletedSidewalks(f, sheet, i)
-		f.SetCellValue(sheet, "E11", workDate.Format("01-02-2006"))
+		f.SetCellValue(sheet, "E11", workDate)
 
 		// Set the tech initials in columns P - AF
 		for techEmail, techId := range s.TechIndex {
