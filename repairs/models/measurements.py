@@ -24,7 +24,7 @@ class Measurement(models.Model):
     measured_hazard_length = models.FloatField(default=0)
     h1 = models.FloatField(default=0)
     h2 = models.FloatField(default=0)
-    size = models.CharField(
+    hazard_size = models.CharField(
         max_length=10, choices=QuickDescription.choices, blank=True, null=True
     )
     special_case = models.CharField(
@@ -96,7 +96,7 @@ class Measurement(models.Model):
 
         encoders = {
             "special_case": SpecialCase,
-            "size": QuickDescription,
+            "hazard_size": QuickDescription,
         }
 
         for measurement in measurements:

@@ -12,7 +12,7 @@ from repairs.models.constants import QuickDescription, SpecialCase, Stage
 class BaseMeasurement(BaseModel):
     """Base measurement record with common attributes"""
 
-    object_id: int = Field(alias="ObjectID")
+    object_id: int = Field(alias="OBJECTID")
     length: Optional[float] = Field(alias="Length")
     width: Optional[float] = Field(alias="Width")
     area: Optional[float] = Field(alias="SQFT")
@@ -25,7 +25,7 @@ class BaseMeasurement(BaseModel):
     measured_hazard_length: Optional[float] = Field(alias="Measured Hazard Length")
     inch_feet: Optional[float] = Field(alias="Inch Feet")
     special_case: Optional[str] = Field(alias="Special Case")
-    size: Optional[str] = Field(alias="Size")
+    hazard_size: Optional[str] = Field(alias="Hazard Size")
     tech: str = Field(alias="Creator")
     note: Optional[str] = Field(alias="Notes")
     measured_at: datetime = Field(alias="CreationDate")
@@ -57,15 +57,15 @@ class BaseMeasurement(BaseModel):
 
         return None
 
-    @validator("size", pre=True)
+    @validator("hazard_size", pre=True)
     @classmethod
-    def validate_quick_description(cls, v):
+    def validate_hazard_size(cls, v):
         for key, alias in QuickDescription.choices:
             if v == alias:
                 return key
 
         if v:
-            raise ValueError(f"Invalid size: {v}")
+            raise ValueError(f"Invalid hazard size: {v}")
 
         return None
 
