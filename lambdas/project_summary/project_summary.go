@@ -39,6 +39,7 @@ type ProjectSummary struct {
 	ProjectInstructions ProjectInstructions
 	Measurements        []Measurement
 	TechIndex           map[string]int
+	TechInitials        map[string]string
 }
 
 // Construct a new Project Summary
@@ -52,6 +53,7 @@ func NewProjectSummary(requestId uuid.UUID) *ProjectSummary {
 		ProjectInstructions: ProjectInstructions{},
 		Measurements:        []Measurement{},
 		TechIndex:           map[string]int{},
+		TechInitials:        map[string]string{},
 	}
 }
 
@@ -267,6 +269,7 @@ func (s *ProjectSummary) FetchMeasurements(db *pgx.Conn) {
 	for _, item := range s.Measurements {
 		if _, ok := s.TechIndex[item.TechEmail]; !ok {
 			s.TechIndex[item.TechEmail] = len(s.TechIndex)
+			s.TechInitials[item.TechEmail] = item.Tech
 		}
 	}
 }
@@ -288,7 +291,7 @@ func (s *ProjectSummary) TotalCurbLength() float64 {
 
 // Generate the Project Summary Excel file
 func (s *ProjectSummary) Generate() {
-	s.Fetch()
+	fmt.Printf("Generating project summary for request: %s\n", s.RequestId)
 
 	workbook, err := excelize.OpenFile(TEMPLATE)
 
@@ -299,6 +302,7 @@ func (s *ProjectSummary) Generate() {
 	defer workbook.Close()
 
 	workbook.UpdateLinkedValue()
+	s.Fetch()
 	s.UpdateSummary(workbook)
 	s.UpdateProductionData(workbook)
 	workbook.UpdateLinkedValue()
@@ -329,6 +333,12 @@ func (s *ProjectSummary) UpdateSummary(f *excelize.File) {
 	f.SetCellValue(sheet, "BC39", s.PricingSheet.ContactPhoneNumber)
 	f.SetCellValue(sheet, "BG39", s.PricingSheet.ContactEmail)
 	f.SetCellValue(sheet, "BN39", s.PricingSheet.EstimatedSidewalkMiles)
+
+	// Set the tech initials in columns P - AF
+	for techEmail, techId := range s.TechIndex {
+		cell, _ := excelize.CoordinatesToCellName(techId+14, 43)
+		f.SetCellValue(sheet, cell, s.TechInitials[techEmail])
+	}
 }
 
 // Update the production survey data worksheets
@@ -359,6 +369,12 @@ func (s *ProjectSummary) UpdateProductionData(f *excelize.File) {
 		s.UpdateSummaryCompletedCurbs(f, sheet, i)
 		s.UpdateSummaryCompletedSidewalks(f, sheet, i)
 		f.SetCellValue(sheet, "E11", workDate.Format("1/2/2006"))
+
+		// Set the tech initials in columns P - AF
+		for techEmail, techId := range s.TechIndex {
+			cell, _ := excelize.CoordinatesToCellName(techId+16, 21)
+			f.SetCellValue(sheet, cell, s.TechInitials[techEmail])
+		}
 
 		for j, item := range sheetData {
 			rowId := 22 + j
