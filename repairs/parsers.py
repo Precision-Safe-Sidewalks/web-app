@@ -157,8 +157,8 @@ class ProductionMeasurement(BaseMeasurement):
             "special_case",
             "curb_length",
             "note",
-            "long",
             "lat",
+            "long",
         ]
 
 
