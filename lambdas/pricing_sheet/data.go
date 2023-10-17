@@ -162,7 +162,7 @@ func (d *PricingSheetData) FetchSurveyData(db *pgx.Conn) {
 		SELECT
 			m.object_id,
 			COALESCE(m.survey_group, ''),
-			COALESCE(m.size, '') AS size,
+			COALESCE(m.hazard_size, '') AS hazard_size,
 			COALESCE(m.curb_length, 0) AS curb_length,
 			COALESCE(m.geocoded_address, '') AS geocoded_address,
 			COALESCE(m.length, 0) AS length,
@@ -190,7 +190,7 @@ func (d *PricingSheetData) FetchSurveyData(db *pgx.Conn) {
 		err = rows.Scan(
 			&r.ObjectId,
 			&r.SurveyGroup,
-			&r.Size,
+			&r.HazardSize,
 			&r.CurbLength,
 			&r.Address,
 			&r.Length,
@@ -211,7 +211,7 @@ func (d *PricingSheetData) FetchSurveyData(db *pgx.Conn) {
 type SurveyRecord struct {
 	ObjectId             int
 	SurveyGroup          string
-	Size                 string
+	HazardSize           string
 	CurbLength           float64
 	Address              string
 	Length               float64

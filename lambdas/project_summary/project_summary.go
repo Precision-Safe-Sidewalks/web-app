@@ -174,9 +174,9 @@ func (s *ProjectSummary) FetchSurveyInstructions(db *pgx.Conn) {
 
 // Fetch the Project Instructions data
 func (s *ProjectSummary) FetchProjectInstructions(db *pgx.Conn) {
-	sizes := []string{"S", "M", "L"}
+	hazardSizes := []string{"S", "M", "L"}
 
-	for _, size := range sizes {
+	for _, hazardSize := range hazardSizes {
 		var hazards int
 		var inchFeet float64
 
@@ -188,7 +188,7 @@ func (s *ProjectSummary) FetchProjectInstructions(db *pgx.Conn) {
 			FROM repairs_instruction i
 			WHERE i.project_id = $1
 				AND i.stage = 'PRODUCTION'
-		`, size, size)
+		`, hazardSize, hazardSize)
 
 		err := db.QueryRow(context.Background(), query, s.Project.Id).Scan(
 			&hazards,
