@@ -16,8 +16,8 @@ class BaseMeasurement(BaseModel):
     length: Optional[float] = Field(alias="Length")
     width: Optional[float] = Field(alias="Width")
     area: Optional[float] = Field(alias="SQFT")
-    long: float = Field(alias="Long")
-    lat: float = Field(alias="Lat")
+    long: float = Field(alias="x")
+    lat: float = Field(alias="y")
     coordinate: Optional[Point] = None
     h1: Optional[float] = Field(alias="H1")
     h2: Optional[float] = Field(alias="H2")
@@ -94,7 +94,6 @@ class BaseMeasurement(BaseModel):
         return measurements
 
     def model_dump(self, **kwargs):
-        kwargs["exclude"] = kwargs.get("exclude", {"long", "lat"})
         return super().model_dump(**kwargs)
 
 
