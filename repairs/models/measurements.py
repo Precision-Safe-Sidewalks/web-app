@@ -47,6 +47,11 @@ class Measurement(models.Model):
         (x, y) = self.coordinate.coords
         return f"{self.project.name} - {self.object_id} - ({x}, {y})"
 
+    def save(self, *args, **kwargs):
+        if self.special_case == SpecialCase.CURB:
+            self.measured_hazard_length = self.curb_length * 12
+        super().save(*args, **kwargs)
+
     @staticmethod
     def import_from_csv(file_obj, project, stage):
         """Import the Measurements from CSV (replaces any existing)"""
