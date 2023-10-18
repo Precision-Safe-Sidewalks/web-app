@@ -28,6 +28,7 @@ class BaseMeasurement(BaseModel):
     hazard_size: Optional[str] = Field(alias="Hazard Size")
     tech: str = Field(alias="Creator")
     note: Optional[str] = Field(alias="Notes")
+    survey_address: Optional[str] = Field(alias="Address", default="")
     measured_at: datetime = Field(alias="CreationDate")
 
     class Config:
@@ -105,7 +106,6 @@ class BaseMeasurement(BaseModel):
 class SurveyMeasurement(BaseMeasurement):
     """Measurement record from a survey CSV"""
 
-    survey_address: Optional[str] = Field(alias="Survey Address")
     survey_group: Optional[str] = Field(alias="Start Street - Area")
 
     @classmethod
