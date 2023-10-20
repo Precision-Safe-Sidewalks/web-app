@@ -21,7 +21,7 @@ class SpecialCase(models.TextChoices):
     APRONS = ("AP", "Aprons")
     LEADWALK = ("L", "Leadwalk")
     RECUTS = ("RC", "Recuts")
-    METERES = ("MM", "Meters - Manholes")
+    METERS = ("MM", "Meters - Manholes")
 
 
 class QuickDescription(models.TextChoices):
