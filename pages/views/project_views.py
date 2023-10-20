@@ -165,8 +165,14 @@ class ProjectMeasurementsImportView(FormView):
                 f.write(data)
                 Measurement.import_from_csv(f, project=project, stage=stage)
         except ValidationError as exc:
+            error = exc.errors()[0]
+            reason = error.get("msg", "Unable to parse the file")
+            columns = ", ".join(error.get("loc", []))
+            message = f"[{columns}]: {reason}"
+
             LOGGER.error(f"Error importing measurements: {exc}")
-            redirect_url = f"{self.request.path}?error=Unable to parse the file"
+            redirect_url = f"{self.request.path}?error={message}"
+
             return redirect(redirect_url)
 
         return super().form_valid(form)

@@ -23,7 +23,7 @@
     padding-right: 12px;
     border-radius: 4px;
     background-color: $inverse-surface;
-    width: 360px;
+    min-width: 360px;
   }
 
   .snackbar-text {
