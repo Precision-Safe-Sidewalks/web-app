@@ -37,7 +37,13 @@ class BaseMeasurement(BaseModel):
     @validator("coordinate", pre=False, always=True)
     @classmethod
     def validate_point(cls, _, values):
-        return Point(values["long"], values["lat"])
+        long = values.get("long")
+        lat = values.get("lat")
+
+        if long is None or lat is None:
+            raise ValueError("Invalid longitude and latitude must not be null")
+
+        return Point(long, lat)
 
     @validator("measured_at", pre=True)
     @classmethod
