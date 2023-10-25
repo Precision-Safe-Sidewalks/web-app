@@ -3,6 +3,7 @@ import json
 import logging
 from datetime import datetime
 
+import chardet
 from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.http import HttpResponse
@@ -159,11 +160,14 @@ class ProjectMeasurementsImportView(FormView):
         project = get_object_or_404(Project, pk=self.kwargs["pk"])
         stage = self.kwargs["stage"].strip().upper()
 
+        raw_data = form.cleaned_data["file"].read()
+        encoding = chardet.detect(raw_data)["encoding"]
+        data = raw_data.decode(encoding)
+
         try:
-            data = form.cleaned_data["file"].read().decode("utf-8-sig")
-            with io.StringIO() as f:
-                f.write(data)
-                Measurement.import_from_csv(f, project=project, stage=stage)
+            with io.StringIO() as file_obj:
+                file_obj.write(data)
+                Measurement.import_from_csv(file_obj, project=project, stage=stage)
         except ValidationError as exc:
             error = exc.errors()[0]
             reason = error.get("msg", "Unable to parse the file")
