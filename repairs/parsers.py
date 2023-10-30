@@ -21,8 +21,10 @@ class BaseMeasurement(BaseModel):
     coordinate: Optional[Point] = None
     h1: Optional[float] = Field(alias="H1")
     h2: Optional[float] = Field(alias="H2")
-    curb_length: Optional[float] = Field(alias="Curb Length")
-    measured_hazard_length: Optional[float] = Field(alias="Measured Hazard Length")
+    curb_length: Optional[float] = Field(alias="Curb Length (feet)")
+    measured_hazard_length: Optional[float] = Field(
+        alias="Measured Hazard Length (inches)"
+    )
     inch_feet: Optional[float] = Field(alias="Inch Feet")
     special_case: Optional[str] = Field(alias="Special Case")
     hazard_size: Optional[str] = Field(alias="Hazard Size")
@@ -56,7 +58,7 @@ class BaseMeasurement(BaseModel):
     @classmethod
     def validate_special_case(cls, v):
         for key, alias in SpecialCase.choices:
-            if v == alias:
+            if v.lower() == alias.lower():
                 return key
 
         if v:
@@ -68,7 +70,7 @@ class BaseMeasurement(BaseModel):
     @classmethod
     def validate_hazard_size(cls, v):
         for key, alias in QuickDescription.choices:
-            if v == alias:
+            if v.lower() == alias.lower():
                 return key
 
         if v:
