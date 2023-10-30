@@ -30,6 +30,7 @@ class QuickDescription(models.TextChoices):
     SMALL = ("S", "Small")
     MEDIUM = ("M", "Medium")
     LARGE = ("L", "Large")
+    OTHER = ("O", "Other")
 
 
 class Hazard(models.TextChoices):
