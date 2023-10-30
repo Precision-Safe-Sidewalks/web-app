@@ -58,7 +58,7 @@ class BaseMeasurement(BaseModel):
     @classmethod
     def validate_special_case(cls, v):
         for key, alias in SpecialCase.choices:
-            if v.lower() == alias.lower():
+            if str(v).lower() == alias.lower():
                 return key
 
         if v:
@@ -70,7 +70,7 @@ class BaseMeasurement(BaseModel):
     @classmethod
     def validate_hazard_size(cls, v):
         for key, alias in QuickDescription.choices:
-            if v.lower() == alias.lower():
+            if str(v).lower() == alias.lower():
                 return key
 
         if v:
