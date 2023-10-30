@@ -161,6 +161,14 @@ func (p *PricingSheet) UpdateSurveyData(f *excelize.File) {
 	sheetId := 1
 	offset := 26
 
+	highlightStyle, _ := f.NewStyle(&excelize.Style{
+		Fill: excelize.Fill{
+			Type:    "pattern",
+			Color:   []string{"#FFFF00"},
+			Pattern: 1,
+		},
+	})
+
 	for group, items := range groups {
 		sheet := strconv.Itoa(sheetId)
 
@@ -177,6 +185,12 @@ func (p *PricingSheet) UpdateSurveyData(f *excelize.File) {
 			f.SetCellValue(sheet, fmt.Sprintf("J%d", i+offset), item.MeasuredHazardLength)
 			f.SetCellValue(sheet, fmt.Sprintf("K%d", i+offset), item.InchFeet)
 			f.SetCellValue(sheet, fmt.Sprintf("T%d", i+offset), item.ObjectId)
+
+			if item.HazardSize == "O" {
+				cell := fmt.Sprintf("V%d", i+offset)
+				f.SetCellValue(sheet, cell, "Other")
+				f.SetCellStyle(sheet, cell, cell, highlightStyle)
+			}
 		}
 
 		sheetId++
