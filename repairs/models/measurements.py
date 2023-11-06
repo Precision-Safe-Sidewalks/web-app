@@ -50,6 +50,10 @@ class Measurement(models.Model):
     def save(self, *args, **kwargs):
         if self.special_case == SpecialCase.CURB:
             self.measured_hazard_length = self.curb_length * 12
+
+            if self.stage == Stage.PRODUCTION:
+                self.length = 0.5
+
         super().save(*args, **kwargs)
 
     @staticmethod

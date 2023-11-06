@@ -1,7 +1,7 @@
 from lib.test_helpers import IntegrationTestBase
 from repairs.factories import ProjectFactory
 from repairs.models import Measurement
-from repairs.models.constants import Stage
+from repairs.models.constants import SpecialCase, Stage
 
 
 class TestMeasurement(IntegrationTestBase):
@@ -30,3 +30,9 @@ class TestMeasurement(IntegrationTestBase):
         with open(filename, "r", encoding="utf-8-sig") as f:
             measurements = Measurement.import_from_csv(f, project, stage)
             self.assertEqual(measurements.count(), 59)
+
+            curbs = measurements.filter(special_case=SpecialCase.CURB)
+            self.assertEqual(len(curbs), 1)
+
+            for curb in curbs:
+                self.assertEqual(curb.length, 0.5)
