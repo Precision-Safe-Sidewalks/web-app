@@ -207,6 +207,8 @@ func (s *ProjectSummary) FetchProjectInstructions(db *pgx.Conn) {
 }
 
 // Fetch the production Measurements data
+// FIXME: this data should come from an API endpoint and not direct from
+// the database.
 func (s *ProjectSummary) FetchMeasurements(db *pgx.Conn) {
 	query := `
 		SELECT
@@ -222,7 +224,22 @@ func (s *ProjectSummary) FetchMeasurements(db *pgx.Conn) {
 			COALESCE(m.note, '') AS note,
 			COALESCE(UPPER(SUBSTRING(m.tech, 1, 1)) || UPPER(SUBSTRING(m.tech, 3, 1)), '') AS tech,
 			COALESCE(m.tech, '') AS tech_email,
-			DATE(m.measured_at) AS work_date
+			DATE(m.measured_at) AS work_date,
+			CASE
+				WHEN m.special_case = 'R' THEN 'Replace'
+				WHEN m.special_case = 'C' THEN 'Curb'
+				WHEN m.special_case = 'BHC' THEN 'Bottom HC'
+				WHEN m.special_case = 'GP' THEN 'Gutter Pan'
+				WHEN m.special_case = 'CB' THEN 'Catch Basin'
+				WHEN m.special_case = 'SW2C' THEN 'SW2C'
+				WHEN m.special_case = 'AS' THEN 'Asphalt'
+				WHEN m.special_case = 'D' THEN 'Driveway'
+				WHEN m.special_case = 'AP' THEN 'Aprons'
+				WHEN m.special_case = 'L' THEN 'Leadwalk'
+				WHEN m.special_case = 'RC' THEN 'Recuts'
+				WHEN m.special_case = 'MM' THEN 'Meters - Manholes'
+				ELSE ''
+			END AS special_case
 		FROM repairs_measurement m
 		WHERE m.project_id = $1
 			AND m.stage = 'PRODUCTION'
@@ -255,6 +272,7 @@ func (s *ProjectSummary) FetchMeasurements(db *pgx.Conn) {
 			&m.Tech,
 			&m.TechEmail,
 			&m.WorkDate,
+			&m.SpecialCase,
 		)
 
 		if err != nil {
@@ -383,13 +401,23 @@ func (s *ProjectSummary) UpdateProductionData(f *excelize.File) {
 			rowId := 22 + j
 			currentTechId := s.TechIndex[item.TechEmail]
 
+			var note string
+
+			if item.Note != "" && item.SpecialCase != "" {
+				note = fmt.Sprintf("%s. %s", item.SpecialCase, item.Note)
+			} else if item.Note != "" {
+				note = item.Note
+			} else if item.SpecialCase != "" {
+				note = item.SpecialCase
+			}
+
 			f.SetCellValue(sheet, fmt.Sprintf("A%d", rowId), item.Width)
 			f.SetCellValue(sheet, fmt.Sprintf("B%d", rowId), item.Length)
 			f.SetCellValue(sheet, fmt.Sprintf("D%d", rowId), item.H1)
 			f.SetCellValue(sheet, fmt.Sprintf("E%d", rowId), item.H2)
 			f.SetCellValue(sheet, fmt.Sprintf("F%d", rowId), item.MeasuredHazardLength)
 			f.SetCellValue(sheet, fmt.Sprintf("G%d", rowId), item.Address)
-			f.SetCellValue(sheet, fmt.Sprintf("H%d", rowId), item.Note)
+			f.SetCellValue(sheet, fmt.Sprintf("H%d", rowId), note)
 			f.SetCellValue(sheet, fmt.Sprintf("M%d", rowId), item.Tech)
 			f.SetCellValue(sheet, fmt.Sprintf("N%d", rowId), item.ObjectId)
 
@@ -600,4 +628,5 @@ type Measurement struct {
 	Tech                 string
 	TechEmail            string
 	WorkDate             time.Time
+	SpecialCase          string
 }
