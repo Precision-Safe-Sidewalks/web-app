@@ -187,7 +187,12 @@ func (p *PricingSheet) UpdateSurveyData(f *excelize.File) {
 			f.SetCellValue(sheet, fmt.Sprintf("T%d", i+offset), item.ObjectId)
 
 			if item.HazardSize == "O" {
-				cell := fmt.Sprintf("V%d", i+offset)
+				var cell string
+
+				cell = fmt.Sprintf("A%d", i+offset)
+				f.SetCellStyle(sheet, cell, cell, highlightStyle)
+
+				cell = fmt.Sprintf("V%d", i+offset)
 				f.SetCellValue(sheet, cell, "Other")
 				f.SetCellStyle(sheet, cell, cell, highlightStyle)
 			}
