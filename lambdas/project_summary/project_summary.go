@@ -18,11 +18,12 @@ import (
 )
 
 const (
-	TEMPLATE = "templates/PS Template - MACRO RB 8-29-23 Modified.xlsm"
+	TEMPLATE = "templates/PS 30 tabs Template - MACRO RB 11-9-2023 Modified.xlsm"
 )
 
 const (
-	WORKSHEET_SUMMARY = "SUMMARY"
+	WORKSHEET_SUMMARY     = "SUMMARY"
+	SUMMARY_TABLE_MAX_ROW = 87
 )
 
 const (
@@ -324,6 +325,7 @@ func (s *ProjectSummary) Generate() {
 	s.UpdateSummary(workbook)
 	s.UpdateProductionData(workbook)
 	workbook.UpdateLinkedValue()
+	workbook.SetActiveSheet(1)
 
 	if err := workbook.SaveAs(s.Filename); err != nil {
 		panic(err)
@@ -467,7 +469,7 @@ func (s *ProjectSummary) UpdateSummaryCompletedCurbs(f *excelize.File, sheet str
 
 // Update the formula references on the SUMMARY worksheet (completed sidewalks)
 func (s *ProjectSummary) UpdateSummaryCompletedSidewalks(f *excelize.File, sheet string, sheetId int) {
-	rowId := 59 - sheetId
+	rowId := SUMMARY_TABLE_MAX_ROW - sheetId
 
 	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("A%d", rowId), fmt.Sprintf("='%s'!O5", sheet))
 	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("B%d", rowId), fmt.Sprintf("='%s'!P5", sheet))

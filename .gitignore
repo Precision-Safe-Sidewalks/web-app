@@ -205,3 +205,6 @@ terraform.rc
 
 # AWS
 .aws-lambda-rie
+
+# Mac
+.DS_Store
