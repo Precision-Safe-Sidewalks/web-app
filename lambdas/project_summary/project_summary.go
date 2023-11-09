@@ -18,15 +18,11 @@ import (
 )
 
 const (
-	TEMPLATE = "templates/PS Template - MACRO RB 8-29-23 Modified.xlsm"
-)
-
-const (
-	WORKSHEET_SUMMARY = "SUMMARY"
-)
-
-const (
-	S3_BUCKET = "precision-safe-sidewalks"
+	TEMPLATE                        = "templates/PS 30 tabs Template - MACRO RB 11-9-2023 Modified.xlsm"
+	SUMMARY_CURBS_TABLE_MAX_ROW     = 49
+	SUMMARY_SIDEWALKS_TABLE_MAX_ROW = 87
+	WORKSHEET_SUMMARY               = "SUMMARY"
+	S3_BUCKET                       = "precision-safe-sidewalks"
 )
 
 // Project Summary
@@ -324,6 +320,7 @@ func (s *ProjectSummary) Generate() {
 	s.UpdateSummary(workbook)
 	s.UpdateProductionData(workbook)
 	workbook.UpdateLinkedValue()
+	workbook.SetActiveSheet(1)
 
 	if err := workbook.SaveAs(s.Filename); err != nil {
 		panic(err)
@@ -456,7 +453,7 @@ func (s *ProjectSummary) UpdateSheetName(f *excelize.File, oldName string, newNa
 
 // Update the formula references on the SUMMARY worksheet (completed curbs)
 func (s *ProjectSummary) UpdateSummaryCompletedCurbs(f *excelize.File, sheet string, sheetId int) {
-	rowId := 35 - sheetId
+	rowId := SUMMARY_CURBS_TABLE_MAX_ROW - sheetId
 
 	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("E%d", rowId), fmt.Sprintf("='%s'!O8", sheet))
 	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("F%d", rowId), fmt.Sprintf("='%s'!P8", sheet))
@@ -467,7 +464,7 @@ func (s *ProjectSummary) UpdateSummaryCompletedCurbs(f *excelize.File, sheet str
 
 // Update the formula references on the SUMMARY worksheet (completed sidewalks)
 func (s *ProjectSummary) UpdateSummaryCompletedSidewalks(f *excelize.File, sheet string, sheetId int) {
-	rowId := 59 - sheetId
+	rowId := SUMMARY_SIDEWALKS_TABLE_MAX_ROW - sheetId
 
 	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("A%d", rowId), fmt.Sprintf("='%s'!O5", sheet))
 	f.SetCellFormula(WORKSHEET_SUMMARY, fmt.Sprintf("B%d", rowId), fmt.Sprintf("='%s'!P5", sheet))
