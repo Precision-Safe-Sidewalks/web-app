@@ -3,7 +3,13 @@ import csv
 from django.contrib.gis.db.models.fields import PointField
 from django.db import models, transaction
 
-from repairs.models.constants import QuickDescription, SpecialCase, Stage
+from repairs.models.constants import (
+    SYMBOL_COLORS,
+    SYMBOLS,
+    QuickDescription,
+    SpecialCase,
+    Stage,
+)
 from repairs.models.projects import Project
 from repairs.parsers import get_parser_class
 from utils.aws import invoke_lambda_function
@@ -129,6 +135,20 @@ class Measurement(models.Model):
         writer.writeheader()
         writer.writerows(measurements)
         file_obj.seek(0)
+
+    def get_symbol(self):
+        """Return the symbol to represent the measurement"""
+        return SYMBOLS.get(self.special_case, "location_on")
+
+    def get_color(self):
+        """Return the color to represent the measurement"""
+        if color := SYMBOL_COLORS.get(self.special_case):
+            return color
+
+        if color := SYMBOL_COLORS.get(self.hazard_size):
+            return color
+
+        return "black"
 
 
 class MeasurementImage(models.Model):
