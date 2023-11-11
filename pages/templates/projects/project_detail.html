@@ -324,26 +324,6 @@
           </td>
         </tr>
         {% endwith %}
-
-        <!-- Post-project review -->
-        {% with exists=project.has_post_project_review %}
-        <tr>
-          <td>Post-project review</td>
-          <td align="center">{{ exists|status_icon }}</td>
-          <td align="center">---</td>
-          <td align="center">---</td>
-          <td>
-            <div class="flex--center">
-              {% if exists %}
-              <a href="#" class="btn--icon-sm ml-1">
-                <span class="icon">download</span>
-              </a>
-              {% endif %}
-            </div>
-          </td>
-        </tr>
-        {% endwith %}
-
       </tbody>
     </table>
   </div>
