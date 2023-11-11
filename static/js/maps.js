@@ -23,16 +23,48 @@ class MeasurementsMap {
   addFeatures(features, label) {
     features.map(feature => {
       const popup = new mapboxgl.Popup({ offset: 24 })
-        .setHTML(`<h5>${feature.id}</h5>`)
+        .setHTML(this.getPopupHTML(feature))
 
       const pin = document.createElement("span")
-      pin.className = "icon--filled"
-      pin.textContent = "location_on"
+      const { symbol, color } = feature.properties
+      pin.className = `icon--filled icon--${color}`
+      pin.textContent = symbol
 
       new mapboxgl.Marker({ element: pin })
         .setLngLat(feature.geometry.coordinates)
         .setPopup(popup)
         .addTo(this.map)
     })
+  }
+
+  getPopupHTML(feature) {
+    const props = feature.properties
+    const empty = "N/A"
+
+    const TEMPLATE = [
+      { label: "Object ID", key: "object_id" },
+      { label: "Stage", key: "stage" },
+      { label: "Address", key: "geocoded_address" },
+      { label: "Special Case", key: "special_case" },
+      { label: "Hazard Size", key: "hazard_size" },
+      { label: "Tech", key: "tech" },
+    ]
+
+    const body = TEMPLATE.map(item => {
+      return `
+        <tr>
+          <td>${item.label}</td>
+          <td>${props[item.key] || empty}</td>
+        </tr>
+      `
+    }).join("\n")
+
+    return `
+      <table>
+        <tbody>
+          ${body}
+        </tbody>
+      </table>
+    `
   }
 }

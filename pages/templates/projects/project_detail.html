@@ -324,26 +324,6 @@
           </td>
         </tr>
         {% endwith %}
-
-        <!-- Post-project review -->
-        {% with exists=project.has_post_project_review %}
-        <tr>
-          <td>Post-project review</td>
-          <td align="center">{{ exists|status_icon }}</td>
-          <td align="center">---</td>
-          <td align="center">---</td>
-          <td>
-            <div class="flex--center">
-              {% if exists %}
-              <a href="#" class="btn--icon-sm ml-1">
-                <span class="icon">download</span>
-              </a>
-              {% endif %}
-            </div>
-          </td>
-        </tr>
-        {% endwith %}
-
       </tbody>
     </table>
   </div>
@@ -352,6 +332,11 @@
     <h4>Map</h4>
     <div class="my-2">
     {% if project.measurements.exists %}
+      <div class="flex--end mb-2">
+        <button class="btn mr-2" onclick="resetMapBounds()">
+          Reset Bounds
+        </button>
+      </div>
       <div id="map" class="map"></div>
     {% else %}
       <p>No measurements to display</p>
@@ -364,15 +349,16 @@
   // Constants
   const pricingSheetUrl = "{% url 'documents-pricing-sheet' pk=project.pk %}"
   const projectSummaryUrl = "{% url 'documents-project-summary' pk=project.pk %}"
+  const geojson = JSON.parse("{{ measurements|safe|escapejs }}")
+  const bbox = JSON.parse("{{ bbox }}")
+  const centroid = JSON.parse("{{ centroid }}")
+
+  // Global variables
+  var map = null;
 
   $(document).ready(() => {
-    const geojson = JSON.parse("{{ measurements|safe|escapejs }}")
-
     if (geojson.features.length > 0) {
-      const bbox = JSON.parse("{{ bbox }}")
-      const centroid = JSON.parse("{{ centroid }}")
-
-      var map = new MeasurementsMap("map", "{{ project.pk }}", centroid)
+      map = new MeasurementsMap("map", "{{ project.pk }}", centroid)
       map.fitBounds(bbox)
       map.addFeatures(geojson.features, "measurements")
     }
@@ -453,6 +439,11 @@
     }
 
     return requestId ? `${baseUrl}?request_id=${requestId}` : baseUrl
+  }
+
+  // Handler to reset the map bounds
+  const resetMapBounds = () => {
+    map.fitBounds(bbox)
   }
 
 </script>

@@ -126,3 +126,32 @@ class PanelSize(models.IntegerChoices):
     FIVE_FOOT = (1, "5 ft.")
     SIX_FOOT = (2, "6 ft.")
     SEVEN_FOOT = (3, "7 ft.")
+
+
+SYMBOLS = {
+    SpecialCase.REPLACE: "square",
+    SpecialCase.BOTTOM_HC: "accessible",
+    SpecialCase.GUTTER_PAN: "accessible",
+    SpecialCase.CURB: "square",
+    SpecialCase.CATCH_BASIN: "star",
+    SpecialCase.SW2C: "change_history",
+    SpecialCase.C2B: "stat_0",
+    # SpecialCase.ASPHALT: None,
+    SpecialCase.DRIVEWAY: "square",
+    SpecialCase.APRONS: "crop_9_16",
+    # SpecialCase.LEADWALK: None,
+    SpecialCase.RECUTS: "radio_button_unchecked",
+    # SpecialCase.METERS: None,
+    # TODO: Missed
+    # TODO: Quality
+}
+
+SYMBOL_COLORS = {
+    SpecialCase.REPLACE: "green",
+    SpecialCase.CURB: "pink",
+    QuickDescription.SMALL: "yellow",
+    QuickDescription.MEDIUM: "blue",
+    QuickDescription.LARGE: "red",
+    # TODO: Missed
+    # TODO: Quality
+}

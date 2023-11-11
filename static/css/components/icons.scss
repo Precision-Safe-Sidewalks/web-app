@@ -40,4 +40,24 @@
 
     font-size: 48px;
   }
+
+  &--red {
+    color: $symbology-red;
+  }
+
+  &--blue {
+    color: $symbology-blue;
+  }
+
+  &--yellow {
+    color: $symbology-yellow;
+  }
+
+  &--green {
+    color: $symbology-green;
+  }
+
+  &--pink {
+    color: $symbology-pink;
+  }
 }
