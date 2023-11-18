@@ -9,6 +9,10 @@ const MAPBOX_CONFIG = {
 class MeasurementsMap {
   constructor(containerId, projectId, centroid) {
     this.projectId = projectId;
+    this.features = [];
+    this.markers = [];
+    this.filters = {};
+
     this.map = new mapboxgl.Map({ 
       ...MAPBOX_CONFIG, 
       container: containerId,
@@ -20,8 +24,38 @@ class MeasurementsMap {
     this.map.fitBounds(bbox)
   }
 
+  addFilter(property, value, render = true) {
+    if (!this.filters.hasOwnProperty(property)) {
+      this.filters[property] = new Set()
+    }
+
+    this.filters[property].add(value)
+
+    if (render) {
+      this.render()
+    }
+  }
+
+  removeFilter(property, value, render = true) {
+    if (this.filters.hasOwnProperty(property)) {
+      this.filters[property].delete(value)
+    }
+
+    if (render) {
+      this.render()
+    }
+  }
+
   addFeatures(features, label) {
-    features.map(feature => {
+    this.features = this.features.concat(features)
+    this.render()
+  }
+
+  render() {
+    this.markers.forEach(marker => marker.remove())
+    this.markers = []
+
+    this.getVisibleFeatures().map(feature => {
       const popup = new mapboxgl.Popup({ offset: 24 })
         .setHTML(this.getPopupHTML(feature))
 
@@ -30,10 +64,27 @@ class MeasurementsMap {
       pin.className = `icon--filled icon--${color}`
       pin.textContent = symbol
 
-      new mapboxgl.Marker({ element: pin })
+      const marker = new mapboxgl.Marker({ element: pin })
         .setLngLat(feature.geometry.coordinates)
         .setPopup(popup)
         .addTo(this.map)
+
+      this.markers.push(marker)
+    })
+  }
+
+  getVisibleFeatures() {
+    return this.features.filter(feature => {
+      for (const property of Object.keys(this.filters)) {
+        const featureValue = feature.properties[property]
+        const filterValues = this.filters[property]
+
+        if (featureValue && !filterValues.has(featureValue)) {
+          return false
+        }
+      }
+
+      return true
     })
   }
 
