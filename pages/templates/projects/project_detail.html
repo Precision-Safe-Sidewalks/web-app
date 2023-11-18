@@ -328,16 +328,64 @@
     </table>
   </div>
 
+  <!-- Measurements map -->
   <div class="mt-12">
     <h4>Map</h4>
     <div class="my-2">
     {% if project.measurements.exists %}
-      <div class="flex--end mb-2">
-        <button class="btn mr-2" onclick="resetMapBounds()">
-          Reset Bounds
-        </button>
+      <div class="flex">
+        <div id="map" class="map"></div>
+
+        <div class="w-25p p-4">
+          <div>
+            <div class="flex">
+              <button class="btn" onclick="resetMapBounds()">
+                Fit to View
+              </button>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <h6>Map Style</h6>
+            <div class="menu w-100p mt-1" data-active="true">
+              <select class="w-100p" onchange="onChangeMapStyle(event)">
+                <option value="mapbox://styles/mapbox/streets-v12">Streets</option>
+                <option value="mapbox://styles/mapbox/satellite-streets-v12">Satellite</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <h6>Stage</h6>
+            {% for stage in map_legend.stages %}
+            <div class="mt-1" onclick="onToggleMapLayer(event, 'stage', '{{ stage }}')">
+              <input id="map:stage:{{ stage }}" type="checkbox" checked>
+              <label class="text--label-lg">{{ stage }}</label>
+            </div>
+            {% endfor %}
+          </div>
+          <div class="mt-4">
+
+            <h6>Hazard Sizes</h6>
+            {% for hazard_size in map_legend.hazard_sizes %}
+            <div class="mt-1" onclick="onToggleMapLayer(event, 'hazard_size', '{{ hazard_size }}')">
+              <input id="map:hazard_size:{{ hazard_size }}" type="checkbox" checked>
+              <label class="text--label-lg">{{ hazard_size }}</label>
+            </div>
+            {% endfor %}
+          </div>
+
+          <div class="mt-4">
+            <h6>Special Cases</h6>
+            {% for special_case in map_legend.special_cases %}
+            <div class="mt-1" onclick="onToggleMapLayer(event, 'special_case', '{{ special_case }}')">
+              <input id="map:special_case:{{ special_case }}" type="checkbox" checked>
+              <label class="text--label-lg">{{ special_case }}</label>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
       </div>
-      <div id="map" class="map"></div>
     {% else %}
       <p>No measurements to display</p>
     {% endif %}
@@ -359,8 +407,16 @@
   $(document).ready(() => {
     if (geojson.features.length > 0) {
       map = new MeasurementsMap("map", "{{ project.pk }}", centroid)
-      map.fitBounds(bbox)
       map.addFeatures(geojson.features, "measurements")
+
+      // Add the initial filters
+      $(`input[type="checkbox"][id^="map:"]`).map((_, element) => {
+        const [prefix, prop, value] = element.id.split(":")
+        element.checked && map.addFilter(prop, value, false)
+      })
+
+      map.render()
+      map.resetBounds()
     }
   })
 
@@ -443,7 +499,26 @@
 
   // Handler to reset the map bounds
   const resetMapBounds = () => {
-    map.fitBounds(bbox)
+    map.resetBounds()
+  }
+
+  // Handler to change the map style
+  const onChangeMapStyle = (event) => {
+    console.log(event.target.value)
+    map.setStyle(event.target.value)
+  }
+
+  // Handler for toggling a map layer
+  const onToggleMapLayer = (event, layer, value) => {
+    const element = document.getElementById(`map:${layer}:${value}`)
+
+    if (event.target !== element) {
+      $(element).prop("checked", !element.checked)
+    }
+
+    element.checked
+      ? map.addFilter(layer, value)
+      : map.removeFilter(layer, value)
   }
 
 </script>

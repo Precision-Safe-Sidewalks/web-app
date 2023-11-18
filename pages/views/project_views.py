@@ -41,6 +41,7 @@ from repairs.models.constants import (
     Hazard,
     PricingModel,
     ProjectSpecification,
+    QuickDescription,
     ReferenceImageMethod,
     SpecialCase,
     Stage,
@@ -72,6 +73,7 @@ class ProjectDetailView(DetailView):
 
         markers = project.get_measurements_geojson()
         context["measurements"] = json.dumps(markers, default=str)
+        context["map_legend"] = self.get_map_legend()
 
         if project.measurements.exists():
             bbox = project.get_bbox(buffer_fraction=0.1)
@@ -81,6 +83,25 @@ class ProjectDetailView(DetailView):
             context["centroid"] = list(centroid)
 
         return context
+
+    def get_map_legend(self):
+        """Return the map legend"""
+        queryset = self.get_object().measurements.all()
+        legend = {"stages": [], "hazard_sizes": [], "special_cases": []}
+
+        for stage, label in Stage.choices:
+            if queryset.filter(stage=stage).exists():
+                legend["stages"].append(label)
+
+        for hazard_size, label in QuickDescription.choices:
+            if queryset.filter(hazard_size=hazard_size).exists():
+                legend["hazard_sizes"].append(label)
+
+        for special_case, label in SpecialCase.choices:
+            if queryset.filter(special_case=special_case).exists():
+                legend["special_cases"].append(label)
+
+        return legend
 
 
 class ProjectCreateView(CreateView):

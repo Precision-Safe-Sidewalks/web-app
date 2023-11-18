@@ -22,6 +22,7 @@ class SpecialCase(models.TextChoices):
     LEADWALK = ("L", "Leadwalk")
     RECUTS = ("RC", "Recuts")
     METERS = ("MM", "Meters - Manholes")
+    QUALITY = ("Q", "Quality")
 
 
 class QuickDescription(models.TextChoices):
