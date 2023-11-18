@@ -29,16 +29,23 @@ class MeasurementsMap {
   }
 
   resetBounds() {
-    const buffer = 5e-6
+    const buffer = 0.1
     let bbox = [Infinity, Infinity, -Infinity, -Infinity]
     
     this.markers.forEach(marker => {
       const { lng, lat } = marker.getLngLat()
-      bbox[0] = Math.min(bbox[0], lng) - buffer
-      bbox[1] = Math.min(bbox[1], lat) - buffer
-      bbox[2] = Math.max(bbox[2], lng) + buffer
-      bbox[3] = Math.max(bbox[3], lat) + buffer
+      bbox[0] = Math.min(bbox[0], lng)
+      bbox[1] = Math.min(bbox[1], lat)
+      bbox[2] = Math.max(bbox[2], lng)
+      bbox[3] = Math.max(bbox[3], lat)
     })
+
+    const dx = (bbox[2] - bbox[0]) * buffer
+    const dy = (bbox[3] - bbox[1]) * buffer
+    bbox[0] -= dx
+    bbox[1] -= dy
+    bbox[2] += dx
+    bbox[3] += dy
 
     this.map.fitBounds(bbox)
   }
