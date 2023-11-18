@@ -20,7 +20,26 @@ class MeasurementsMap {
     })
   }
 
+  setStyle(style) {
+    this.map.setStyle(style)
+  }
+
   fitBounds(bbox) {
+    this.map.fitBounds(bbox)
+  }
+
+  resetBounds() {
+    const buffer = 5e-6
+    let bbox = [Infinity, Infinity, -Infinity, -Infinity]
+    
+    this.markers.forEach(marker => {
+      const { lng, lat } = marker.getLngLat()
+      bbox[0] = Math.min(bbox[0], lng) - buffer
+      bbox[1] = Math.min(bbox[1], lat) - buffer
+      bbox[2] = Math.max(bbox[2], lng) + buffer
+      bbox[3] = Math.max(bbox[3], lat) + buffer
+    })
+
     this.map.fitBounds(bbox)
   }
 
