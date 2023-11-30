@@ -7,7 +7,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from api.serializers.projects import SquareFootPricingSheetSerializer
+from api.serializers.projects import PricingSheetSerializer
 from repairs.documents import ProjectInstructionsGenerator, SurveyInstructionsGenerator
 from repairs.models import (
     Instruction,
@@ -93,16 +93,7 @@ class PricingSheetDataAPIView(APIView):
 
     def get(self, request, pk):
         project = get_object_or_404(Project, pk=pk)
-        serializer_class = None
-
-        if project.pricing_model == PricingModel.SQUARE_FOOT:
-            serializer_class = SquareFootPricingSheetSerializer
-
-        if not serializer_class:
-            data = {"detail": "Invalid pricing model."}
-            return Response(data, status=status.HTTP_400_BAD_REQUEST)
-
-        serializer = serializer_class(project)
+        serializer = PricingSheetSerializer(project)
         return Response(serializer.data)
 
 

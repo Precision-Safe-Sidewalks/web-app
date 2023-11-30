@@ -2,7 +2,9 @@ import pyproj
 from rest_framework import serializers
 
 from lib.constants import CONVERT_METERS_TO_MILES
-from repairs.models import Measurement, Project
+from repairs.models import Measurement, Project, PricingSheet, PricingSheetContact
+from api.serializers.customers import CustomerSerializer
+from api.serializers.core import TerritorySerializer
 
 
 class MeasurementSerializer(serializers.ModelSerializer):
@@ -34,41 +36,45 @@ class MeasurementSerializer(serializers.ModelSerializer):
             "width",
             "special_case",
             "hazard_size",
+            "curb_length",
+            "measured_hazard_length",
+            "inch_feet",
             "area",
             "geocoded_address",
             "note",
         )
 
 
-class SquareFootPricingSheetSerializer(serializers.ModelSerializer):
+class PricingSheetContactSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PricingSheetContact
+        fields = "__all__"
+
+
+class PricingSheetDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PricingSheet
+        fields = "__all__"
+
+
+class PricingSheetSerializer(serializers.ModelSerializer):
     survey_date = serializers.SerializerMethodField()
-    estimated_miles = serializers.SerializerMethodField()
     measurements = serializers.SerializerMethodField()
+    customer = CustomerSerializer()
+    territory = TerritorySerializer()
+    pricing_model = serializers.SerializerMethodField()
+    pricing = PricingSheetDataSerializer(source="pricing_sheet")
+    contact = serializers.SerializerMethodField()
 
     def get_survey_date(self, obj):
         return obj.get_survey_date()
 
-    def get_estimated_miles(self, obj):
-        # FIXME: survey or production?
-        distance = 0
-        previous = None
-        geod = pyproj.Geod(ellps="WGS84")
-
-        for item in obj.get_survey_measurements().order_by("object_id"):
-            current = item.coordinate
-
-            if previous is not None:
-                _, _, dist = geod.inv(previous.x, previous.y, current.x, current.y)
-                distance += dist
-
-            previous = current
-
-        return distance * CONVERT_METERS_TO_MILES
+    def get_pricing_model(self, obj):
+        return obj.get_pricing_model_display()
 
     def get_measurements(self, obj):
         data = {}
 
-        # FIXME: survey or production?
         for item in obj.get_survey_measurements():
             if item.survey_group not in data:
                 data[item.survey_group] = []
@@ -78,13 +84,24 @@ class SquareFootPricingSheetSerializer(serializers.ModelSerializer):
 
         return data
 
+    def get_contact(self, obj):
+        contact = PricingSheetContact.objects.filter(pricing_sheet__project=obj).first()
+        
+        if contact:
+            return PricingSheetContactSerializer(contact).data
+
+        return None
+
     class Meta:
         model = Project
         fields = (
             "id",
-            "customer",
             "name",
+            "customer",
+            "territory",
+            "pricing",
+            "contact",
             "survey_date",
-            "estimated_miles",
+            "pricing_model",
             "measurements",
         )

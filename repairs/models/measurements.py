@@ -6,6 +6,7 @@ from django.db import models, transaction
 from repairs.models.constants import (
     SYMBOL_COLORS,
     SYMBOLS,
+    PricingModel,
     QuickDescription,
     SpecialCase,
     Stage,
@@ -74,6 +75,11 @@ class Measurement(models.Model):
             for data in parser_cls.from_csv(file_obj):
                 kwargs = data.model_dump(exclude_none=True, exclude={"long", "lat"})
                 Measurement.objects.create(project=project, stage=stage, **kwargs)
+
+        # For square foot pricing models, calculate the estimated sidewalk
+        # miles from the measurements.
+        if project.pricing_model == PricingModel.SQUARE_FOOT:
+            project.pricing_sheet.calculate_sidewalk_miles()
 
         # Trigger the Lambda function to reverse geocode the addresses
         # based on the coordinates by adding the (project_id, stage) to

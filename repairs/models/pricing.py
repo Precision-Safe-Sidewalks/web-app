@@ -1,9 +1,11 @@
 import uuid
 
 import boto3
+import pyproj
 from django.db import models
 
 from core.models.constants import States
+from lib.constants import CONVERT_METERS_TO_MILES
 from repairs.models.constants import HazardDensity, HazardTier, PanelSize
 from repairs.models.projects import Project
 
@@ -14,7 +16,7 @@ class PricingSheet(models.Model):
     project = models.OneToOneField(
         Project, on_delete=models.CASCADE, related_name="pricing_sheet"
     )
-    estimated_sidewalk_miles = models.PositiveIntegerField(default=0)
+    estimated_sidewalk_miles = models.FloatField(default=0)
     surveyor_speed = models.PositiveIntegerField(default=0)
     survey_hazards = models.IntegerField(
         choices=HazardTier.choices, default=HazardTier.ABOVE_LS
@@ -30,6 +32,28 @@ class PricingSheet(models.Model):
     commission_rate = models.FloatField(default=0)
     base_rate = models.FloatField(default=0, help_text="Base cost/square foot")
     number_of_technicians = models.PositiveIntegerField(default=0)
+
+    def calculate_sidewalk_miles(self):
+        """
+        Calculate the sidewalk miles from the survey data. This is only 
+        used for square foot pricing models.
+        """
+        distance = 0
+        previous = None
+        geod = pyproj.Geod(ellps="WGS84")
+
+        for item in self.project.get_survey_measurements().order_by("object_id"):
+            current = item.coordinate
+
+            if previous is not None:
+                _, _, dist = geod.inv(previous.x, previous.y, current.x, current.y)
+                distance += dist
+
+            previous = current
+
+        miles = distance * CONVERT_METERS_TO_MILES
+        self.estimated_sidewalk_miles = miles
+        self.save()
 
     def get_contact(self):
         """Return the pricing sheet contact"""
