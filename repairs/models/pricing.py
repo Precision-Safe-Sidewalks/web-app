@@ -35,7 +35,7 @@ class PricingSheet(models.Model):
 
     def calculate_sidewalk_miles(self):
         """
-        Calculate the sidewalk miles from the survey data. This is only 
+        Calculate the sidewalk miles from the survey data. This is only
         used for square foot pricing models.
         """
         distance = 0

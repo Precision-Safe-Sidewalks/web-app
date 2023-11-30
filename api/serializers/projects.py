@@ -1,10 +1,8 @@
-import pyproj
 from rest_framework import serializers
 
-from lib.constants import CONVERT_METERS_TO_MILES
-from repairs.models import Measurement, Project, PricingSheet, PricingSheetContact
-from api.serializers.customers import CustomerSerializer
 from api.serializers.core import TerritorySerializer
+from api.serializers.customers import CustomerSerializer
+from repairs.models import Measurement, PricingSheet, PricingSheetContact, Project
 
 
 class MeasurementSerializer(serializers.ModelSerializer):
@@ -86,7 +84,7 @@ class PricingSheetSerializer(serializers.ModelSerializer):
 
     def get_contact(self, obj):
         contact = PricingSheetContact.objects.filter(pricing_sheet__project=obj).first()
-        
+
         if contact:
             return PricingSheetContactSerializer(contact).data
 

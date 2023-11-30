@@ -15,7 +15,6 @@ from repairs.models import (
     Project,
     ProjectSummaryRequest,
 )
-from repairs.models.constants import PricingModel
 
 
 class SurveyInstructionsAPIView(APIView):
