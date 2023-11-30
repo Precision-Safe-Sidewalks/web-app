@@ -89,6 +89,13 @@ class Project(models.Model):
         serializer = MeasurementSerializer(measurements, many=True)
         return serializer.data
 
+    def get_survey_date(self):
+        """Return the survey date"""
+        measurement = self.get_survey_measurements().first()
+        if measurement:
+            return measurement.measured_at.date()
+        return None
+
     def get_survey_measurements(self):
         """Return the survey measurements queryset"""
         return self.measurements.filter(stage=Stage.SURVEY).order_by("object_id")

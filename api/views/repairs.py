@@ -4,9 +4,13 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import status
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.viewsets import GenericViewSet
+from rest_framework.mixins import RetrieveModelMixin
 
+from api.serializers.projects import SquareFootPricingSheetSerializer
 from repairs.documents import ProjectInstructionsGenerator, SurveyInstructionsGenerator
 from repairs.models import (
     Instruction,
@@ -14,6 +18,7 @@ from repairs.models import (
     Project,
     ProjectSummaryRequest,
 )
+from repairs.models.constants import PricingModel
 
 
 class SurveyInstructionsAPIView(APIView):
@@ -84,6 +89,24 @@ class PricingSheetAPIView(APIView):
             return Response(data, status=status.HTTP_202_ACCEPTED)
 
         return Response({"url": url})
+
+
+class PricingSheetDataAPIView(APIView):
+    """Pricing sheet data API view"""
+
+    def get(self, request, pk):
+        project = get_object_or_404(Project, pk=pk)
+        serializer_class = None
+
+        if project.pricing_model == PricingModel.SQUARE_FOOT:
+            serializer_class = SquareFootPricingSheetSerializer
+
+        if not serializer_class:
+            data = {"detail": "Invalid pricing model."}
+            return Response(data, status=status.HTTP_400_BAD_REQUEST) 
+
+        serializer = serializer_class(project)
+        return Response(serializer.data)
 
 
 class ProjectSummaryAPIView(APIView):
