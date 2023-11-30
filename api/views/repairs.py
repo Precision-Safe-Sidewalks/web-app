@@ -4,11 +4,8 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import status
-from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.viewsets import GenericViewSet
-from rest_framework.mixins import RetrieveModelMixin
 
 from api.serializers.projects import SquareFootPricingSheetSerializer
 from repairs.documents import ProjectInstructionsGenerator, SurveyInstructionsGenerator
@@ -103,7 +100,7 @@ class PricingSheetDataAPIView(APIView):
 
         if not serializer_class:
             data = {"detail": "Invalid pricing model."}
-            return Response(data, status=status.HTTP_400_BAD_REQUEST) 
+            return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = serializer_class(project)
         return Response(serializer.data)
