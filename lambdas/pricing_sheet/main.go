@@ -65,7 +65,7 @@ func (p *PricingSheet) Generate() error {
 	case INCH_FOOT:
 		generator = documents.NewInchFootPricingSheet(p.Data)
 	case SQUARE_FOOT:
-		generator = documents.NewSquareFootPricingSheet()
+		generator = documents.NewSquareFootPricingSheet(p.Data)
 	}
 
 	if p.Filename, err = generator.Generate(); err != nil {
