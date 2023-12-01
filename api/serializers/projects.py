@@ -50,6 +50,19 @@ class PricingSheetContactSerializer(serializers.ModelSerializer):
 
 
 class PricingSheetDataSerializer(serializers.ModelSerializer):
+    survey_hazards = serializers.SerializerMethodField()
+    hazard_density = serializers.SerializerMethodField()
+    panel_size = serializers.SerializerMethodField()
+
+    def get_survey_hazards(self, obj):
+        return obj.get_survey_hazards_display()
+
+    def get_hazard_density(self, obj):
+        return obj.get_hazard_density_display()
+
+    def get_panel_size(self, obj):
+        return obj.get_panel_size_display()
+
     class Meta:
         model = PricingSheet
         fields = "__all__"
