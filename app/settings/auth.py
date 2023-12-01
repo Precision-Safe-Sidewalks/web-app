@@ -36,6 +36,9 @@ if MICROSOFT_AUTH_CLIENT_SECRET:
         0, "microsoft_auth.backends.MicrosoftAuthenticationBackend"
     )
 
+# Lambda API key
+LAMBDA_API_KEY = os.environ.get("LAMBDA_API_KEY")
+
 # Define the public URL regular expressions
 PUBLIC_URLS = [
     "^/status/$",

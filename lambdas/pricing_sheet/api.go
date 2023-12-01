@@ -13,28 +13,28 @@ import (
 )
 
 const (
-	ENV_API_TOKEN    = "API_TOKEN"
+	ENV_API_KEY      = "API_KEY"
 	ENV_API_BASE_URL = "API_BASE_URL"
 	S3_BUCKET        = "precision-safe-sidewalks"
 )
 
 type PricingSheetAPI struct {
-	url   string
-	token string
+	url string
+	key string
 }
 
 // Construct a new pricing sheet API
 func NewPricingSheetAPI() PricingSheetAPI {
 	return PricingSheetAPI{
-		url:   os.Getenv(ENV_API_BASE_URL),
-		token: os.Getenv(ENV_API_TOKEN),
+		url: os.Getenv(ENV_API_BASE_URL),
+		key: os.Getenv(ENV_API_KEY),
 	}
 }
 
 // Perform an HTTP request for the API with authentication
 func (p PricingSheetAPI) performRequest(req *http.Request) (*http.Response, error) {
 	client := &http.Client{}
-	req.Header.Set("Authorization", fmt.Sprintf("Token %s", p.token))
+	req.Header.Set("Authorization", fmt.Sprintf("Token %s", p.key))
 	req.Header.Set("Content-Type", "application/json")
 	return client.Do(req)
 }

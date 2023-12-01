@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	INCH_FOOT = "Inch Foot"
+	INCH_FOOT   = "Inch Foot"
 	SQUARE_FOOT = "Square Foot"
 )
 
