@@ -36,10 +36,8 @@ resource "aws_lambda_function" "pricing_sheet" {
 
   environment {
     variables = {
-      DB_HOST     = local.secrets.DB_HOST
-      DB_USER     = local.secrets.DB_USER
-      DB_PASSWORD = local.secrets.DB_PASSWORD
-      DB_NAME     = local.secrets.DB_NAME
+      API_KEY      = local.secrets.LAMBDA_API_KEY
+      API_BASE_URL = "https://app.bluezoneautomation.com"
     }
   }
 
