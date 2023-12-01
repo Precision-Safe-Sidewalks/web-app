@@ -30,7 +30,7 @@ router.register(
 router.register(
     "pricing_sheet",
     repairs.PricingSheetViewSet,
-    basename="pricing-sheet",
+    basename="documents-pricing-sheet",
 )
 
 urlpatterns = router.urls + [

@@ -1,8 +1,10 @@
 from rest_framework import serializers
 
+from api.serializers.accounts import UserSerializer
 from api.serializers.core import TerritorySerializer
 from api.serializers.customers import CustomerSerializer
 from repairs.models import Measurement, PricingSheet, PricingSheetContact, Project
+from repairs.models.constants import Stage
 
 
 class MeasurementSerializer(serializers.ModelSerializer):
@@ -50,19 +52,6 @@ class PricingSheetContactSerializer(serializers.ModelSerializer):
 
 
 class PricingSheetDataSerializer(serializers.ModelSerializer):
-    survey_hazards = serializers.SerializerMethodField()
-    hazard_density = serializers.SerializerMethodField()
-    panel_size = serializers.SerializerMethodField()
-
-    def get_survey_hazards(self, obj):
-        return obj.get_survey_hazards_display()
-
-    def get_hazard_density(self, obj):
-        return obj.get_hazard_density_display()
-
-    def get_panel_size(self, obj):
-        return obj.get_panel_size_display()
-
     class Meta:
         model = PricingSheet
         fields = "__all__"
@@ -76,6 +65,8 @@ class PricingSheetSerializer(serializers.ModelSerializer):
     pricing_model = serializers.SerializerMethodField()
     pricing = PricingSheetDataSerializer(source="pricing_sheet")
     contact = serializers.SerializerMethodField()
+    business_development_manager = UserSerializer()
+    surveyor = serializers.SerializerMethodField()
 
     def get_survey_date(self, obj):
         return obj.get_survey_date()
@@ -84,14 +75,17 @@ class PricingSheetSerializer(serializers.ModelSerializer):
         return obj.get_pricing_model_display()
 
     def get_measurements(self, obj):
-        data = {}
+        data = []
+        index = {}
 
         for item in obj.get_survey_measurements():
-            if item.survey_group not in data:
-                data[item.survey_group] = []
+            if item.survey_group not in index:
+                index[item.survey_group] = len(data)
+                data.append({"name": item.survey_group, "data": []})
 
+            group = index[item.survey_group]
             value = MeasurementSerializer(item).data
-            data[item.survey_group].append(value)
+            data[group]["data"].append(value)
 
         return data
 
@@ -100,6 +94,14 @@ class PricingSheetSerializer(serializers.ModelSerializer):
 
         if contact:
             return PricingSheetContactSerializer(contact).data
+
+        return None
+
+    def get_surveyor(self, obj):
+        instructions = obj.instructions.filter(stage=Stage.SURVEY).first()
+
+        if instructions and instructions.surveyed_by:
+            return UserSerializer(instructions.surveyed_by).data
 
         return None
 
@@ -114,5 +116,13 @@ class PricingSheetSerializer(serializers.ModelSerializer):
             "contact",
             "survey_date",
             "pricing_model",
+            "business_development_manager",
+            "surveyor",
             "measurements",
         )
+
+
+class PricingSheetCompleteSerializer(serializers.Serializer):
+    request_id = serializers.UUIDField()
+    s3_bucket = serializers.CharField(max_length=50)
+    s3_key = serializers.CharField(max_length=255)
