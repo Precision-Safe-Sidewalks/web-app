@@ -54,6 +54,12 @@ type Pricing struct {
 	CommissionRate         float64 `json:"commission_rate"`
 	BaseRate               float64 `json:"base_rate"`
 	NumberOfTechnicians    int     `json:"number_of_technicians"`
+	CLINS                  []CLIN  `json:"clins"`
+}
+
+type CLIN struct {
+	Name  string  `json:"name"`
+	Value float64 `json:"value"`
 }
 
 type Contact struct {

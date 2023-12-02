@@ -56,7 +56,14 @@ func (p SquareFootPricingSheet) UpdateSummary(f *excelize.File) {
 	f.SetCellValue(sheet, "B4", p.Data.Name)
 	f.SetCellValue(sheet, "K17", p.Data.Pricing.EstimatedSidewalkMiles)
 
-	// TODO: handle CLIN (H13/H14/H15)
+	for index, clin := range p.Data.Pricing.CLINS {
+		f.SetCellValue(sheet, fmt.Sprintf("G%d", index+13), clin.Name)
+		f.SetCellValue(sheet, fmt.Sprintf("H%d", index+13), clin.Value)
+	}
+
+	if p.Data.Surveyor != nil {
+		f.SetCellValue(sheet, "K22", p.Data.Surveyor.Initials)
+	}
 }
 
 // Update the "DATA1" worksheet
