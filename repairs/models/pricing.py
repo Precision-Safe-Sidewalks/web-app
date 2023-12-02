@@ -10,6 +10,24 @@ from repairs.models.constants import HazardDensity, HazardTier, PanelSize
 from repairs.models.projects import Project
 
 
+def get_default_clins():
+    """Return the list of default CLINS"""
+    return [
+        {
+            "name": "CLIN 001",
+            "value": 0,
+        },
+        {
+            "name": "CLIN 002",
+            "value": 0,
+        },
+        {
+            "name": "CLIN 003",
+            "value": 0,
+        },
+    ]
+
+
 class PricingSheet(models.Model):
     """Pricing sheet (inch foot/square foot) for a Project"""
 
@@ -32,7 +50,7 @@ class PricingSheet(models.Model):
     commission_rate = models.FloatField(default=0)
     base_rate = models.FloatField(default=0, help_text="Base cost/square foot")
     number_of_technicians = models.PositiveIntegerField(default=0)
-    clins = models.JSONField(default=list)
+    clins = models.JSONField(default=get_default_clins)
 
     def calculate_sidewalk_miles(self):
         """

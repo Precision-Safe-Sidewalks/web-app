@@ -24,6 +24,7 @@ from customers.models import Customer
 from pages.forms.projects import (
     PricingSheetContactForm,
     PricingSheetInchFootForm,
+    PricingSheetSquareFootForm,
     ProjectForm,
     ProjectMeasurementsForm,
 )
@@ -512,7 +513,7 @@ class PricingSheetView(TemplateView):
         project = self.get_object()
 
         if project.pricing_model == PricingModel.SQUARE_FOOT:
-            raise NotImplementedError
+            return PricingSheetSquareFootForm
 
         return PricingSheetInchFootForm
 
@@ -527,6 +528,7 @@ class PricingSheetView(TemplateView):
         context["contact_form"] = PricingSheetContactForm(instance=contact)
         context["contact_type"] = contact.contact_type if contact else None
         context["contact_exists"] = contact is not None
+        context["clins"] = pricing_sheet.clins
 
         return context
 
@@ -543,18 +545,21 @@ class PricingSheetView(TemplateView):
         form = self.get_form_class()(request.POST, instance=project.pricing_sheet)
         contact_form = PricingSheetContactForm(request.POST, instance=contact)
 
-        if form.is_valid() and contact_form.is_valid():
+        is_valid = form.is_valid()
+
+        if project.pricing_model == PricingModel.INCH_FOOT:
+            is_valid = is_valid and contact_form.is_valid()
+
+        if is_valid:
             with transaction.atomic():
                 form.save()
 
-                contact_form.cleaned_data["pricing_sheet"] = pricing_sheet
-                contact_form.save()
+                if project.pricing_model == PricingModel.INCH_FOOT:
+                    contact_form.cleaned_data["pricing_sheet"] = pricing_sheet
+                    contact_form.save()
 
             redirect_url = reverse("project-detail", kwargs={"pk": self.kwargs["pk"]})
             return redirect(redirect_url)
-        else:
-            print("form", form.errors)
-            print("contact_form", contact_form.errors)
 
         # TODO: improve the errors for context
         redirect_url = request.path + "?errors=Unable to save the pricing sheet"
