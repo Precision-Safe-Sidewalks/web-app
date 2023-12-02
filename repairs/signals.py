@@ -44,5 +44,8 @@ def generate_project_summary(sender, instance, created, **kwargs):
     """Trigger the project summary generation Lambda function"""
 
     if created:
-        payload = {"request_id": instance.request_id}
+        payload = {
+            "request_id": instance.request_id,
+            "project_id": instance.project_id,
+        }
         invoke_lambda_function("project_summary", payload=payload)

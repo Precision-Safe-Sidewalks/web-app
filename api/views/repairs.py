@@ -11,6 +11,7 @@ from rest_framework.views import APIView
 from api.serializers.projects import (
     PricingSheetCompleteSerializer,
     PricingSheetSerializer,
+    ProjectSummaryCompleteSerializer,
     ProjectSummarySerializer,
 )
 from repairs.documents import ProjectInstructionsGenerator, SurveyInstructionsGenerator
@@ -155,17 +156,16 @@ class ProjectSummaryViewSet(viewsets.ViewSet):
 
     @action(methods=["POST"], detail=True)
     def complete(self, request, pk=None):
-        # project = get_object_or_404(Project, pk=pk)
-        # serializer = ProjectSummaryCompleteSerializer(data=request.data)
-        # serializer.is_valid(raise_exception=True)
-        #
-        #        data = serializer.validated_data
-        #        request_id = data["request_id"]
-        #        req = get_object_or_404(project.pricing_sheet.requests, request_id=request_id)
-        #
-        #        req.s3_bucket = data["s3_bucket"]
-        #        req.s3_key = data["s3_key"]
-        #        req.save()
-        #
-        #        return Response(status=status.HTTP_204_NO_CONTENT)
-        raise NotImplementedError
+        project = get_object_or_404(Project, pk=pk)
+        serializer = ProjectSummaryCompleteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        data = serializer.validated_data
+        request_id = data["request_id"]
+        req = get_object_or_404(project.summary_requests, request_id=request_id)
+
+        req.s3_bucket = data["s3_bucket"]
+        req.s3_key = data["s3_key"]
+        req.save()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)

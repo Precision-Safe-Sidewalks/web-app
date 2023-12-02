@@ -147,12 +147,16 @@ class ProjectSummarySerializer(serializers.ModelSerializer):
     customer = CustomerSerializer()
     territory = TerritorySerializer()
     business_development_manager = UserSerializer()
+    pricing_model = serializers.SerializerMethodField()
     pricing = PricingSheetDataSerializer(source="pricing_sheet")
     contact = serializers.SerializerMethodField()
     survey_date = serializers.SerializerMethodField()
     surveyor = serializers.SerializerMethodField()
     hazards = serializers.SerializerMethodField()
     measurements = serializers.SerializerMethodField()
+
+    def get_pricing_model(self, obj):
+        return obj.get_pricing_model_display()
 
     def get_survey_date(self, obj):
         return obj.get_survey_date()
@@ -207,6 +211,7 @@ class ProjectSummarySerializer(serializers.ModelSerializer):
             "id",
             "name",
             "po_number",
+            "pricing_model",
             "territory",
             "customer",
             "business_development_manager",
@@ -217,3 +222,9 @@ class ProjectSummarySerializer(serializers.ModelSerializer):
             "hazards",
             "measurements",
         )
+
+
+class ProjectSummaryCompleteSerializer(serializers.Serializer):
+    request_id = serializers.UUIDField()
+    s3_bucket = serializers.CharField(max_length=50)
+    s3_key = serializers.CharField(max_length=255)

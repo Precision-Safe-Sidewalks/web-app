@@ -2,6 +2,7 @@ package schema
 
 import (
 	"fmt"
+	"strings"
 )
 
 type ProjectSummaryData struct {
@@ -18,6 +19,29 @@ type ProjectSummaryData struct {
 	PricingModel string             `json:"pricing_model"`
 	Hazards      Hazards            `json:"hazards"`
 	Measurements []MeasurementGroup `json:"measurements"`
+}
+
+// Return the ordered list of techs in the measurements
+func (p ProjectSummaryData) GetTechs() []string {
+	cache := map[string]bool{}
+	techs := []string{}
+
+	for _, group := range p.Measurements {
+		for _, item := range group.Measurements {
+			if _, ok := cache[item.Tech]; !ok {
+				techs = append(techs, item.Tech)
+				cache[item.Tech] = true
+			}
+		}
+	}
+
+	return techs
+}
+
+// Return the initials from the tech's email
+func (p ProjectSummaryData) GetTechInitials(tech string) string {
+	initials := fmt.Sprintf("%s%s", string(tech[0]), string(tech[2]))
+	return strings.ToUpper(initials)
 }
 
 type User struct {
