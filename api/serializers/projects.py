@@ -190,7 +190,7 @@ class ProjectSummarySerializer(serializers.ModelSerializer):
         data = []
         index = {}
 
-        for item in obj.get_production_measurements():
+        for item in obj.get_production_measurements().order_by("tech", "object_id"):
             if item.survey_group not in index:
                 index[item.survey_group] = len(data)
                 data.append({"name": item.survey_group, "data": []})
