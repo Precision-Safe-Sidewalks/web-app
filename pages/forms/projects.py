@@ -87,6 +87,18 @@ class PricingSheetInchFootForm(forms.ModelForm):
         )
 
 
+class PricingSheetSquareFootForm(forms.ModelForm):
+    """Square foot pricing sheet form"""
+
+    class Meta:
+        model = PricingSheet
+        fields = (
+            "project",
+            "estimated_sidewalk_miles",
+            "clins",
+        )
+
+
 class PricingSheetContactForm(forms.ModelForm):
     """Pricing sheet contact form"""
 

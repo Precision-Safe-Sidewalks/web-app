@@ -12,6 +12,6 @@ RUN go build -tags lambda.norpc -o ./main
 FROM public.ecr.aws/lambda/provided:al2
 
 COPY --from=build /code/main ./main
-COPY --from=build /code/templates ./templates
+COPY --from=build /code/documents/templates ./templates
 
 ENTRYPOINT ["./main"]

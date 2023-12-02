@@ -395,7 +395,7 @@
 
 <script>
   // Constants
-  const pricingSheetUrl = "{% url 'documents-pricing-sheet' pk=project.pk %}"
+  const pricingSheetUrl = "{% url 'documents-pricing-sheet-detail' pk=project.pk %}"
   const projectSummaryUrl = "{% url 'documents-project-summary' pk=project.pk %}"
   const geojson = JSON.parse("{{ measurements|safe|escapejs }}")
   const bbox = JSON.parse("{{ bbox }}")

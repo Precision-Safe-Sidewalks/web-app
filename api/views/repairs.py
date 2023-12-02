@@ -3,10 +3,15 @@ import io
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
-from rest_framework import status
+from rest_framework import status, viewsets
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from api.serializers.projects import (
+    PricingSheetCompleteSerializer,
+    PricingSheetSerializer,
+)
 from repairs.documents import ProjectInstructionsGenerator, SurveyInstructionsGenerator
 from repairs.models import (
     Instruction,
@@ -50,10 +55,10 @@ class ProjectInstructionsAPIView(APIView):
             return resp
 
 
-class PricingSheetAPIView(APIView):
-    """Generate the pricing sheet document for download"""
+class PricingSheetViewSet(viewsets.ViewSet):
+    """Pricing sheet API view set"""
 
-    def get(self, request, pk):
+    def retrieve(self, request, pk=None):
         project = get_object_or_404(Project, pk=pk)
         request_id = request.GET.get("request_id")
 
@@ -84,6 +89,28 @@ class PricingSheetAPIView(APIView):
             return Response(data, status=status.HTTP_202_ACCEPTED)
 
         return Response({"url": url})
+
+    @action(methods=["GET"], detail=True)
+    def data(self, request, pk=None):
+        project = get_object_or_404(Project, pk=pk)
+        serializer = PricingSheetSerializer(project)
+        return Response(serializer.data)
+
+    @action(methods=["POST"], detail=True)
+    def complete(self, request, pk=None):
+        project = get_object_or_404(Project, pk=pk)
+        serializer = PricingSheetCompleteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        data = serializer.validated_data
+        request_id = data["request_id"]
+        req = get_object_or_404(project.pricing_sheet.requests, request_id=request_id)
+
+        req.s3_bucket = data["s3_bucket"]
+        req.s3_key = data["s3_key"]
+        req.save()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ProjectSummaryAPIView(APIView):

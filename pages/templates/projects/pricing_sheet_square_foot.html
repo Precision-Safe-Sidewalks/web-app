@@ -14,7 +14,63 @@
 
   <form id="id_form" method="POST">
     {% csrf_token %}
+
+    <div class="mt-12 grid align-start" style="grid-template-columns: 256px auto;">
+      {{ form.project.as_hidden }}
+
+      <div class="text--body-md">
+        Estimated Miles
+      </div>
+      <div class="form-control w-64">
+        {{ form.estimated_sidewalk_miles }}
+      </div>
+
+      <!-- Handle the CLINS -->
+      <div class="text--body-md">
+        CLIN
+      </div>
+      <div>
+        <div id="clin-containers">
+          {{ form.clins.as_hidden }}
+          
+        {% for clin in clins %}
+          <div class="flex pt-3" id="clin:{{ forloop.counter0 }}">
+            <div class="form-control">
+              <input type="text" name="clin:{{ forloop.counter0 }}:name" value="{{ clin.name }}" placeholder="Name">
+            </div>
+            <div class="form-control ml-6">
+              <input type="number" step="0.01" name="clin:{{ forloop.counter0 }}:value" value="{{ clin.value }}" placeholder="Value">
+            </div>
+          </div>
+        {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <div class="flex">
+      <button type="submit" class="btn--filled" onClick="onSubmit(event)">
+        Save
+      </button>
+    </div>
+
+    {{ form.errors }}
   </form>
 </div>
+
+<script>
+  const onSubmit = (event) => {
+    event.preventDefault()
+  
+    const clinData = $(`div[id^="clin:"]`).map((_, item) => {
+      const id = parseInt($(item).attr("id").split(":")[1])
+      const name = $(item).find(`input[name="clin:${id}:name"]`).val()
+      const value = parseFloat($(item).find(`input[name="clin:${id}:value"]`).val())
+      return { name, value } 
+    }).toArray()
+
+    $(`input[id="id_clins"]`).val(JSON.stringify(clinData))
+    $(`form[id="id_form"]`).submit()
+  }
+</script>
 
 {% endblock %}

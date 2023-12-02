@@ -1,11 +1,31 @@
 import uuid
 
 import boto3
+import pyproj
 from django.db import models
 
 from core.models.constants import States
+from lib.constants import CONVERT_METERS_TO_MILES
 from repairs.models.constants import HazardDensity, HazardTier, PanelSize
 from repairs.models.projects import Project
+
+
+def get_default_clins():
+    """Return the list of default CLINS"""
+    return [
+        {
+            "name": "CLIN 001",
+            "value": 0,
+        },
+        {
+            "name": "CLIN 002",
+            "value": 0,
+        },
+        {
+            "name": "CLIN 003",
+            "value": 0,
+        },
+    ]
 
 
 class PricingSheet(models.Model):
@@ -14,7 +34,7 @@ class PricingSheet(models.Model):
     project = models.OneToOneField(
         Project, on_delete=models.CASCADE, related_name="pricing_sheet"
     )
-    estimated_sidewalk_miles = models.PositiveIntegerField(default=0)
+    estimated_sidewalk_miles = models.FloatField(default=0)
     surveyor_speed = models.PositiveIntegerField(default=0)
     survey_hazards = models.IntegerField(
         choices=HazardTier.choices, default=HazardTier.ABOVE_LS
@@ -30,6 +50,29 @@ class PricingSheet(models.Model):
     commission_rate = models.FloatField(default=0)
     base_rate = models.FloatField(default=0, help_text="Base cost/square foot")
     number_of_technicians = models.PositiveIntegerField(default=0)
+    clins = models.JSONField(default=get_default_clins)
+
+    def calculate_sidewalk_miles(self):
+        """
+        Calculate the sidewalk miles from the survey data. This is only
+        used for square foot pricing models.
+        """
+        distance = 0
+        previous = None
+        geod = pyproj.Geod(ellps="WGS84")
+
+        for item in self.project.get_survey_measurements().order_by("object_id"):
+            current = item.coordinate
+
+            if previous is not None:
+                _, _, dist = geod.inv(previous.x, previous.y, current.x, current.y)
+                distance += dist
+
+            previous = current
+
+        miles = distance * CONVERT_METERS_TO_MILES
+        self.estimated_sidewalk_miles = round(miles, 3)
+        self.save()
 
     def get_contact(self):
         """Return the pricing sheet contact"""

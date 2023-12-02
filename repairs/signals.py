@@ -32,7 +32,10 @@ def generate_pricing_sheet(sender, instance, created, **kwargs):
     """Trigger the pricing sheet generation Lambda function"""
 
     if created:
-        payload = {"request_id": instance.request_id}
+        payload = {
+            "request_id": instance.request_id,
+            "project_id": instance.pricing_sheet.project_id,
+        }
         invoke_lambda_function("pricing_sheet", payload=payload)
 
 

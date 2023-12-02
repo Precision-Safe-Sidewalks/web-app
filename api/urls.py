@@ -27,6 +27,12 @@ router.register(
     basename="tables-users",
 )
 
+router.register(
+    "pricing_sheet",
+    repairs.PricingSheetViewSet,
+    basename="documents-pricing-sheet",
+)
+
 urlpatterns = router.urls + [
     path(
         "documents/instructions/survey/<int:pk>/",
@@ -37,11 +43,6 @@ urlpatterns = router.urls + [
         "documents/instructions/project/<int:pk>/",
         repairs.ProjectInstructionsAPIView.as_view(),
         name="documents-project-instructions",
-    ),
-    path(
-        "documents/pricing-sheet/<int:pk>/",
-        repairs.PricingSheetAPIView.as_view(),
-        name="documents-pricing-sheet",
     ),
     path(
         "documents/project-summary/<int:pk>/",
