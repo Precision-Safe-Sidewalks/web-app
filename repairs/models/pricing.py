@@ -71,7 +71,7 @@ class PricingSheet(models.Model):
             previous = current
 
         miles = distance * CONVERT_METERS_TO_MILES
-        self.estimated_sidewalk_miles = miles
+        self.estimated_sidewalk_miles = round(miles, 3)
         self.save()
 
     def get_contact(self):
