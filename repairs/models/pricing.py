@@ -32,6 +32,7 @@ class PricingSheet(models.Model):
     commission_rate = models.FloatField(default=0)
     base_rate = models.FloatField(default=0, help_text="Base cost/square foot")
     number_of_technicians = models.PositiveIntegerField(default=0)
+    clins = models.JSONField(default=list)
 
     def calculate_sidewalk_miles(self):
         """
