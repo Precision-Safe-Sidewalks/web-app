@@ -1,7 +1,7 @@
 # Stage 1: build the executable
 FROM golang:1.19 AS build
 
-ARG SRC=lambdas/project_summary
+ARG SRC=lambdas/project_summary_v2
 
 WORKDIR /code
 ADD ${SRC} .
@@ -12,6 +12,6 @@ RUN go build -tags lambda.norpc -o ./main
 FROM public.ecr.aws/lambda/provided:al2
 
 COPY --from=build /code/main ./main
-COPY --from=build /code/templates ./templates
+COPY --from=build /code/documents/templates ./templates
 
 ENTRYPOINT ["./main"]
