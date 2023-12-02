@@ -2,7 +2,6 @@ package documents
 
 import (
 	"fmt"
-	//"strconv"
 
 	"github.com/google/uuid"
 	"github.com/xuri/excelize/v2"
@@ -11,7 +10,7 @@ import (
 )
 
 const (
-	TEMPLATE_SQUARE_FOOT = "templates/TEMPLATE SQFT Pricing - 11-28-23.xlsx"
+	TEMPLATE_SQUARE_FOOT = "templates/TEMPLATE - SQFT Pricing - 11-28-23.xlsx"
 )
 
 type SquareFootPricingSheet struct {
@@ -64,13 +63,11 @@ func (p SquareFootPricingSheet) UpdateSummary(f *excelize.File) {
 func (p SquareFootPricingSheet) UpdateSurveyData(f *excelize.File) {
 	sheet := "DATA1"
 
-	// TODO: calculate these
-	groupRows := []int{17, 918, 1182, 1446, 1708, 2108, 2436, 2700, 2964, 3228, 3556, 4572, 4772, 4972}
-
 	for index, group := range p.Data.Measurements {
-		offset := groupRows[index]
+		offset := 4 + (index * 401)
+		row_label := offset + 400
 
-		f.SetCellValue(sheet, fmt.Sprintf("B%d", groupRows[index+1]-1), group.Name)
+		f.SetCellValue(sheet, fmt.Sprintf("B%d", row_label), group.Name)
 
 		for i, item := range group.Measurements {
 			f.SetCellValue(sheet, fmt.Sprintf("B%d", offset+i), SafeString(item.Address))
