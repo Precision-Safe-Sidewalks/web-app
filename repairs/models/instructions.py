@@ -62,8 +62,8 @@ class Instruction(models.Model):
         queryset = self.project.measurements.filter(stage=Stage.SURVEY)
 
         for value, name in Hazard.choices:
-            size = Hazard.get_size(value)
-            data = queryset.filter(size=size)
+            hazard_size = Hazard.get_size(value)
+            data = queryset.filter(hazard_size=hazard_size)
 
             count = data.count()
             sqft = sum([m.length * m.width for m in data if m.length and m.width])
