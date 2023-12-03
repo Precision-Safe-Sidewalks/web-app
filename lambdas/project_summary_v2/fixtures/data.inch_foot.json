@@ -2,6 +2,7 @@
     "id": 1,
     "name": "Demo #1",
     "po_number": null,
+    "pricing_model": "Inch Foot",
     "territory": {
         "id": 1,
         "name": "Western North Carolina",
@@ -85,7 +86,7 @@
     },
     "measurements": [
         {
-            "name": null,
+            "name": "2023-02-02",
             "data": [
                 {
                     "id": 1050,
@@ -149,7 +150,80 @@
                     "tech": "a.hester@precisionsafesidewalks.com",
                     "tech_initials": "AH",
                     "work_date": "2023-02-02"
+                }
+            ]
+        },
+        {
+            "name": "2023-02-03",
+            "data": [
+                {
+                    "id": 1053,
+                    "object_id": 4,
+                    "longitude": -77.90640598,
+                    "latitude": 34.16391771,
+                    "length": 8.0,
+                    "width": 1.0,
+                    "special_case": null,
+                    "hazard_size": "Medium",
+                    "curb_length": 0.0,
+                    "measured_hazard_length": 0.0,
+                    "inch_feet": 3.0,
+                    "h1": 4.0,
+                    "h2": 2.0,
+                    "area": 8.0,
+                    "geocoded_address": "828 Saint Andrews Drive",
+                    "note": null,
+                    "tech": "c.leftwich_PSSPIMS",
+                    "tech_initials": "CL",
+                    "work_date": "2023-02-03"
                 },
+                {
+                    "id": 1054,
+                    "object_id": 5,
+                    "longitude": -77.90640598,
+                    "latitude": 34.16391771,
+                    "length": 5.0,
+                    "width": 6.0,
+                    "special_case": null,
+                    "hazard_size": "Small",
+                    "curb_length": 0.0,
+                    "measured_hazard_length": 0.0,
+                    "inch_feet": 1.875,
+                    "h1": 3.0,
+                    "h2": 3.0,
+                    "area": 30.0,
+                    "geocoded_address": "828 Saint Andrews Drive",
+                    "note": null,
+                    "tech": "c.leftwich_PSSPIMS",
+                    "tech_initials": "CL",
+                    "work_date": "2023-02-03"
+                },
+                {
+                    "id": 1055,
+                    "object_id": 6,
+                    "longitude": -77.90648693,
+                    "latitude": 34.16386858,
+                    "length": 5.0,
+                    "width": 5.0,
+                    "special_case": null,
+                    "hazard_size": "Medium",
+                    "curb_length": 60.0,
+                    "measured_hazard_length": 0.0,
+                    "inch_feet": 3.4375,
+                    "h1": 6.0,
+                    "h2": 5.0,
+                    "area": 25.0,
+                    "geocoded_address": "828 Saint Andrews Drive",
+                    "note": null,
+                    "tech": "c.leftwich_PSSPIMS",
+                    "tech_initials": "CL",
+                    "work_date": "2023-02-03"
+                }
+            ]
+        },
+        {
+            "name": "2023-02-27",
+            "data": [
                 {
                     "id": 1056,
                     "object_id": 7,
@@ -359,7 +433,12 @@
                     "tech": "a.hester@precisionsafesidewalks.com",
                     "tech_initials": "AH",
                     "work_date": "2023-02-27"
-                },
+                }
+            ]
+        },
+        {
+            "name": "2023-02-28",
+            "data": [
                 {
                     "id": 1066,
                     "object_id": 17,
@@ -1241,70 +1320,12 @@
                     "tech": "a.hester@precisionsafesidewalks.com",
                     "tech_initials": "AH",
                     "work_date": "2023-02-28"
-                },
-                {
-                    "id": 1053,
-                    "object_id": 4,
-                    "longitude": -77.90640598,
-                    "latitude": 34.16391771,
-                    "length": 8.0,
-                    "width": 1.0,
-                    "special_case": null,
-                    "hazard_size": "Medium",
-                    "curb_length": 0.0,
-                    "measured_hazard_length": 0.0,
-                    "inch_feet": 3.0,
-                    "h1": 4.0,
-                    "h2": 2.0,
-                    "area": 8.0,
-                    "geocoded_address": "828 Saint Andrews Drive",
-                    "note": null,
-                    "tech": "c.leftwich_PSSPIMS",
-                    "tech_initials": "CL",
-                    "work_date": "2023-02-03"
-                },
-                {
-                    "id": 1054,
-                    "object_id": 5,
-                    "longitude": -77.90640598,
-                    "latitude": 34.16391771,
-                    "length": 5.0,
-                    "width": 6.0,
-                    "special_case": null,
-                    "hazard_size": "Small",
-                    "curb_length": 0.0,
-                    "measured_hazard_length": 0.0,
-                    "inch_feet": 1.875,
-                    "h1": 3.0,
-                    "h2": 3.0,
-                    "area": 30.0,
-                    "geocoded_address": "828 Saint Andrews Drive",
-                    "note": null,
-                    "tech": "c.leftwich_PSSPIMS",
-                    "tech_initials": "CL",
-                    "work_date": "2023-02-03"
-                },
-                {
-                    "id": 1055,
-                    "object_id": 6,
-                    "longitude": -77.90648693,
-                    "latitude": 34.16386858,
-                    "length": 5.0,
-                    "width": 5.0,
-                    "special_case": null,
-                    "hazard_size": "Medium",
-                    "curb_length": 60.0,
-                    "measured_hazard_length": 0.0,
-                    "inch_feet": 3.4375,
-                    "h1": 6.0,
-                    "h2": 5.0,
-                    "area": 25.0,
-                    "geocoded_address": "828 Saint Andrews Drive",
-                    "note": null,
-                    "tech": "c.leftwich_PSSPIMS",
-                    "tech_initials": "CL",
-                    "work_date": "2023-02-03"
-                },
+                }
+            ]
+        },
+        {
+            "name": "2023-03-29",
+            "data": [
                 {
                     "id": 1108,
                     "object_id": 59,

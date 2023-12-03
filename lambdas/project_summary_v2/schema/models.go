@@ -23,19 +23,29 @@ type ProjectSummaryData struct {
 
 // Return the ordered list of techs in the measurements
 func (p ProjectSummaryData) GetTechs() []string {
-	cache := map[string]bool{}
-	techs := []string{}
+	index := p.GetTechIndex()
+	techs := make([]string, len(index))
+
+	for tech, i := range index {
+		techs[i] = tech
+	}
+
+	return techs
+}
+
+// Return the index of techs
+func (p ProjectSummaryData) GetTechIndex() map[string]int {
+	index := map[string]int{}
 
 	for _, group := range p.Measurements {
 		for _, item := range group.Measurements {
-			if _, ok := cache[item.Tech]; !ok {
-				techs = append(techs, item.Tech)
-				cache[item.Tech] = true
+			if _, ok := index[item.Tech]; !ok {
+				index[item.Tech] = len(index)
 			}
 		}
 	}
 
-	return techs
+	return index
 }
 
 // Return the initials from the tech's email
@@ -123,6 +133,8 @@ type Measurement struct {
 	CurbLength           float64 `json:"curb_length"`
 	MeasuredHazardLength float64 `json:"measured_hazard_length"`
 	InchFeet             float64 `json:"inch_feet"`
+	H1                   float64 `json:"h1"`
+	H2                   float64 `json:"h2"`
 	Area                 float64 `json:"area"`
 	Address              *string `json:"geocoded_address"`
 	Note                 *string `json:"note"`

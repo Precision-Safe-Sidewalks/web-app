@@ -194,14 +194,22 @@ class ProjectSummarySerializer(serializers.ModelSerializer):
         data = []
         index = {}
 
-        for item in obj.get_production_measurements().order_by("tech", "object_id"):
-            if item.survey_group not in index:
-                index[item.survey_group] = len(data)
-                data.append({"name": item.survey_group, "data": []})
+        for item in obj.get_production_measurements().order_by("measured_at"):
+            work_date = item.measured_at.date()
 
-            group = index[item.survey_group]
+            if work_date not in index:
+                index[work_date] = len(data)
+                data.append({"name": str(work_date), "data": []})
+
+            group = index[work_date]
             value = MeasurementSerializer(item).data
             data[group]["data"].append(value)
+
+        # Sort the values for each work date by tech/object_id
+        for i, items in enumerate(data):
+            values = items["data"]
+            values.sort(key=lambda r: (r["tech"], r["object_id"]))
+            data[i]["data"] = values
 
         return data
 
