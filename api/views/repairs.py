@@ -11,6 +11,8 @@ from rest_framework.views import APIView
 from api.serializers.projects import (
     PricingSheetCompleteSerializer,
     PricingSheetSerializer,
+    ProjectSummaryCompleteSerializer,
+    ProjectSummarySerializer,
 )
 from repairs.documents import ProjectInstructionsGenerator, SurveyInstructionsGenerator
 from repairs.models import (
@@ -113,10 +115,10 @@ class PricingSheetViewSet(viewsets.ViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ProjectSummaryAPIView(APIView):
-    """Generate the project summary document for download"""
+class ProjectSummaryViewSet(viewsets.ViewSet):
+    """Project summary API viewset"""
 
-    def get(self, request, pk):
+    def retrieve(self, request, pk=None):
         project = get_object_or_404(Project, pk=pk)
         request_id = request.GET.get("request_id")
 
@@ -145,3 +147,25 @@ class ProjectSummaryAPIView(APIView):
             return Response(data, status=status.HTTP_202_ACCEPTED)
 
         return Response({"url": url})
+
+    @action(methods=["GET"], detail=True)
+    def data(self, request, pk=None):
+        project = get_object_or_404(Project, pk=pk)
+        serializer = ProjectSummarySerializer(project)
+        return Response(serializer.data)
+
+    @action(methods=["POST"], detail=True)
+    def complete(self, request, pk=None):
+        project = get_object_or_404(Project, pk=pk)
+        serializer = ProjectSummaryCompleteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        data = serializer.validated_data
+        request_id = data["request_id"]
+        req = get_object_or_404(project.summary_requests, request_id=request_id)
+
+        req.s3_bucket = data["s3_bucket"]
+        req.s3_key = data["s3_key"]
+        req.save()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)

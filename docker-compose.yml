@@ -88,10 +88,9 @@ services:
   lambda-project-summary:
     image: pss-lambda-project-summary:latest
     environment:
-      - DB_HOST=db
-      - DB_USER=postgres
-      - DB_PASSWORD=postgres
-      - DB_NAME=pss_dev
+      - AWS_DEFAULT_REGION=us-east-1
+      - API_BASE_URL=http://app:8000 
+      - API_KEY=fake-api-key
     env_file:
       - docker/env.secrets
     ports:
