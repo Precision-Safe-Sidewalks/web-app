@@ -81,6 +81,7 @@ type Territory struct {
 type Hazards struct {
 	Count          int     `json:"count"`
 	InchFeet       float64 `json:"inch_feet"`
+	SquareFeet     float64 `json:"square_feet"`
 	LinearFeetCurb float64 `json:"linear_feet_curb"`
 }
 

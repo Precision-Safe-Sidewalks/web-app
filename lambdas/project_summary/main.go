@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/aws"
@@ -49,7 +50,8 @@ func NewProjectSummary(requestId uuid.UUID, projectId int) ProjectSummary {
 
 // Generate the S3 key for the document
 func (p ProjectSummary) GetKey() string {
-	return fmt.Sprintf("project_summarys/%s/%s - Project Summary.xlsm", p.RequestId, p.Data.Name)
+	ext := filepath.Ext(p.Filename)
+	return fmt.Sprintf("project_summarys/%s/%s - Project Summary%s", p.RequestId, p.Data.Name, ext)
 }
 
 // Generate the project summary document
