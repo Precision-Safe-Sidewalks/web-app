@@ -179,7 +179,7 @@ class ProjectSummarySerializer(serializers.ModelSerializer):
 
     def get_hazards(self, obj):
         instructions = obj.instructions.filter(stage=Stage.PRODUCTION).first()
-        hazards = {"count": 0, "inch_feet": 0, "linear_feet_curb": 0}
+        hazards = {"count": 0, "inch_feet": 0, "square_feet": 0, "linear_feet_curb": 0}
 
         if instructions:
             hazards["linear_feet_curb"] = instructions.linear_feet_curb
@@ -187,6 +187,7 @@ class ProjectSummarySerializer(serializers.ModelSerializer):
             for _, values in instructions.hazards.items():
                 hazards["count"] += values.get("count", 0)
                 hazards["inch_feet"] += values.get("inch_feet", 0)
+                hazards["square_feet"] += values.get("square_feet", 0)
 
         return hazards
 
