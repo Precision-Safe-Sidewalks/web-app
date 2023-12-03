@@ -1,7 +1,7 @@
 # Stage 1: build the executable
 FROM golang:1.19 AS build
 
-ARG SRC=lambdas/project_summary_v2
+ARG SRC=lambdas/project_summary
 
 WORKDIR /code
 ADD ${SRC} .
