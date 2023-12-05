@@ -23,6 +23,7 @@ class SpecialCase(models.TextChoices):
     RECUTS = ("RC", "Recuts")
     METERS = ("MM", "Meters - Manholes")
     QUALITY = ("Q", "Quality")
+    NONE = ("NONE", "None")
 
 
 class QuickDescription(models.TextChoices):
