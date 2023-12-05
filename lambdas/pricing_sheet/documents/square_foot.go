@@ -55,6 +55,7 @@ func (p SquareFootPricingSheet) UpdateSummary(f *excelize.File) {
 	f.SetCellValue(sheet, "B2", p.Data.Customer.Name)
 	f.SetCellValue(sheet, "B4", p.Data.Name)
 	f.SetCellValue(sheet, "K17", p.Data.Pricing.EstimatedSidewalkMiles)
+	f.SetCellValue(sheet, "H12", SafeDateString(p.Data.SurveyDate))
 
 	for index, clin := range p.Data.Pricing.CLINS {
 		f.SetCellValue(sheet, fmt.Sprintf("G%d", index+13), clin.Name)
