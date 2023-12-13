@@ -18,6 +18,35 @@ type PricingSheetData struct {
 	Measurements []MeasurementGroup `json:"measurements"`
 }
 
+// Calculate the total area sureyed
+func (p PricingSheetData) TotalSurveyArea() float64 {
+	var area float64
+
+	for _, group := range p.Measurements {
+		for _, measurement := range group.Measurements {
+			area += measurement.Area
+		}
+	}
+
+	return area
+}
+
+// Calculate the total area (square feet) for all Replace
+// special cases from the survey data
+func (p PricingSheetData) TotalReplaceArea() float64 {
+	var area float64
+
+	for _, group := range p.Measurements {
+		for _, measurement := range group.Measurements {
+			if measurement.SpecialCase != nil && *measurement.SpecialCase == "Replace" {
+				area += measurement.Area
+			}
+		}
+	}
+
+	return area
+}
+
 type User struct {
 	Id        int     `json:"id"`
 	Email     string  `json:"email"`
