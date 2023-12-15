@@ -14,6 +14,7 @@ class MeasurementSerializer(serializers.ModelSerializer):
     hazard_size = serializers.SerializerMethodField()
     tech_initials = serializers.SerializerMethodField()
     work_date = serializers.SerializerMethodField()
+    description = serializers.SerializerMethodField()
 
     def get_longitude(self, obj):
         return obj.coordinate.x
@@ -34,6 +35,20 @@ class MeasurementSerializer(serializers.ModelSerializer):
 
     def get_work_date(self, obj):
         return obj.measured_at.date()
+
+    def get_description(self, obj):
+        is_none = str(obj.special_case).upper() == "NONE"
+
+        if not is_none and obj.note:
+            return f"{obj.get_special_case_display()}. {obj.note}."
+
+        if obj.note:
+            return obj.note
+
+        if not is_none:
+            return obj.get_special_case_display()
+
+        return ""
 
     class Meta:
         model = Measurement
@@ -57,6 +72,7 @@ class MeasurementSerializer(serializers.ModelSerializer):
             "tech",
             "tech_initials",
             "work_date",
+            "description",
         )
 
 
