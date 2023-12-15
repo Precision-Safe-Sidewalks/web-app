@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	TEMPLATE_INCH_FOOT = "templates/TEMP Pricing Inch Foot  - 10-2-2023- FINAL.xltx"
+	TEMPLATE_INCH_FOOT = "templates/TEMP Pricing Inch Foot - 10-2-2023- FINAL.xltx"
 )
 
 type InchFootPricingSheet struct {
@@ -131,7 +131,7 @@ func (p InchFootPricingSheet) UpdateSurveyData(f *excelize.File) {
 			f.SetCellValue(sheet, fmt.Sprintf("C%d", i+offset), BoolToInt(hazard_size == "Medium"))
 			f.SetCellValue(sheet, fmt.Sprintf("D%d", i+offset), BoolToInt(hazard_size == "Large"))
 			f.SetCellValue(sheet, fmt.Sprintf("E%d", i+offset), item.CurbLength)
-			f.SetCellValue(sheet, fmt.Sprintf("F%d", i+offset), SafeString(item.Address))
+			f.SetCellValue(sheet, fmt.Sprintf("F%d", i+offset), item.Description())
 			f.SetCellValue(sheet, fmt.Sprintf("G%d", i+offset), item.Width)
 			f.SetCellValue(sheet, fmt.Sprintf("H%d", i+offset), item.Length)
 			f.SetCellValue(sheet, fmt.Sprintf("J%d", i+offset), item.MeasuredHazardLength)
