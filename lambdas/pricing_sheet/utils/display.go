@@ -1,4 +1,4 @@
-package documents
+package utils
 
 import (
 	"time"

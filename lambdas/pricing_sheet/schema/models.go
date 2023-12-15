@@ -1,9 +1,5 @@
 package schema
 
-import (
-	"fmt"
-)
-
 type PricingSheetData struct {
 	Id           int                `json:"id"`
 	Name         string             `json:"name"`
@@ -123,20 +119,5 @@ type Measurement struct {
 	Area                 float64 `json:"area"`
 	Address              *string `json:"geocoded_address"`
 	Note                 *string `json:"note"`
-}
-
-func (m Measurement) Description() string {
-	if m.SpecialCase != nil && m.Note != nil {
-		return fmt.Sprintf("%s. %s.", *m.SpecialCase, *m.Note)
-	}
-
-	if m.SpecialCase != nil {
-		return *m.SpecialCase
-	}
-
-	if m.Note != nil {
-		return *m.Note
-	}
-
-	return ""
+	Description          string  `json:"description"`
 }

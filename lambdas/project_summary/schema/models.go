@@ -142,20 +142,5 @@ type Measurement struct {
 	Tech                 string  `json:"tech"`
 	TechInitials         string  `json:"tech_initials"`
 	WorkDate             string  `json:"work_date"`
-}
-
-func (m Measurement) Description() string {
-	if m.SpecialCase != nil && m.Note != nil {
-		return fmt.Sprintf("%s. %s.", *m.SpecialCase, *m.Note)
-	}
-
-	if m.SpecialCase != nil {
-		return *m.SpecialCase
-	}
-
-	if m.Note != nil {
-		return *m.Note
-	}
-
-	return ""
+	Description          string  `json:"description"`
 }
