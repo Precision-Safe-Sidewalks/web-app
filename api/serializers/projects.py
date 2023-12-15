@@ -94,11 +94,14 @@ class PricingSheetSerializer(serializers.ModelSerializer):
         index = {}
 
         for item in obj.get_survey_measurements():
-            if item.survey_group not in index:
-                index[item.survey_group] = len(data)
-                data.append({"name": item.survey_group, "data": []})
+            key = str(item.survey_group).strip().lower()
 
-            group = index[item.survey_group]
+            if key not in index:
+                name = str(item.survey_group).strip()
+                index[key] = len(data)
+                data.append({"name": name, "data": []})
+
+            group = index[key]
             value = MeasurementSerializer(item).data
             data[group]["data"].append(value)
 
