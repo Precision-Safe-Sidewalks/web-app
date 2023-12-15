@@ -146,7 +146,11 @@ type Measurement struct {
 
 func (m Measurement) Description() string {
 	if m.SpecialCase != nil && m.Note != nil {
-		return fmt.Sprintf("%s. %s.", *m.SpecialCase, *m.Note)
+		if m.SpecialCase != "None" {
+			return fmt.Sprintf("%s. %s.", *m.SpecialCase, *m.Note)
+		} else {
+			return *m.Note
+		}
 	}
 
 	if m.SpecialCase != nil {
