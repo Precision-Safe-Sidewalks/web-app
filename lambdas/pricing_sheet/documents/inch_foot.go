@@ -112,14 +112,6 @@ func (p InchFootPricingSheet) UpdateGreenSavings(f *excelize.File) {
 func (p InchFootPricingSheet) UpdateSurveyData(f *excelize.File) {
 	offset := 26
 
-	highlightStyle, _ := f.NewStyle(&excelize.Style{
-		Fill: excelize.Fill{
-			Type:    "pattern",
-			Color:   []string{"#FFFF00"},
-			Pattern: 1,
-		},
-	})
-
 	for sheetId, group := range p.Data.Measurements {
 		sheet := strconv.Itoa(sheetId + 1)
 		f.SetCellValue(sheet, "C1", group.Name)
@@ -142,11 +134,11 @@ func (p InchFootPricingSheet) UpdateSurveyData(f *excelize.File) {
 				var cell string
 
 				cell = fmt.Sprintf("A%d", i+offset)
-				f.SetCellStyle(sheet, cell, cell, highlightStyle)
+				HighlightCell(f, sheet, cell, true)
 
 				cell = fmt.Sprintf("V%d", i+offset)
 				f.SetCellValue(sheet, cell, "Other")
-				f.SetCellStyle(sheet, cell, cell, highlightStyle)
+				HighlightCell(f, sheet, cell, true)
 			}
 		}
 	}
