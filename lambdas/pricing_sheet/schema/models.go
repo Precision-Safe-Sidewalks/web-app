@@ -2,6 +2,8 @@ package schema
 
 import (
 	"fmt"
+
+	"app.bluezoneautomation.com/lambda-pricing-sheet/v2/utils"
 )
 
 type PricingSheetData struct {
@@ -126,21 +128,20 @@ type Measurement struct {
 }
 
 func (m Measurement) Description() string {
-	if m.SpecialCase != nil && m.Note != nil {
-		if *m.SpecialCase != "None" {
-			return fmt.Sprintf("%s. %s.", *m.SpecialCase, *m.Note)
-		} else {
-			return *m.Note
-		}
+	specialCase := utils.SafeString(m.SpecialCase)
+	note := utils.SafeString(m.Note)
+
+	if specialCase == "None" {
+		specialCase = ""
 	}
 
-	if m.SpecialCase != nil {
-		return *m.SpecialCase
+	if specialCase != "" && note != "" {
+		return fmt.Sprintf("%s. %s.", specialCase, note)
 	}
 
-	if m.Note != nil {
-		return *m.Note
+	if specialCase != "" {
+		return specialCase
 	}
 
-	return ""
+	return note
 }

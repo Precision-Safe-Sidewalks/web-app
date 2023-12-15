@@ -8,6 +8,7 @@ import (
 	"github.com/xuri/excelize/v2"
 
 	"app.bluezoneautomation.com/lambda-pricing-sheet/v2/schema"
+	"app.bluezoneautomation.com/lambda-pricing-sheet/v2/utils"
 )
 
 const (
@@ -58,15 +59,15 @@ func (p InchFootPricingSheet) UpdateProjectSurveyCost(f *excelize.File) {
 
 	f.SetCellValue(sheet, "D4", p.Data.Pricing.EstimatedSidewalkMiles)
 	f.SetCellValue(sheet, "D5", p.Data.Pricing.SurveyorSpeed)
-	f.SetCellValue(sheet, "D7", BoolToInt(p.Data.Pricing.SurveyHazards == 1))
-	f.SetCellValue(sheet, "D8", BoolToInt(p.Data.Pricing.SurveyHazards == 2))
-	f.SetCellValue(sheet, "D9", BoolToInt(p.Data.Pricing.SurveyHazards == 3))
-	f.SetCellValue(sheet, "D11", BoolToInt(p.Data.Pricing.HazardDensity == 1))
-	f.SetCellValue(sheet, "D12", BoolToInt(p.Data.Pricing.HazardDensity == 2))
-	f.SetCellValue(sheet, "D13", BoolToInt(p.Data.Pricing.HazardDensity == 3))
-	f.SetCellValue(sheet, "D15", BoolToInt(p.Data.Pricing.PanelSize == 1))
-	f.SetCellValue(sheet, "D16", BoolToInt(p.Data.Pricing.PanelSize == 2))
-	f.SetCellValue(sheet, "D17", BoolToInt(p.Data.Pricing.PanelSize == 3))
+	f.SetCellValue(sheet, "D7", utils.BoolToInt(p.Data.Pricing.SurveyHazards == 1))
+	f.SetCellValue(sheet, "D8", utils.BoolToInt(p.Data.Pricing.SurveyHazards == 2))
+	f.SetCellValue(sheet, "D9", utils.BoolToInt(p.Data.Pricing.SurveyHazards == 3))
+	f.SetCellValue(sheet, "D11", utils.BoolToInt(p.Data.Pricing.HazardDensity == 1))
+	f.SetCellValue(sheet, "D12", utils.BoolToInt(p.Data.Pricing.HazardDensity == 2))
+	f.SetCellValue(sheet, "D13", utils.BoolToInt(p.Data.Pricing.HazardDensity == 3))
+	f.SetCellValue(sheet, "D15", utils.BoolToInt(p.Data.Pricing.PanelSize == 1))
+	f.SetCellValue(sheet, "D16", utils.BoolToInt(p.Data.Pricing.PanelSize == 2))
+	f.SetCellValue(sheet, "D17", utils.BoolToInt(p.Data.Pricing.PanelSize == 3))
 }
 
 // Update the "JPC - Full Scope" worksheet
@@ -92,11 +93,11 @@ func (p InchFootPricingSheet) UpdateSummary(f *excelize.File) {
 	}
 
 	if p.Data.Contact != nil {
-		f.SetCellValue(sheet, "E3", SafeString(p.Data.Contact.Address))
+		f.SetCellValue(sheet, "E3", utils.SafeString(p.Data.Contact.Address))
 		f.SetCellValue(sheet, "I3", p.Data.Contact.Name)
-		f.SetCellValue(sheet, "J3", SafeString(p.Data.Contact.Title))
-		f.SetCellValue(sheet, "K3", SafeString(p.Data.Contact.Email))
-		f.SetCellValue(sheet, "L3", SafeString(p.Data.Contact.PhoneNumber))
+		f.SetCellValue(sheet, "J3", utils.SafeString(p.Data.Contact.Title))
+		f.SetCellValue(sheet, "K3", utils.SafeString(p.Data.Contact.Email))
+		f.SetCellValue(sheet, "L3", utils.SafeString(p.Data.Contact.PhoneNumber))
 	}
 }
 
@@ -117,11 +118,11 @@ func (p InchFootPricingSheet) UpdateSurveyData(f *excelize.File) {
 		f.SetCellValue(sheet, "C1", group.Name)
 
 		for i, item := range group.Measurements {
-			hazard_size := SafeString(item.HazardSize)
+			hazard_size := utils.SafeString(item.HazardSize)
 
-			f.SetCellValue(sheet, fmt.Sprintf("B%d", i+offset), BoolToInt(hazard_size == "Small"))
-			f.SetCellValue(sheet, fmt.Sprintf("C%d", i+offset), BoolToInt(hazard_size == "Medium"))
-			f.SetCellValue(sheet, fmt.Sprintf("D%d", i+offset), BoolToInt(hazard_size == "Large"))
+			f.SetCellValue(sheet, fmt.Sprintf("B%d", i+offset), utils.BoolToInt(hazard_size == "Small"))
+			f.SetCellValue(sheet, fmt.Sprintf("C%d", i+offset), utils.BoolToInt(hazard_size == "Medium"))
+			f.SetCellValue(sheet, fmt.Sprintf("D%d", i+offset), utils.BoolToInt(hazard_size == "Large"))
 			f.SetCellValue(sheet, fmt.Sprintf("E%d", i+offset), item.CurbLength)
 			f.SetCellValue(sheet, fmt.Sprintf("F%d", i+offset), item.Description())
 			f.SetCellValue(sheet, fmt.Sprintf("G%d", i+offset), item.Width)
