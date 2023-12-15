@@ -114,7 +114,7 @@ func (s SquareFootProjectSummary) UpdateSurveyData(f *excelize.File) {
 			f.SetCellValue(sheet, fmt.Sprintf("E%d", rowId), item.H2)
 			f.SetCellValue(sheet, fmt.Sprintf("F%d", rowId), item.MeasuredHazardLength)
 			f.SetCellValue(sheet, fmt.Sprintf("G%d", rowId), SafeString(item.Address))
-			f.SetCellValue(sheet, fmt.Sprintf("H%d", rowId), item.Description())
+			f.SetCellValue(sheet, fmt.Sprintf("H%d", rowId), item.Description)
 			f.SetCellValue(sheet, fmt.Sprintf("M%d", rowId), s.Data.GetTechInitials(item.Tech))
 			f.SetCellValue(sheet, fmt.Sprintf("N%d", rowId), item.ObjectId)
 

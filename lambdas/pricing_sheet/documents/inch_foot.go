@@ -124,7 +124,7 @@ func (p InchFootPricingSheet) UpdateSurveyData(f *excelize.File) {
 			f.SetCellValue(sheet, fmt.Sprintf("C%d", i+offset), utils.BoolToInt(hazard_size == "Medium"))
 			f.SetCellValue(sheet, fmt.Sprintf("D%d", i+offset), utils.BoolToInt(hazard_size == "Large"))
 			f.SetCellValue(sheet, fmt.Sprintf("E%d", i+offset), item.CurbLength)
-			f.SetCellValue(sheet, fmt.Sprintf("F%d", i+offset), item.Description())
+			f.SetCellValue(sheet, fmt.Sprintf("F%d", i+offset), item.Description)
 			f.SetCellValue(sheet, fmt.Sprintf("G%d", i+offset), item.Width)
 			f.SetCellValue(sheet, fmt.Sprintf("H%d", i+offset), item.Length)
 			f.SetCellValue(sheet, fmt.Sprintf("J%d", i+offset), item.MeasuredHazardLength)

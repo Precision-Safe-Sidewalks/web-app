@@ -85,7 +85,7 @@ func (p SquareFootPricingSheet) UpdateSurveyData(f *excelize.File) {
 			address := strings.ToUpper(utils.SafeString(item.Address))
 
 			f.SetCellValue(sheet, fmt.Sprintf("B%d", offset+i), address)
-			f.SetCellValue(sheet, fmt.Sprintf("C%d", offset+i), item.Description())
+			f.SetCellValue(sheet, fmt.Sprintf("C%d", offset+i), item.Description)
 			f.SetCellValue(sheet, fmt.Sprintf("D%d", offset+i), item.Latitude)
 			f.SetCellValue(sheet, fmt.Sprintf("E%d", offset+i), item.Longitude)
 			f.SetCellValue(sheet, fmt.Sprintf("F%d", offset+i), utils.SafeString(item.HazardSize))

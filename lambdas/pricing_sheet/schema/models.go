@@ -1,11 +1,5 @@
 package schema
 
-import (
-	"fmt"
-
-	"app.bluezoneautomation.com/lambda-pricing-sheet/v2/utils"
-)
-
 type PricingSheetData struct {
 	Id           int                `json:"id"`
 	Name         string             `json:"name"`
@@ -125,23 +119,5 @@ type Measurement struct {
 	Area                 float64 `json:"area"`
 	Address              *string `json:"geocoded_address"`
 	Note                 *string `json:"note"`
-}
-
-func (m Measurement) Description() string {
-	specialCase := utils.SafeString(m.SpecialCase)
-	note := utils.SafeString(m.Note)
-
-	if specialCase == "None" {
-		specialCase = ""
-	}
-
-	if specialCase != "" && note != "" {
-		return fmt.Sprintf("%s. %s.", specialCase, note)
-	}
-
-	if specialCase != "" {
-		return specialCase
-	}
-
-	return note
+	Description          string  `json:"description"`
 }
