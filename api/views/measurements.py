@@ -8,6 +8,6 @@ from repairs.models import Measurement
 class MeasurementViewSet(ReadOnlyModelViewSet):
     """Read-only view set for a Project's Measurements"""
 
-    queryset = Measurement.objects.all()
+    queryset = Measurement.objects.order_by("id")
     serializer_class = MeasurementSerializer
     filterset_class = MeasurementFilter
