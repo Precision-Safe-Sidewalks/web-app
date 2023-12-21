@@ -89,7 +89,7 @@ class BaseMeasurement(BaseModel):
         if "survey_group" in cls.__fields__:
             group_alias = cls.__fields__["survey_group"].alias
 
-        for data in csv.DictReader(file_obj):
+        for i, data in enumerate(csv.DictReader(file_obj)):
             for key, value in data.items():
                 if value.strip() == "":
                     data[key] = None

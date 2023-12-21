@@ -397,27 +397,23 @@
   // Constants
   const pricingSheetUrl = "{% url 'documents-pricing-sheet-detail' pk=project.pk %}"
   const projectSummaryUrl = "{% url 'documents-project-summary-detail' pk=project.pk %}"
-  const geojson = JSON.parse("{{ measurements|safe|escapejs }}")
-  const bbox = JSON.parse("{{ bbox }}")
   const centroid = JSON.parse("{{ centroid }}")
 
   // Global variables
   var map = null;
 
   $(document).ready(() => {
-    if (geojson.features.length > 0) {
-      map = new MeasurementsMap("map", "{{ project.pk }}", centroid)
-      map.addFeatures(geojson.features, "measurements")
+    map = new MeasurementsMap("map", "{{ project.pk }}", center=centroid)
+    map.fetchFeatures()
 
-      // Add the initial filters
-      $(`input[type="checkbox"][id^="map:"]`).map((_, element) => {
-        const [prefix, prop, value] = element.id.split(":")
-        element.checked && map.addFilter(prop, value, false)
-      })
+    // Add the initial filters
+    $(`input[type="checkbox"][id^="map:"]`).map((_, element) => {
+      const [prefix, prop, value] = element.id.split(":")
+      element.checked && map.addFilter(prop, value, false)
+    })
 
-      map.render()
-      map.resetBounds()
-    }
+    map.render()
+    map.resetBounds()
   })
 
   // Configure the handler for the status change

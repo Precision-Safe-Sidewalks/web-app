@@ -71,16 +71,10 @@ class ProjectDetailView(DetailView):
         context["si"] = project.instructions.filter(stage=Stage.SURVEY).first()
         context["pi"] = project.instructions.filter(stage=Stage.PRODUCTION).first()
         context["statuses"] = Project.Status.choices
-
-        markers = project.get_measurements_geojson()
-        context["measurements"] = json.dumps(markers, default=str)
         context["map_legend"] = self.get_map_legend()
 
         if project.measurements.exists():
-            bbox = project.get_bbox(buffer_fraction=0.1)
             centroid = project.get_centroid().coords
-
-            context["bbox"] = list(bbox)
             context["centroid"] = list(centroid)
 
         return context

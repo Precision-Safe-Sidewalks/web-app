@@ -2,12 +2,12 @@ mapboxgl.accessToken = "pk.eyJ1IjoiYWN1cmxleTMxIiwiYSI6ImNsMDVqYmRzYTFuM2UzaXFnM
 
 const MAPBOX_CONFIG = {
   style: "mapbox://styles/mapbox/streets-v12",
-  center: [-74.5, 40],
+  center: [0, 0],
   zoom: 12,
 }
 
 class MeasurementsMap {
-  constructor(containerId, projectId, centroid) {
+  constructor(containerId, projectId, center = null) {
     this.projectId = projectId;
     this.features = [];
     this.markers = [];
@@ -16,8 +16,28 @@ class MeasurementsMap {
     this.map = new mapboxgl.Map({ 
       ...MAPBOX_CONFIG, 
       container: containerId,
-      center: centroid,
+      center: center ? center : MAPBOX_CONFIG.center,
     })
+  }
+
+  async fetchFeatures() {
+    let url = `/api/measurements/?project=${this.projectId}`
+
+    while (url !== null) {
+      const resp = await fetch(url)
+
+      if (!resp.ok) {
+        throw new Error(`Error fetching measurements for project ${this.projectId}`)
+      }
+
+      const { results, next } = await resp.json()
+      this.features = this.features.concat(results.features)
+
+      url = next
+    }
+
+    this.render()
+    this.resetBounds()
   }
 
   setStyle(style) {
@@ -29,6 +49,10 @@ class MeasurementsMap {
   }
 
   resetBounds() {
+    if (this.markers.length === 0) {
+      return
+    }
+
     const buffer = 0.1
     let bbox = [Infinity, Infinity, -Infinity, -Infinity]
     
