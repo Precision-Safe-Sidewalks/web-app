@@ -33,7 +33,12 @@ class MeasurementsMap {
       const { results, next } = await resp.json()
       this.features = this.features.concat(results.features)
 
-      url = next
+      if (next !== null) {
+        const origin = (new URL(next)).origin
+        url = next.replace(origin, "")
+      } else {
+        url = null
+      }
     }
 
     this.render()
