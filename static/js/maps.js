@@ -12,12 +12,15 @@ class MeasurementsMap {
     this.features = [];
     this.markers = [];
     this.filters = {};
+    this.zoom = null;
 
     this.map = new mapboxgl.Map({ 
       ...MAPBOX_CONFIG, 
       container: containerId,
       center: center ? center : MAPBOX_CONFIG.center,
     })
+
+    this.map.on("zoom", (event) => this.onZoom(event))
   }
 
   async fetchFeatures() {
@@ -172,5 +175,23 @@ class MeasurementsMap {
         </tbody>
       </table>
     `
+  }
+
+  onZoom(event) {
+    const zoom = Math.round(this.map.getZoom())
+
+    if (zoom !== this.zoom) {
+      this.zoom = zoom;
+
+      this.markers.forEach(marker => {
+        const element = marker.getElement()
+        
+        Array.from(element.classList)
+          .filter(className => className.startsWith("zoom-"))
+          .forEach(className => element.classList.remove(className))
+      
+        element.classList.add(`zoom-${zoom}`)
+      })
+    }
   }
 }
