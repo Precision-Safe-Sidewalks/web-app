@@ -2,6 +2,7 @@ mapboxgl.accessToken = "pk.eyJ1IjoiYWN1cmxleTMxIiwiYSI6ImNsMDVqYmRzYTFuM2UzaXFnM
 
 const MAPBOX_CONFIG = {
   style: "mapbox://styles/mapbox/streets-v12",
+  //style: "mapbox://styles/acurley31/clqoa2mem00ic01p5dnemgq8q",
   center: [0, 0],
   zoom: 12,
 }
@@ -20,11 +21,56 @@ class MeasurementsMap {
       center: center ? center : MAPBOX_CONFIG.center,
     })
 
-    this.map.on("zoom", (event) => this.onZoom(event))
+    //this.map.on("zoom", (event) => this.onZoom(event))
+
+    this.map.on("load", async () => {
+      await this.fetchIcons()
+      const data = await this.fetchFeatures()
+    
+      this.map.addSource(
+        "measurements", 
+        {
+          type: "geojson", 
+          data: data,
+          tolerance: 0,
+        },
+      )
+
+      this.map.addLayer({
+        id: "measurements-markers",
+        type: "symbol",
+        source: "measurements",
+        layout: {
+          "icon-image": ["get", "symbol"],
+          "icon-allow-overlap": true,
+          "icon-size": ['interpolate', ['linear'], ['zoom'], 15, 0.5, 20, 2]
+        },
+        paint: {
+          "icon-color": ["get", "color"],
+          "icon-halo-color": ["get", "color"],
+          "icon-halo-width": 2,
+        },
+      })
+
+      this.resetBounds()
+    })
+  }
+
+  async fetchIcons() {
+    const resp = await fetch("/api/symbology/icons/")
+    const data = await resp.json()
+
+    data.forEach(({ name, url }) => {
+      this.map.loadImage(url, (error, image) => {
+        if (error) throw error;
+        this.map.addImage(name, image, { sdf: true })
+      })
+    })
   }
 
   async fetchFeatures() {
     let url = `/api/measurements/?project=${this.projectId}`
+    let data = {type: "FeatureCollection", features: []}
 
     while (url !== null) {
       const resp = await fetch(url)
@@ -34,7 +80,7 @@ class MeasurementsMap {
       }
 
       const { results, next } = await resp.json()
-      this.features = this.features.concat(results.features)
+      data.features = data.features.concat(results.features)
 
       if (next !== null) {
         const origin = (new URL(next)).origin
@@ -44,8 +90,9 @@ class MeasurementsMap {
       }
     }
 
-    this.render()
-    this.resetBounds()
+    this.features = data.features
+
+    return data
   }
 
   setStyle(style) {

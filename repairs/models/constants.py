@@ -131,6 +131,7 @@ class PanelSize(models.IntegerChoices):
 
 
 SYMBOLS = {
+    None: "location_on",
     SpecialCase.REPLACE: "square",
     SpecialCase.BOTTOM_HC: "accessible",
     SpecialCase.GUTTER_PAN: "accessible",
@@ -149,6 +150,7 @@ SYMBOLS = {
 }
 
 SYMBOL_COLORS = {
+    None: "black",
     SpecialCase.REPLACE: "green",
     SpecialCase.CURB: "pink",
     QuickDescription.SMALL: "yellow",

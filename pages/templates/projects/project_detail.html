@@ -404,7 +404,7 @@
 
   $(document).ready(() => {
     map = new MeasurementsMap("map", "{{ project.pk }}", center=centroid)
-    map.fetchFeatures()
+    //map.fetchFeatures()
 
     // Add the initial filters
     $(`input[type="checkbox"][id^="map:"]`).map((_, element) => {
@@ -412,8 +412,8 @@
       element.checked && map.addFilter(prop, value, false)
     })
 
-    map.render()
-    map.resetBounds()
+    //map.render()
+    //map.resetBounds()
   })
 
   // Configure the handler for the status change
