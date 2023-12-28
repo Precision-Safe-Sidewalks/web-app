@@ -1,5 +1,5 @@
 # Stage 1: build the executable
-FROM golang:1.19 AS build
+FROM golang:1.21.5-bullseye AS build
 
 ARG SRC=lambdas/pricing_sheet
 
