@@ -97,7 +97,10 @@ func (s InchFootProjectSummary) UpdateSurveyData(f *excelize.File) {
 
 	for sheetId, group := range s.Data.Measurements {
 		oldSheet := strconv.Itoa(sheetId + 1)
-		sheet := group.Name
+
+		// Convert the ISO 8601 date to the preferred MM-DD-YYYY format
+		workDate, _ := time.Parse(time.DateOnly, group.Name)
+		sheet := workDate.Format("01-02-2006")
 
 		s.UpdateSheetName(f, oldSheet, sheet)
 		f.SetCellValue(sheet, "E11", DateStringToTime(group.Name))

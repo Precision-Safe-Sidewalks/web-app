@@ -25,10 +25,10 @@ image_geocoding:
 	@docker build -t ${PROJECT}-lambda-geocoding:latest -f docker/Dockerfile.lambda.geocoding .
 
 image_pricing_sheet:
-	@docker build -t ${PROJECT}-lambda-pricing-sheet:latest -f docker/Dockerfile.lambda.pricing_sheet --platform linux/amd64 .
+	@docker build -t ${PROJECT}-lambda-pricing-sheet:latest -f docker/Dockerfile.lambda.pricing_sheet .
 
 image_project_summary:
-	@docker build -t ${PROJECT}-lambda-project-summary:latest -f docker/Dockerfile.lambda.project_summary --platform linux/amd64 .
+	@docker build -t ${PROJECT}-lambda-project-summary:latest -f docker/Dockerfile.lambda.project_summary .
 
 release_images: release_image_app release_image_geocoding release_image_pricing_sheet release_image_project_summary
 

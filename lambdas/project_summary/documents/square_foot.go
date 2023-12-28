@@ -59,7 +59,7 @@ func (s SquareFootProjectSummary) UpdateSummary(f *excelize.File) {
 	year, month, day := time.Now().Date()
 	reportDate := time.Date(year, month, day, 0, 0, 0, 0, time.UTC)
 
-	f.SetCellValue(sheet, "B1", s.Data.Customer.Name)
+	f.SetCellValue(sheet, "A1", s.Data.Customer.Name)
 	f.SetCellValue(sheet, "E1", reportDate)
 	f.SetCellValue(sheet, "D3", s.Data.Name)
 	f.SetCellValue(sheet, "C8", SafeString(s.Data.PONumber))
@@ -93,7 +93,10 @@ func (s SquareFootProjectSummary) UpdateSurveyData(f *excelize.File) {
 
 	for sheetId, group := range s.Data.Measurements {
 		oldSheet := strconv.Itoa(sheetId + 1)
-		sheet := group.Name
+
+		// Convert the ISO 8601 date format to the preferred MM-DD-YYY
+		workDate, _ := time.Parse(time.DateOnly, group.Name)
+		sheet := workDate.Format("01-02-2006")
 
 		s.UpdateSheetName(f, oldSheet, sheet)
 		f.SetCellValue(sheet, "E12", DateStringToTime(group.Name))
