@@ -1,8 +1,10 @@
 mapboxgl.accessToken = "pk.eyJ1IjoiYWN1cmxleTMxIiwiYSI6ImNsMDVqYmRzYTFuM2UzaXFnMThuMnE5NHMifQ.DaCM5UwTwkuLo02YUKQpFA"
 
+const SOURCE_ID = "measurements"
+const LAYER_ID = "measurements"
+
 const MAPBOX_CONFIG = {
   style: "mapbox://styles/mapbox/streets-v12",
-  //style: "mapbox://styles/acurley31/clqoa2mem00ic01p5dnemgq8q",
   center: [0, 0],
   zoom: 12,
 }
@@ -21,39 +23,10 @@ class MeasurementsMap {
       center: center ? center : MAPBOX_CONFIG.center,
     })
 
-    //this.map.on("zoom", (event) => this.onZoom(event))
-
-    this.map.on("load", async () => {
-      await this.fetchIcons()
-      const data = await this.fetchFeatures()
-    
-      this.map.addSource(
-        "measurements", 
-        {
-          type: "geojson", 
-          data: data,
-          tolerance: 0,
-        },
-      )
-
-      this.map.addLayer({
-        id: "measurements-markers",
-        type: "symbol",
-        source: "measurements",
-        layout: {
-          "icon-image": ["get", "symbol"],
-          "icon-allow-overlap": true,
-          "icon-size": ['interpolate', ['linear'], ['zoom'], 15, 0.5, 20, 2]
-        },
-        paint: {
-          "icon-color": ["get", "color"],
-          "icon-halo-color": ["get", "color"],
-          "icon-halo-width": 2,
-        },
-      })
-
-      this.resetBounds()
-    })
+    this.map.on("load", () => this.onLoad())
+    this.map.on("click", LAYER_ID, (e) => this.onClick(e))
+    this.map.on("mouseenter", LAYER_ID, (e) => this.onMouseEnter(e))
+    this.map.on("mouseleave", LAYER_ID, (e) => this.onMouseLeave(e))
   }
 
   async fetchIcons() {
@@ -95,6 +68,50 @@ class MeasurementsMap {
     return data
   }
 
+  async onLoad() {
+    await this.fetchIcons()
+    const data = await this.fetchFeatures()
+  
+    this.map.addSource(
+      "measurements", 
+      {
+        type: "geojson", 
+        data: data,
+        tolerance: 0,
+      },
+    )
+
+    this.map.addLayer({
+      id: "measurements",
+      type: "symbol",
+      source: "measurements",
+      layout: {
+        "icon-image": ["get", "symbol"],
+        "icon-allow-overlap": true,
+        "icon-size": ["interpolate", ["exponential", 2], ["zoom"], 15, 0.15, 22, 8]
+      },
+      paint: {
+        "icon-color": ["get", "color"],
+      },
+    })
+
+    this.resetBounds()
+  }
+
+  async onClick(e) {
+    const feature = e.features[0]
+    const html = this.getPopupHTML(feature)
+    
+    new mapboxgl.Popup({ offset: 24 })
+      .setLngLat(feature.geometry.coordinates)
+      .setHTML(html)
+      .addTo(this.map)
+  }
+
+
+
+
+
   setStyle(style) {
     this.map.setStyle(style)
   }
@@ -104,15 +121,15 @@ class MeasurementsMap {
   }
 
   resetBounds() {
-    if (this.markers.length === 0) {
+    if (this.features.length === 0) {
       return
     }
 
     const buffer = 0.1
     let bbox = [Infinity, Infinity, -Infinity, -Infinity]
     
-    this.markers.forEach(marker => {
-      const { lng, lat } = marker.getLngLat()
+    this.features.forEach(feature => {
+      const [lng, lat] = feature.geometry.coordinates
       bbox[0] = Math.min(bbox[0], lng)
       bbox[1] = Math.min(bbox[1], lat)
       bbox[2] = Math.max(bbox[2], lng)

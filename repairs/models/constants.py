@@ -151,11 +151,11 @@ SYMBOLS = {
 
 SYMBOL_COLORS = {
     None: "black",
-    SpecialCase.REPLACE: "green",
-    SpecialCase.CURB: "pink",
-    QuickDescription.SMALL: "yellow",
-    QuickDescription.MEDIUM: "blue",
-    QuickDescription.LARGE: "red",
+    SpecialCase.REPLACE: "#00a707",
+    SpecialCase.CURB: "#f48fb9",
+    QuickDescription.SMALL: "#eed300",
+    QuickDescription.MEDIUM: "#0290ee",
+    QuickDescription.LARGE: "#ee0202",
     # TODO: Missed
     # TODO: Quality
 }
