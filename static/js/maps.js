@@ -166,7 +166,7 @@ class MeasurementsMap {
   // of all the visible features on the map
   async fitToView() {
     const filter = this.map.getFilter(LAYER)
-    const features = this.map.querySourceFeatures(SOURCE, filter)
+    const features = this.map.querySourceFeatures(SOURCE, { filter })
     const bbox = this.calculateBounds(features)
     this.map.fitBounds(bbox)
   }
@@ -217,7 +217,7 @@ class MeasurementsMap {
   // Calculate the buffered bounding box from a set of GeoJSON
   // features. The buffer is a fraction of the minimum bounds.
   calculateBounds(features) {
-    if (!features) {
+    if (features.length === 0) {
       return [0, 0, 0, 0]
     }
 
