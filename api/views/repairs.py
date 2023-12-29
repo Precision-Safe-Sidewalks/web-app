@@ -11,6 +11,7 @@ from rest_framework.views import APIView
 from api.serializers.projects import (
     PricingSheetCompleteSerializer,
     PricingSheetSerializer,
+    ProjectSerializer,
     ProjectSummaryCompleteSerializer,
     ProjectSummarySerializer,
 )
@@ -21,6 +22,7 @@ from repairs.models import (
     Project,
     ProjectSummaryRequest,
 )
+from repairs.models.constants import Stage
 
 
 class SurveyInstructionsAPIView(APIView):
@@ -169,3 +171,20 @@ class ProjectSummaryViewSet(viewsets.ViewSet):
         req.save()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ProjectViewSet(viewsets.ModelViewSet):
+    """Project API view set"""
+
+    queryset = Project.objects.order_by("id")
+    serializer_class = ProjectSerializer
+
+    @action(methods=["GET"], detail=True)
+    def geocoding(self, request, pk=None):
+        """Return the geocoding status"""
+        project = self.get_object()
+        stage = request.GET.get("stage", Stage.SURVEY)
+        complete = project.measurements.filter(
+            stage=stage, geocoded_address__isnull=False
+        ).exists()
+        return Response({"complete": complete})

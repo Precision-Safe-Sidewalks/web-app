@@ -256,3 +256,9 @@ class ProjectSummaryCompleteSerializer(serializers.Serializer):
     request_id = serializers.UUIDField()
     s3_bucket = serializers.CharField(max_length=50)
     s3_key = serializers.CharField(max_length=255)
+
+
+class ProjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Project
+        fields = "__all__"

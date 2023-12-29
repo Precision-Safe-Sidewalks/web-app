@@ -41,6 +41,11 @@ router.register(
     repairs.ProjectSummaryViewSet,
     basename="documents-project-summary",
 )
+router.register(
+    "projects",
+    repairs.ProjectViewSet,
+    basename="projects",
+)
 
 urlpatterns = router.urls + [
     path(
