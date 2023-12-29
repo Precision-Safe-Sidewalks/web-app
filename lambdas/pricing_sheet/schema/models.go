@@ -133,13 +133,9 @@ func (m Measurement) GetHighlightColor() string {
 
 	// If curb, highlight if the either:
 	// - Panel length or width are non-zero [Yellow]
-	// - Hazard size is Small, Medium, or Large [Yellow]
+	// - Hazard size is not Other [Yellow]
 	if specialCase == "Curb" {
-		if m.Width != 0 || m.Length != 0 {
-			return constants.COLOR_YELLOW
-		}
-
-		if hazardSize == "Small" || hazardSize == "Medium" || hazardSize == "Large" {
+		if m.Width+m.Length > 0 || hazardSize != "Other" {
 			return constants.COLOR_YELLOW
 		}
 	}
