@@ -1,7 +1,7 @@
-from rest_framework.viewsets import ReadOnlyModelViewSet, ViewSet
+from django.templatetags.static import static
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from django.templatetags.static import static
+from rest_framework.viewsets import ReadOnlyModelViewSet, ViewSet
 
 from api.filters.measurements import MeasurementFilter
 from api.serializers.measurements import MeasurementSerializer
