@@ -18,7 +18,6 @@ class MeasurementViewSet(ReadOnlyModelViewSet):
 
 
 class SymbologyViewSet(ViewSet):
-    
     @action(methods=["GET"], detail=False)
     def icons(self, request):
         data = []

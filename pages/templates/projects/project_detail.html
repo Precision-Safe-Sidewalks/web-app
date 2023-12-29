@@ -339,8 +339,11 @@
         <div class="w-25p p-4">
           <div>
             <div class="flex">
-              <button class="btn" onclick="fitToView()">
-                Fit to View
+              <button class="btn mr-1" onclick="fitToView()">
+                Fit View
+              </button>
+              <button class="btn" onclick="saveToImage()">
+                Save Image
               </button>
             </div>
           </div>
@@ -408,6 +411,7 @@
 
   // Global variables
   var map = null;
+  var imageId = 1;
 
   $(document).ready(() => {
     map = new MeasurementsMap("map", "{{ project.pk }}", center=centroid)
@@ -524,6 +528,16 @@
     }
 
     map.toggleLabels()
+  }
+
+  // Handler to save the map as an image
+  const saveToImage = async () => {
+    var a = document.createElement("a")
+    a.href = await map.saveToImage()
+    a.download = `{{ project.slug }}_map_${imageId}.png`
+    a.click()
+    
+    imageId++
   }
 </script>
 {% endblock %}

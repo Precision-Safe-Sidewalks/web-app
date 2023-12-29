@@ -9,7 +9,9 @@ router.register(
     "measurements", measurements.MeasurementViewSet, basename="measurements"
 )
 router.register(
-    "symbology", measurements.SymbologyViewSet, basename="symbology",
+    "symbology",
+    measurements.SymbologyViewSet,
+    basename="symbology",
 )
 router.register(
     "tables/contacts",

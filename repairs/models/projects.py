@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.gis.db.models.aggregates import Union
 from django.db import models, transaction
+from django.utils.text import slugify
 
 from customers.models import Contact, Customer
 from repairs.models.constants import PricingModel, Stage
@@ -63,6 +64,11 @@ class Project(models.Model):
     def secondary_contact(self):
         """Return the secondary Contact (if exists)"""
         return self.contacts.filter(projectcontact__order=1).first()
+
+    @property
+    def slug(self):
+        """Return the slugified name"""
+        return slugify(self.name)
 
     def get_bbox(self, buffer_fraction=0):
         """Return the bounding box of the Measurements"""

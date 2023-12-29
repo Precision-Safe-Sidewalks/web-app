@@ -10,7 +10,7 @@ const LAYER_LABELS = `${LAYER}-labels`
 class MeasurementsMap {
   constructor(container, projectId, center) {
     this.projectId = projectId
-    this.mapConfig = { center, container, zoom: DEFAULT_ZOOM }
+    this.mapConfig = { center, container, zoom: DEFAULT_ZOOM, preserveDrawingBuffer: true }
     this.mapData = null
     this.mapLabels = "none"
     this.mapFilter = null
@@ -169,6 +169,11 @@ class MeasurementsMap {
     const features = this.map.querySourceFeatures(SOURCE, filter)
     const bbox = this.calculateBounds(features)
     this.map.fitBounds(bbox)
+  }
+
+  // Handler to save the map to a PNG and download
+  async saveToImage() {
+    return await this.map.getCanvas().toDataURL()
   }
 
   // Fetch the symbols required for rendering the map. These are loaded
