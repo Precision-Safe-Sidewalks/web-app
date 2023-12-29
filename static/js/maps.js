@@ -1,148 +1,244 @@
 mapboxgl.accessToken = "pk.eyJ1IjoiYWN1cmxleTMxIiwiYSI6ImNsMDVqYmRzYTFuM2UzaXFnMThuMnE5NHMifQ.DaCM5UwTwkuLo02YUKQpFA"
 
-const MAPBOX_CONFIG = {
-  style: "mapbox://styles/mapbox/streets-v12",
-  center: [0, 0],
-  zoom: 12,
-}
+const DEFAULT_STYLE = "mapbox://styles/mapbox/streets-v12"
+const DEFAULT_ZOOM = 12
+
+const SOURCE = "measurements"
+const LAYER = "measurements"
+const LAYER_LABELS = `${LAYER}-labels`
 
 class MeasurementsMap {
-  constructor(containerId, projectId, center = null) {
-    this.projectId = projectId;
-    this.features = [];
-    this.markers = [];
-    this.filters = {};
+  constructor(container, projectId, center) {
+    this.projectId = projectId
+    this.mapConfig = { center, container, zoom: DEFAULT_ZOOM, preserveDrawingBuffer: true }
+    this.mapData = null
+    this.mapLabels = "none"
+    this.mapFilter = null
+    this.map = null
 
-    this.map = new mapboxgl.Map({ 
-      ...MAPBOX_CONFIG, 
-      container: containerId,
-      center: center ? center : MAPBOX_CONFIG.center,
-    })
+    this.buildMap(DEFAULT_STYLE)
   }
 
-  async fetchFeatures() {
-    let url = `/api/measurements/?project=${this.projectId}`
-
-    while (url !== null) {
-      const resp = await fetch(url)
-
-      if (!resp.ok) {
-        throw new Error(`Error fetching measurements for project ${this.projectId}`)
-      }
-
-      const { results, next } = await resp.json()
-      this.features = this.features.concat(results.features)
-
-      if (next !== null) {
-        const origin = (new URL(next)).origin
-        url = next.replace(origin, "")
-      } else {
-        url = null
-      }
+  async buildMap(style) {
+    if (this.map) {
+      this.mapConfig.center = this.map.getCenter()
+      this.mapConfig.zoom = this.map.getZoom()
+      this.mapConfig.container = this.map.getContainer()
+      this.mapLabels = this.map.getLayoutProperty(LAYER_LABELS, "visibility")
+      this.mapFilter = this.map.getFilter(LAYER)
+      this.map.remove()
     }
 
-    this.render()
-    this.resetBounds()
+    this.map = new mapboxgl.Map({ style, ...this.mapConfig })
+
+    this.map.on("load", () => this.onMapLoad())
+    this.map.on("click", LAYER, (e) => this.onMapClick(e))
+    this.map.on("mouseenter", LAYER, () => this.onMouseEnter())
+    this.map.on("mouseleave", LAYER, () => this.onMouseLeave())
   }
 
-  setStyle(style) {
-    this.map.setStyle(style)
+  // Handler for processing the map after it loads. This adds the source
+  // and symbol layers.
+  async onMapLoad() {
+    await this.fetchSymbols()
+    let bounds = this.map.getBounds()
+
+    if (!this.mapData) {
+      this.mapData = await this.fetchFeatures()
+      bounds = this.mapData.bbox
+    }
+    
+    await this.map.addSource(SOURCE, {
+      type: "geojson",
+      data: this.mapData,
+    })
+   
+    await this.map.addLayer({
+      id: LAYER,
+      source: SOURCE,
+      type: "symbol",
+      layout: {
+        "icon-image": ["get", "symbol"],
+        "icon-allow-overlap": true,
+        "icon-size": ["interpolate", ["exponential", 2], ["zoom"], 15, 0.15, 22, 8],
+        "icon-anchor": "bottom",
+      },
+      paint: {
+        "icon-color": ["get", "color"],
+      },
+    })
+
+    await this.map.addLayer({
+      id: LAYER_LABELS,
+      source: SOURCE,
+      type: "symbol",
+      layout: {
+        "text-field": ["get", "object_id"],
+        "text-anchor": "top",
+        "text-allow-overlap": false,
+        "text-size": 10,
+        "visibility": this.mapLabels,
+      },
+    })
+
+    await this.map.setFilter(LAYER, this.mapFilter)
+    await this.map.setFilter(LAYER_LABELS, this.mapFilter)
+
+    this.map.fitBounds(bounds)
   }
 
-  fitBounds(bbox) {
-    this.map.fitBounds(bbox)
+  // Handler for clicking a layer on the map to display a popup
+  async onMapClick(e) {
+    const feature = e.features[0]
+    const coordinates = feature.geometry.coordinates.slice()
+    const html = this.getPopupHTML(feature)
+  
+    new mapboxgl.Popup()
+      .setLngLat(coordinates)
+      .setHTML(html)
+      .addTo(this.map)
   }
 
-  resetBounds() {
-    if (this.markers.length === 0) {
+  // Handler for toggling the cursor when the mouse enters the layer
+  async onMouseEnter() {
+    this.map.getCanvas().style.cursor = "pointer"
+  }
+
+  // Handler for toggling the cursor when the mouse leaves the layer
+  async onMouseLeave() {
+    this.map.getCanvas().style.cursor = ""
+  }
+
+  // Handler for applying filters to the layer
+  async addFilter(property, value) {
+    const layer = this.map.getLayer(LAYER)
+
+    if (!layer) {
+      return
+    }
+    
+    const currentFilter = this.map.getFilter(LAYER)
+    const nextFilter = ["!=", ["get", property], value]
+
+    if (currentFilter === undefined) {
+      this.map.setFilter(LAYER, ["all", nextFilter])
+      this.map.setFilter(LAYER_LABELS, ["all", nextFilter])
+    } else {
+      this.map.setFilter(LAYER, [...currentFilter, nextFilter])
+      this.map.setFilter(LAYER_LABELS, [...currentFilter, nextFilter])
+    }
+  }
+
+  // Handler fo removing filters from the layer
+  async removeFilter(property, value) {
+    const currentFilter = this.map.getFilter(LAYER)
+    const layer = this.map.getLayer(LAYER)
+
+    if (currentFilter === undefined || layer === undefined) {
       return
     }
 
-    const buffer = 0.1
-    let bbox = [Infinity, Infinity, -Infinity, -Infinity]
-    
-    this.markers.forEach(marker => {
-      const { lng, lat } = marker.getLngLat()
-      bbox[0] = Math.min(bbox[0], lng)
-      bbox[1] = Math.min(bbox[1], lat)
-      bbox[2] = Math.max(bbox[2], lng)
-      bbox[3] = Math.max(bbox[3], lat)
-    })
+    const nextFilter = currentFilter
+      .slice(1, -1)
+      .filter(f => (!(f[1][1] === property && f[2] === value)))
 
-    const dx = (bbox[2] - bbox[0]) * buffer
-    const dy = (bbox[3] - bbox[1]) * buffer
-    bbox[0] -= dx
-    bbox[1] -= dy
-    bbox[2] += dx
-    bbox[3] += dy
+    if (nextFilter.length === 0) {
+      this.map.setFilter(LAYER, null)
+      this.map.setFilter(LAYER_LABELS, null)
+    } else {
+      this.map.setFilter(LAYER, ["all", ...nextFilter])
+      this.map.setFilter(LAYER_LABELS, ["all", ...nextFilter])
+    }
+  }
 
+  // Handler to toggle the visbility for the labels
+  async toggleLabels() {
+    const layer = this.map.getLayer(LAYER_LABELS)
+  
+    if (!!layer) {
+      this.map.getLayoutProperty(LAYER_LABELS, "visibility") === "visible"
+        ? this.map.setLayoutProperty(LAYER_LABELS, "visibility", "none")
+        : this.map.setLayoutProperty(LAYER_LABELS, "visibility", "visible")
+    }
+  }
+
+  // Handler to reset the bounds to the buffered bounding box
+  // of all the visible features on the map
+  async fitToView() {
+    const filter = this.map.getFilter(LAYER)
+    const features = this.map.querySourceFeatures(SOURCE, filter)
+    const bbox = this.calculateBounds(features)
     this.map.fitBounds(bbox)
   }
 
-  addFilter(property, value, render = true) {
-    if (!this.filters.hasOwnProperty(property)) {
-      this.filters[property] = new Set()
-    }
-
-    this.filters[property].add(value)
-
-    if (render) {
-      this.render()
-    }
+  // Handler to save the map to a PNG and download
+  async saveToImage() {
+    return await this.map.getCanvas().toDataURL()
   }
 
-  removeFilter(property, value, render = true) {
-    if (this.filters.hasOwnProperty(property)) {
-      this.filters[property].delete(value)
-    }
+  // Fetch the symbols required for rendering the map. These are loaded
+  // directly into the map on each build.
+  async fetchSymbols() {
+    const resp = await fetch("/api/symbology/icons/")
+    const data = await resp.json()
 
-    if (render) {
-      this.render()
-    }
-  }
-
-  addFeatures(features, label) {
-    this.features = this.features.concat(features)
-    this.render()
-  }
-
-  render() {
-    this.markers.forEach(marker => marker.remove())
-    this.markers = []
-
-    this.getVisibleFeatures().map(feature => {
-      const popup = new mapboxgl.Popup({ offset: 24 })
-        .setHTML(this.getPopupHTML(feature))
-
-      const pin = document.createElement("span")
-      const { symbol, color } = feature.properties
-      pin.className = `icon--filled icon--${color}`
-      pin.textContent = symbol
-
-      const marker = new mapboxgl.Marker({ element: pin })
-        .setLngLat(feature.geometry.coordinates)
-        .setPopup(popup)
-        .addTo(this.map)
-
-      this.markers.push(marker)
+    data.forEach(({name, url}) => {
+      this.map.loadImage(url, (error, image) => {
+        if (error) throw error
+        this.map.addImage(name, image, { sdf: true })
+      })
     })
   }
 
-  getVisibleFeatures() {
-    return this.features.filter(feature => {
-      for (const property of Object.keys(this.filters)) {
-        const featureValue = feature.properties[property]
-        const filterValues = this.filters[property]
+  // Fetch the GeoJSON Feature Collection containing all of the
+  // features for the current project
+  async fetchFeatures() {
+    let page = 1
+    let features = []
 
-        if (featureValue && !filterValues.has(featureValue)) {
-          return false
-        }
+    while (page !== null) {
+      const url = `/api/measurements/?project=${this.projectId}&page=${page}`
+      const resp = await fetch(url)
+
+      if (!resp.ok) {
+        throw new Error(`Error fetching project ${this.projectId} data`)
       }
 
-      return true
-    })
+      const { results, next } = await resp.json()
+      features = [...features, ...results.features]
+      page = !!next ? page + 1 : null
+    }
+
+    const bbox = this.calculateBounds(features)
+
+    return {type: "FeatureCollection", bbox, features} 
   }
 
+  // Calculate the buffered bounding box from a set of GeoJSON
+  // features. The buffer is a fraction of the minimum bounds.
+  calculateBounds(features) {
+    if (!features) {
+      return [0, 0, 0, 0]
+    }
+
+    const [minX, minY, maxX, maxY] = features.reduce((bbox, feature) => (
+      [
+        Math.min(bbox[0], feature.geometry.coordinates[0]),
+        Math.min(bbox[1], feature.geometry.coordinates[1]),
+        Math.max(bbox[2], feature.geometry.coordinates[0]),
+        Math.max(bbox[3], feature.geometry.coordinates[1]),
+      ]
+    ), [Infinity, Infinity, -Infinity, -Infinity])
+
+    const buffer = 0.1
+    const dx = (maxX - minX) * buffer
+    const dy = (maxY - minY) * buffer
+
+    return [minX - dx, minY - dy, maxX + dx, maxY + dy]
+  }
+
+  // Return the HTML template for the feature to render inside the
+  // popup menu
   getPopupHTML(feature) {
     const props = feature.properties
     const empty = "N/A"

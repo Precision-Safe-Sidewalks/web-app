@@ -339,8 +339,11 @@
         <div class="w-25p p-4">
           <div>
             <div class="flex">
-              <button class="btn" onclick="resetMapBounds()">
-                Fit to View
+              <button class="btn mr-1" onclick="fitToView()">
+                Fit View
+              </button>
+              <button class="btn" onclick="saveToImage()">
+                Save Image
               </button>
             </div>
           </div>
@@ -356,10 +359,17 @@
           </div>
 
           <div class="mt-4">
+            <div onclick="onToggleMapLabels()">
+              <input id="map:labels", type="checkbox" checked="">
+              <label class="text--label-lg">Show Labels</label>
+            </div>
+          </div>
+
+          <div class="mt-4">
             <h6>Stage</h6>
             {% for stage in map_legend.stages %}
             <div class="mt-1" onclick="onToggleMapLayer(event, 'stage', '{{ stage }}')">
-              <input id="map:stage:{{ stage }}" type="checkbox" checked>
+              <input id="map:filter:stage:{{ stage }}" type="checkbox" checked>
               <label class="text--label-lg">{{ stage }}</label>
             </div>
             {% endfor %}
@@ -369,7 +379,7 @@
             <h6>Hazard Sizes</h6>
             {% for hazard_size in map_legend.hazard_sizes %}
             <div class="mt-1" onclick="onToggleMapLayer(event, 'hazard_size', '{{ hazard_size }}')">
-              <input id="map:hazard_size:{{ hazard_size }}" type="checkbox" checked>
+              <input id="map:filter:hazard_size:{{ hazard_size }}" type="checkbox" checked>
               <label class="text--label-lg">{{ hazard_size }}</label>
             </div>
             {% endfor %}
@@ -379,7 +389,7 @@
             <h6>Special Cases</h6>
             {% for special_case in map_legend.special_cases %}
             <div class="mt-1" onclick="onToggleMapLayer(event, 'special_case', '{{ special_case }}')">
-              <input id="map:special_case:{{ special_case }}" type="checkbox" checked>
+              <input id="map:filter:special_case:{{ special_case }}" type="checkbox" checked>
               <label class="text--label-lg">{{ special_case }}</label>
             </div>
             {% endfor %}
@@ -401,19 +411,12 @@
 
   // Global variables
   var map = null;
+  var imageId = 1;
 
   $(document).ready(() => {
     map = new MeasurementsMap("map", "{{ project.pk }}", center=centroid)
-    map.fetchFeatures()
-
-    // Add the initial filters
-    $(`input[type="checkbox"][id^="map:"]`).map((_, element) => {
-      const [prefix, prop, value] = element.id.split(":")
-      element.checked && map.addFilter(prop, value, false)
-    })
-
-    map.render()
-    map.resetBounds()
+    $(`input[id^="map:filter"]`).prop("checked", true)
+    $(`input[id="map:labels"]`).prop("checked", false)
   })
 
   // Configure the handler for the status change
@@ -494,28 +497,47 @@
   }
 
   // Handler to reset the map bounds
-  const resetMapBounds = () => {
-    map.resetBounds()
+  const fitToView = () => {
+    map.fitToView()
   }
 
   // Handler to change the map style
   const onChangeMapStyle = (event) => {
-    console.log(event.target.value)
-    map.setStyle(event.target.value)
+    map.buildMap(event.target.value)
   }
 
   // Handler for toggling a map layer
   const onToggleMapLayer = (event, layer, value) => {
-    const element = document.getElementById(`map:${layer}:${value}`)
+    const element = document.getElementById(`map:filter:${layer}:${value}`)
 
     if (event.target !== element) {
       $(element).prop("checked", !element.checked)
     }
 
     element.checked
-      ? map.addFilter(layer, value)
-      : map.removeFilter(layer, value)
+      ? map.removeFilter(layer, value)
+      : map.addFilter(layer, value)
   }
 
+  // Handler for toggling the map labels
+  const onToggleMapLabels = () => {
+    const element = document.getElementById("map:labels")
+    
+    if (event.target !== element) {
+      $(element).prop("checked", !element.checked)
+    }
+
+    map.toggleLabels()
+  }
+
+  // Handler to save the map as an image
+  const saveToImage = async () => {
+    var a = document.createElement("a")
+    a.href = await map.saveToImage()
+    a.download = `{{ project.slug }}_map_${imageId}.png`
+    a.click()
+    
+    imageId++
+  }
 </script>
 {% endblock %}
