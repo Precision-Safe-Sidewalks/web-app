@@ -132,14 +132,12 @@ func (p InchFootPricingSheet) UpdateSurveyData(f *excelize.File) {
 			f.SetCellValue(sheet, fmt.Sprintf("T%d", i+offset), item.ObjectId)
 
 			if hazard_size == "Other" {
-				var cell string
+				f.SetCellValue(sheet, fmt.Sprintf("V%d", offset+i), "Other")
+			}
 
-				cell = fmt.Sprintf("A%d", i+offset)
-				HighlightCell(f, sheet, cell, true)
-
-				cell = fmt.Sprintf("V%d", i+offset)
-				f.SetCellValue(sheet, cell, "Other")
-				HighlightCell(f, sheet, cell, true)
+			if color := item.GetHighlightColor(); color != "" {
+				HighlightCell(f, sheet, fmt.Sprintf("A%d", offset+i), color)
+				HighlightCell(f, sheet, fmt.Sprintf("T%d", offset+i), color)
 			}
 		}
 	}

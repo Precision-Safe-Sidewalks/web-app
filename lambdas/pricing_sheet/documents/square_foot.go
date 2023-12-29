@@ -97,12 +97,11 @@ func (p SquareFootPricingSheet) UpdateSurveyData(f *excelize.File) {
 			if utils.SafeString(item.SpecialCase) == "Replace" {
 				f.SetCellValue(sheet, fmt.Sprintf("D%d", offset+i), "")
 				f.SetCellValue(sheet, fmt.Sprintf("E%d", offset+i), "")
-				HighlightCell(f, sheet, fmt.Sprintf("C%d", offset+i), false)
 			}
 
-			if utils.SafeString(item.HazardSize) == "Other" {
-				HighlightCell(f, sheet, fmt.Sprintf("A%d", offset+i), true)
-				HighlightCell(f, sheet, fmt.Sprintf("F%d", offset+i), false)
+			if color := item.GetHighlightColor(); color != "" {
+				HighlightCell(f, sheet, fmt.Sprintf("A%d", offset+i), color)
+				HighlightCell(f, sheet, fmt.Sprintf("X%d", offset+i), color)
 			}
 		}
 	}
