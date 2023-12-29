@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/xuri/excelize/v2"
 
+	"app.bluezoneautomation.com/lambda-pricing-sheet/v2/constants"
 	"app.bluezoneautomation.com/lambda-pricing-sheet/v2/schema"
 	"app.bluezoneautomation.com/lambda-pricing-sheet/v2/utils"
 )
@@ -97,12 +98,16 @@ func (p SquareFootPricingSheet) UpdateSurveyData(f *excelize.File) {
 			if utils.SafeString(item.SpecialCase) == "Replace" {
 				f.SetCellValue(sheet, fmt.Sprintf("D%d", offset+i), "")
 				f.SetCellValue(sheet, fmt.Sprintf("E%d", offset+i), "")
-				HighlightCell(f, sheet, fmt.Sprintf("C%d", offset+i), false)
+				HighlightCell(f, sheet, fmt.Sprintf("C%d", offset+i), constants.COLOR_YELLOW)
 			}
 
 			if utils.SafeString(item.HazardSize) == "Other" {
-				HighlightCell(f, sheet, fmt.Sprintf("A%d", offset+i), true)
-				HighlightCell(f, sheet, fmt.Sprintf("F%d", offset+i), false)
+				HighlightCell(f, sheet, fmt.Sprintf("A%d", offset+i), constants.COLOR_YELLOW)
+				HighlightCell(f, sheet, fmt.Sprintf("F%d", offset+i), constants.COLOR_YELLOW)
+			}
+
+			if color := item.GetHighlightColor(); color != "" {
+				HighlightCell(f, sheet, fmt.Sprintf("A%d", offset+i), color)
 			}
 		}
 	}

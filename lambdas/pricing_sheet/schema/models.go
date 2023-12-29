@@ -1,5 +1,10 @@
 package schema
 
+import (
+	"app.bluezoneautomation.com/lambda-pricing-sheet/v2/constants"
+	"app.bluezoneautomation.com/lambda-pricing-sheet/v2/utils"
+)
+
 type PricingSheetData struct {
 	Id           int                `json:"id"`
 	Name         string             `json:"name"`
@@ -120,4 +125,40 @@ type Measurement struct {
 	Address              *string `json:"geocoded_address"`
 	Note                 *string `json:"note"`
 	Description          string  `json:"description"`
+}
+
+func (m Measurement) GetHighlightColor() string {
+	specialCase := utils.SafeString(m.SpecialCase)
+	hazardSize := utils.SafeString(m.HazardSize)
+
+	// If curb, highlight if the either:
+	// - Panel length or width are non-zero [Yellow]
+	// - Hazard size is Small, Medium, or Large [Yellow]
+	if specialCase == "Curb" {
+		if m.Width != 0 || m.Length != 0 {
+			return constants.COLOR_YELLOW
+		}
+
+		if hazardSize == "Small" || hazardSize == "Medium" || hazardSize == "Large" {
+			return constants.COLOR_YELLOW
+		}
+	}
+
+	// If recuts, highlight if:
+	// - Hazard size is not Large [Pink]
+	if specialCase == "Recuts" {
+		if hazardSize != "Large" {
+			return constants.COLOR_PINK
+		}
+	}
+
+	// If replace, highlight if:
+	// - Hazard size is Small, Medium, or Large [Green]
+	if specialCase == "Replace" {
+		if hazardSize == "Small" || hazardSize == "Medium" || hazardSize == "Large" {
+			return constants.COLOR_GREEN
+		}
+	}
+
+	return ""
 }
