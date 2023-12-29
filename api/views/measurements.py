@@ -1,4 +1,3 @@
-from django.templatetags.static import static
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet, ViewSet
