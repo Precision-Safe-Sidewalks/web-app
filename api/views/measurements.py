@@ -26,8 +26,7 @@ class SymbologyViewSet(ViewSet):
         for _, icon in SYMBOLS.items():
             if icon not in used:
                 used.add(icon)
-                path = static(f"icons/material/{icon}.png")
-                url = request.build_absolute_uri(path)
+                url = f"/static/icons/material/{icon}.png"
                 data.append({"name": icon, "url": url})
 
         return Response(data)
