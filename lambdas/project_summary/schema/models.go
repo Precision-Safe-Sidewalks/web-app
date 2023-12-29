@@ -3,6 +3,8 @@ package schema
 import (
 	"fmt"
 	"strings"
+
+	"app.bluezoneautomation.com/lambda-project-summary/v2/constants"
 )
 
 type ProjectSummaryData struct {
@@ -143,4 +145,13 @@ type Measurement struct {
 	TechInitials         string  `json:"tech_initials"`
 	WorkDate             string  `json:"work_date"`
 	Description          string  `json:"description"`
+}
+
+func (m Measurement) GetHighlightColor() string {
+	// If H2 > 20, higlight yellow
+	if m.H2 > 20 {
+		return constants.COLOR_YELLOW
+	}
+
+	return ""
 }

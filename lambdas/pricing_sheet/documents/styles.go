@@ -4,22 +4,24 @@ import (
 	"strings"
 
 	"github.com/xuri/excelize/v2"
+
+	"app.bluezoneautomation.com/lambda-pricing-sheet/v2/constants"
 )
 
 // Highlight a cell by copying it's current style and replacing the fill. Force
 // the font color to black.
-func HighlightCell(f *excelize.File, sheet string, cell string, center bool) error {
+func HighlightCell(f *excelize.File, sheet string, cell string, color string) error {
 	style, err := CopyCellStyle(f, sheet, cell)
 	if err != nil {
 		return err
 	}
 
 	style.Fill.Type = "pattern"
-	style.Fill.Color = []string{"#FFFF00"}
+	style.Fill.Color = []string{color}
 	style.Fill.Pattern = 1
 
 	if style.Font != nil {
-		style.Font.Color = "#000000"
+		style.Font.Color = constants.COLOR_BLACK
 	}
 
 	styleId, err := f.NewStyle(style)

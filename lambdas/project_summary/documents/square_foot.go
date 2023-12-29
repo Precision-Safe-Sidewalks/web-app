@@ -121,6 +121,12 @@ func (s SquareFootProjectSummary) UpdateSurveyData(f *excelize.File) {
 			f.SetCellValue(sheet, fmt.Sprintf("M%d", rowId), s.Data.GetTechInitials(item.Tech))
 			f.SetCellValue(sheet, fmt.Sprintf("N%d", rowId), item.ObjectId)
 
+			// Apply conditional highlighting
+			if color := item.GetHighlightColor(); color != "" {
+				HighlightCell(f, sheet, fmt.Sprintf("E%d", rowId), color)
+				HighlightCell(f, sheet, fmt.Sprintf("N%d", rowId), color)
+			}
+
 			// Update the formulas for the tech totals
 			for j, tech := range techs {
 				cell, _ := excelize.CoordinatesToCellName(j+16, rowId)

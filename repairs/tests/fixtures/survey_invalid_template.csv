@@ -1,0 +1,13 @@
+OBJECTID,CreationDate,Creator,Width,Length,Hazard Size,Special Case,H1,H2,Survey Address,Notes,SQFT,Curb Length (feet),Measured Hazard Length (inches),x,y,Start Street - Area,Inch Feet
+1,8/3/23 15:19,j.clapper_PSSPIMS,9,9,,Curb,,,104 Aisling Ct,Yellow. Curb + Width or Length,81,,,-78.76618822,35.80083209,Aisling Ct,
+2,8/3/23 15:19,j.clapper_PSSPIMS,0,9,,Curb,,,104 Aisling Ct,Yellow. Curb + Width or Length,0,,,-78.76618822,35.80083209,Aisling Ct,
+3,8/3/23 15:19,j.clapper_PSSPIMS,9,0,,Curb,,,104 Aisling Ct,Yellow. Curb + Width or Length,0,,,-78.76618822,35.80083209,Aisling Ct,
+4,8/3/23 15:19,j.clapper_PSSPIMS,,,Small,Curb,,,104 Aisling Ct,Yellow. Curb + Small,0,,,-78.76618822,35.80083209,Aisling Ct,
+5,8/3/23 15:19,j.clapper_PSSPIMS,,,Medium,Curb,,,104 Aisling Ct,Yellow. Curb + Medium,0,,,-78.76618822,35.80083209,Aisling Ct,
+6,8/3/23 15:19,j.clapper_PSSPIMS,,,Large,Curb,,,104 Aisling Ct,Yellow. Curb + Large,0,,,-78.76618822,35.80083209,Aisling Ct,
+7,8/3/23 15:19,j.clapper_PSSPIMS,9,9,Small,Recuts,,,104 Aisling Ct,Pink. Recuts + Small,81,,,-78.76618822,35.80083209,Aisling Ct,
+8,8/3/23 15:19,j.clapper_PSSPIMS,9,9,Medium,Recuts,,,104 Aisling Ct,Pink. Recuts + Medium,81,,,-78.76618822,35.80083209,Aisling Ct,
+9,8/3/23 15:19,j.clapper_PSSPIMS,9,9,,Recuts,,,104 Aisling Ct,Pink. Recuts + Blank,81,,,-78.766188,35.8008321,Aisling Ct,
+10,8/3/23 15:19,j.clapper_PSSPIMS,9,9,Small,Replace,,,104 Aisling Ct,Green. Replace + Small,81,,,-78.76618822,35.80083209,Aisling Ct,
+11,8/3/23 15:19,j.clapper_PSSPIMS,9,9,Medium,Replace,,,104 Aisling Ct,Green. Replace + Medium,81,,,-78.76618822,35.80083209,Aisling Ct,
+12,8/3/23 15:19,j.clapper_PSSPIMS,9,9,Large,Replace,,,104 Aisling Ct,Green. Replace + Large,81,,,-78.76618822,35.80083209,Aisling Ct,
