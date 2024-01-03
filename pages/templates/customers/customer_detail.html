@@ -12,10 +12,10 @@
 
   <div class="mt-16">
     <div class="flex align-items-center justify-content-between">
-      <h5>Active Projects</h5>
+      <h5>Active Deals</h5>
 
       <a href="{% url 'customer-project-create' pk=customer.pk %}" class="btn--tonal">
-        Add project
+        Add deal
       </a>
     </div>
 
@@ -25,7 +25,7 @@
   </div>
 
   <div class="mt-16">
-    <h5>Completed Projects</h5>
+    <h5>Completed Deals</h5>
     
     <div class="mt-4">
       <div id="completed-projects-table"></div>
@@ -52,12 +52,11 @@
     // Create the active projects data table
     new DataTable("active-projects-table", {
       columns: [
-        "Name",
-        "Status",
+        "Deal Name",
+        "Stage",
         "BD",
-        "BDA",
+        "Segment",
         "Territory",
-        "Primary Contact",
         "Created",
       ],
       url: "/api/tables/projects/?customer={{ customer.pk }}&active=true",
@@ -67,12 +66,11 @@
     // Create the completed projects data table
     new DataTable("completed-projects-table", {
       columns: [
-        "Name",
-        "Status",
+        "Deal Name",
+        "Stage",
         "BD",
-        "BDA",
+        "Segment",
         "Territory",
-        "Primary Contact",
         "Created",
       ],
       url: "/api/tables/projects/?customer={{ customer.pk }}&active=false",

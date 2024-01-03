@@ -69,11 +69,10 @@ class CustomerTableSerializer(serializers.ModelSerializer):
 
 class ProjectTableSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField()
-    status = serializers.SerializerMethodField()
+    stage = serializers.SerializerMethodField()
     business_development_manager = serializers.SerializerMethodField()
-    business_development_administrator = serializers.SerializerMethodField()
+    segment = serializers.SerializerMethodField()  # FIXME: add field to model
     territory = serializers.CharField(source="territory.label")
-    primary_contact = serializers.SerializerMethodField()
     created = serializers.SerializerMethodField()
 
     def get_name(self, obj):
@@ -81,7 +80,7 @@ class ProjectTableSerializer(serializers.ModelSerializer):
         html = f'<a href="{href}">{obj.name}</a>'
         return mark_safe(html)
 
-    def get_status(self, obj):
+    def get_stage(self, obj):
         return obj.get_status_display()
 
     def get_business_development_manager(self, obj):
@@ -89,16 +88,9 @@ class ProjectTableSerializer(serializers.ModelSerializer):
             return obj.business_development_manager.full_name
         return None
 
-    def get_business_development_administrator(self, obj):
-        if obj.business_development_administrator:
-            return obj.business_development_administrator.full_name
-        return None
-
-    def get_primary_contact(self, obj):
-        contact = obj.primary_contact
-        if contact:
-            return contact.name
-        return None
+    def get_segment(self, obj):
+        # FIXME: use model field
+        return ""
 
     def get_created(self, obj):
         return obj.created_at.strftime("%-m/%-d/%Y")
@@ -107,11 +99,10 @@ class ProjectTableSerializer(serializers.ModelSerializer):
         model = Project
         fields = (
             "name",
-            "status",
+            "stage",
             "business_development_manager",
-            "business_development_administrator",
+            "segment",
             "territory",
-            "primary_contact",
             "created",
         )
 
