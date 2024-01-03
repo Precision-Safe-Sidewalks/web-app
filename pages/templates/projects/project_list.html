@@ -15,12 +15,11 @@
   $(document).ready(() => {
     new DataTable("projects-table", {
       columns: [
-        "Name",
-        "Status",
+        "Deal Name",
+        "Stage",
         "BD",
-        "BDA",
+        "Segment",
         "Territory",
-        "Primary Contact",
         "Created",
       ],
       url: "/api/tables/projects/",

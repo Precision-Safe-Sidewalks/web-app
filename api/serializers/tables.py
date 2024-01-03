@@ -35,6 +35,7 @@ class ContactTableSerializer(serializers.ModelSerializer):
 class CustomerTableSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField()
     location = serializers.SerializerMethodField()
+    segment = serializers.SerializerMethodField()
     active_projects = serializers.SerializerMethodField()
     completed_projects = serializers.SerializerMethodField()
     created = serializers.SerializerMethodField()
@@ -46,6 +47,9 @@ class CustomerTableSerializer(serializers.ModelSerializer):
 
     def get_location(self, obj):
         return obj.short_address or ""
+
+    def get_segment(self, obj):
+        return obj.get_segment_display()
 
     def get_active_projects(self, obj):
         return obj.active_projects.count()
@@ -61,6 +65,7 @@ class CustomerTableSerializer(serializers.ModelSerializer):
         fields = (
             "name",
             "location",
+            "segment",
             "active_projects",
             "completed_projects",
             "created",
@@ -71,7 +76,7 @@ class ProjectTableSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField()
     stage = serializers.SerializerMethodField()
     business_development_manager = serializers.SerializerMethodField()
-    segment = serializers.SerializerMethodField()  # FIXME: add field to model
+    segment = serializers.SerializerMethodField()
     territory = serializers.CharField(source="territory.label")
     created = serializers.SerializerMethodField()
 
@@ -89,8 +94,7 @@ class ProjectTableSerializer(serializers.ModelSerializer):
         return None
 
     def get_segment(self, obj):
-        # FIXME: use model field
-        return ""
+        return obj.customer.get_segment_display()
 
     def get_created(self, obj):
         return obj.created_at.strftime("%-m/%-d/%Y")
