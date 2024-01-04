@@ -25,6 +25,14 @@
         "Created",
       ],
       filterOptions: filterOptions,
+      sortOptions: [
+        {sort: "name", label: "Deal Name"},
+        {sort: "status", label: "Stage"},
+        {sort: "business_development_manager", label: "BD"},
+        {sort: "customer__segment", label: "Segment"},
+        {sort: "territory__name", label: "Territory"},
+        {sort: "created_at", label: "Created"},
+      ],
       url: "/api/tables/projects/",
       perPage: 10,
     })
