@@ -1,4 +1,5 @@
 @import "../theme/colors.scss";
+@import "../theme/typography.scss";
 
 .menu {
   select {
@@ -16,4 +17,10 @@
       display: none;
     }
   }
+}
+
+.menu-label {
+  @extend .text--body-sm;
+  @extend .mt-1;
+  @extend .ml-2;
 }

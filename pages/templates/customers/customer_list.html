@@ -3,9 +3,9 @@
 {% block content %}
 <div class="pane pane--full-height">
   <div class="flex align-items-center justify-content-between">
-    <h2>Customers</h2>
+    <h2>Organization</h2>
     <a class="btn--tonal" href="{% url 'customer-create' %}">
-      New Customer
+      New Organization
     </a>
   </div>
 
@@ -18,10 +18,11 @@
   $(document).ready(() => {
     new DataTable("customers-table", {
       columns: [
-        "Customer Name",
+        "Organization Name",
         "Location",
-        "Active Projects",
-        "Completed Projects",
+        "Segment",
+        "Active Deals",
+        "Completed Deals",
         "Created",
       ],
       url: "/api/tables/customers/",

@@ -2,6 +2,7 @@ import django_filters
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 
+from customers.constants import Segment
 from customers.models import Contact, Customer
 from repairs.models import Project
 
@@ -40,12 +41,19 @@ class ProjectTableFilter(django_filters.FilterSet):
     q = django_filters.CharFilter(method="filter_q")
     active = django_filters.BooleanFilter(method="filter_active")
     status = django_filters.MultipleChoiceFilter(choices=Project.Status.choices)
+    business_development_manager = django_filters.ModelMultipleChoiceFilter(
+        queryset=User.objects.all(),
+    )
+    segment = django_filters.MultipleChoiceFilter(
+        field_name="customer__segment",
+        choices=Segment.choices,
+    )
 
     def filter_q(self, queryset, name, value):
-        # TODO: make BD/BDA filterable
-
         return queryset.filter(
             Q(name__icontains=value)
+            | Q(business_development_manager__full_name__icontains=value)
+            | Q(customer__segment__icontains=value)
             | Q(territory__label__icontains=value)
             | Q(territory__name__icontains=value)
         )
@@ -61,7 +69,7 @@ class ProjectTableFilter(django_filters.FilterSet):
 
     class Meta:
         model = Project
-        fields = ("customer", "status", "q")
+        fields = ("customer", "status", "business_development_manager", "segment", "q")
 
 
 class UserTableFilter(django_filters.FilterSet):

@@ -22,7 +22,7 @@ class CustomerDetailView(DetailView):
 
 class CustomerCreateView(CreateView):
     model = Customer
-    fields = ("name", "address", "city", "state")
+    fields = ("name", "address", "city", "state", "segment")
     template_name = "customers/customer_form.html"
 
     def get_success_url(self):
@@ -31,7 +31,7 @@ class CustomerCreateView(CreateView):
 
 class CustomerUpdateView(UpdateView):
     model = Customer
-    fields = ("name", "address", "city", "state")
+    fields = ("name", "address", "city", "state", "segment")
     template_name = "customers/customer_form.html"
 
     def get_success_url(self):

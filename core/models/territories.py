@@ -12,3 +12,9 @@ class Territory(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.label}"
+
+    @classmethod
+    def to_options(cls):
+        """Return the list of options dictionaries"""
+        queryset = cls.objects.order_by("name")
+        return [{"key": t.id, "value": t.name} for t in queryset]

@@ -35,6 +35,7 @@ class ContactTableSerializer(serializers.ModelSerializer):
 class CustomerTableSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField()
     location = serializers.SerializerMethodField()
+    segment = serializers.SerializerMethodField()
     active_projects = serializers.SerializerMethodField()
     completed_projects = serializers.SerializerMethodField()
     created = serializers.SerializerMethodField()
@@ -46,6 +47,9 @@ class CustomerTableSerializer(serializers.ModelSerializer):
 
     def get_location(self, obj):
         return obj.short_address or ""
+
+    def get_segment(self, obj):
+        return obj.get_segment_display()
 
     def get_active_projects(self, obj):
         return obj.active_projects.count()
@@ -61,6 +65,7 @@ class CustomerTableSerializer(serializers.ModelSerializer):
         fields = (
             "name",
             "location",
+            "segment",
             "active_projects",
             "completed_projects",
             "created",
@@ -69,11 +74,10 @@ class CustomerTableSerializer(serializers.ModelSerializer):
 
 class ProjectTableSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField()
-    status = serializers.SerializerMethodField()
+    stage = serializers.SerializerMethodField()
     business_development_manager = serializers.SerializerMethodField()
-    business_development_administrator = serializers.SerializerMethodField()
+    segment = serializers.SerializerMethodField()
     territory = serializers.CharField(source="territory.label")
-    primary_contact = serializers.SerializerMethodField()
     created = serializers.SerializerMethodField()
 
     def get_name(self, obj):
@@ -81,7 +85,7 @@ class ProjectTableSerializer(serializers.ModelSerializer):
         html = f'<a href="{href}">{obj.name}</a>'
         return mark_safe(html)
 
-    def get_status(self, obj):
+    def get_stage(self, obj):
         return obj.get_status_display()
 
     def get_business_development_manager(self, obj):
@@ -89,16 +93,8 @@ class ProjectTableSerializer(serializers.ModelSerializer):
             return obj.business_development_manager.full_name
         return None
 
-    def get_business_development_administrator(self, obj):
-        if obj.business_development_administrator:
-            return obj.business_development_administrator.full_name
-        return None
-
-    def get_primary_contact(self, obj):
-        contact = obj.primary_contact
-        if contact:
-            return contact.name
-        return None
+    def get_segment(self, obj):
+        return obj.customer.get_segment_display()
 
     def get_created(self, obj):
         return obj.created_at.strftime("%-m/%-d/%Y")
@@ -107,11 +103,10 @@ class ProjectTableSerializer(serializers.ModelSerializer):
         model = Project
         fields = (
             "name",
-            "status",
+            "stage",
             "business_development_manager",
-            "business_development_administrator",
+            "segment",
             "territory",
-            "primary_contact",
             "created",
         )
 

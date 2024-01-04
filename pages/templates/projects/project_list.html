@@ -3,7 +3,7 @@
 {% block content %}
 <div class="pane pane--full-height">
   <div class="flex align-items-center justify-content-between">
-    <h2>Projects</h2>
+    <h2>Deals</h2>
   </div>
 
   <div class="my-12">
@@ -12,17 +12,19 @@
 </div>
 
 <script>
+  const filterOptions = {{ table_filters|safe }}
+  
   $(document).ready(() => {
     new DataTable("projects-table", {
       columns: [
-        "Name",
-        "Status",
+        "Deal Name",
+        "Stage",
         "BD",
-        "BDA",
+        "Segment",
         "Territory",
-        "Primary Contact",
         "Created",
       ],
+      filterOptions: filterOptions,
       url: "/api/tables/projects/",
       perPage: 10,
     })

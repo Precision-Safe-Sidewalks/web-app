@@ -18,6 +18,11 @@ class BDMManager(models.Manager):
 
         return super().get_queryset().filter(roles__role=UserRole.Role.BDM)
 
+    def to_options(self):
+        """Return the list of options dictionaries"""
+        queryset = self.get_queryset().order_by("full_name")
+        return [{"key": u.id, "value": u.full_name} for u in queryset]
+
 
 class BDAManager(models.Manager):
     use_in_migrations = False

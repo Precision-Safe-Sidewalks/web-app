@@ -2,6 +2,7 @@ from django.db import models
 
 from core.models.abstract import AbstractPhoneNumber
 from core.models.constants import PhoneNumberType, States
+from customers.constants import Segment
 
 
 class Customer(models.Model):
@@ -12,6 +13,9 @@ class Customer(models.Model):
     city = models.CharField(max_length=100, blank=True, null=True)
     state = models.CharField(
         max_length=2, blank=True, null=True, choices=States.choices
+    )
+    segment = models.CharField(
+        max_length=100, choices=Segment.choices, blank=True, null=True
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -21,6 +21,11 @@ class Project(models.Model):
         SCHEDULED = (4, "Scheduled/Work in progress")
         COMPLETE = (5, "Invoiced/Complete")
 
+        @classmethod
+        def to_options(cls):
+            """Return the list of {key, value} options"""
+            return [{"key": k, "value": v} for (k, v) in cls.choices]
+
     name = models.CharField(max_length=255)
     address = models.TextField(blank=True, null=True)
     status = models.IntegerField(choices=Status.choices, default=Status.SURVEY)
