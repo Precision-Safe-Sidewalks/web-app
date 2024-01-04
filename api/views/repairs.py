@@ -36,7 +36,7 @@ class SurveyInstructionsAPIView(APIView):
             generator.generate(f)
             f.seek(0)
 
-            filename = f"{instruction.project.name} - SI.pdf"
+            filename = f"SI - {instruction.project.name}.pdf"
             resp = HttpResponse(f, content_type="application/pdf")
             resp["Content-Disposition"] = f'attachment; filename="{filename}"'
             return resp
@@ -53,7 +53,7 @@ class ProjectInstructionsAPIView(APIView):
             generator.generate(f)
             f.seek(0)
 
-            filename = f"{instruction.project.name} - PI.pdf"
+            filename = f"PI - {instruction.project.name}.pdf"
             resp = HttpResponse(f, content_type="application/pdf")
             resp["Content-Disposition"] = f'attachment; filename="{filename}"'
             return resp
