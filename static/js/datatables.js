@@ -314,6 +314,7 @@ class DataTable {
     $(iconDesc).css("display", asc ? "none" : "block")
     
     this.sortBy = {...option, asc: asc}
+    this.openFilter = null
     this.render()
   }
 
