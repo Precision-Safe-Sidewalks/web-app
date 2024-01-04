@@ -315,6 +315,7 @@ class DataTable {
     
     this.sortBy = {...option, asc: asc}
     this.openFilter = null
+    this.currentPage = 1
     this.render()
   }
 
