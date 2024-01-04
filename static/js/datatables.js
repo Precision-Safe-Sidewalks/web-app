@@ -123,7 +123,7 @@ class DataTable {
   renderFilters(data) {
     $(`div[class="table-filters"]`).empty()
 
-    if (this.options?.filterOptions.length !== 0) {
+    if (!!this.options.filterOptions) {
       const container = $(`div[class="table-filters"]`)
       const grid = $(`<div class="table-filters-grid"></div>`)
 

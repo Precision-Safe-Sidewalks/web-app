@@ -2,6 +2,7 @@ import django_filters
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 
+from core.models import Territory
 from customers.constants import Segment
 from customers.models import Contact, Customer
 from repairs.models import Project
@@ -48,6 +49,9 @@ class ProjectTableFilter(django_filters.FilterSet):
         field_name="customer__segment",
         choices=Segment.choices,
     )
+    territory = django_filters.ModelMultipleChoiceFilter(
+        queryset=Territory.objects.all(),
+    )
 
     def filter_q(self, queryset, name, value):
         return queryset.filter(
@@ -69,7 +73,14 @@ class ProjectTableFilter(django_filters.FilterSet):
 
     class Meta:
         model = Project
-        fields = ("customer", "status", "business_development_manager", "segment", "q")
+        fields = (
+            "customer",
+            "status",
+            "business_development_manager",
+            "segment",
+            "territory",
+            "q",
+        )
 
 
 class UserTableFilter(django_filters.FilterSet):
