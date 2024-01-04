@@ -1,4 +1,5 @@
 import io
+import json
 import logging
 from datetime import datetime
 
@@ -19,6 +20,8 @@ from django.views.generic import (
 )
 from pydantic import ValidationError
 
+from core.models import Territory
+from customers.constants import Segment
 from customers.models import Customer
 from pages.forms.projects import (
     PricingSheetContactForm,
@@ -56,6 +59,38 @@ class ProjectListView(ListView):
     model = Project
     template_name = "projects/project_list.html"
     context_object_name = "projects"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["table_filters"] = self.get_table_filters()
+        return context
+
+    def get_table_filters(self):
+        """Return the dictionary of table filters"""
+        return json.dumps(
+            [
+                {
+                    "label": "Stage",
+                    "field": "status",
+                    "options": Project.Status.to_options(),
+                },
+                {
+                    "label": "BD",
+                    "field": "business_development_manager",
+                    "options": User.bdm.to_options(),
+                },
+                {
+                    "label": "Segment",
+                    "field": "segment",
+                    "options": Segment.to_options(),
+                },
+                {
+                    "label": "Territory",
+                    "field": "territory",
+                    "options": Territory.to_options(),
+                },
+            ]
+        )
 
 
 class ProjectDetailView(DetailView):

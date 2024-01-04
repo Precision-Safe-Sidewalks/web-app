@@ -3,6 +3,7 @@
 @import "../theme/colors.scss";
 @import "../layout/padding.scss";
 @import "../layout/flex.scss";
+@import "../layout/grid.scss";
 
 .table {
   @extend .text--body-md;
@@ -46,7 +47,7 @@
   @extend .flex;
   @extend .align-items-center;
   @extend .justify-content-between;
-  @extend .mb-2;
+  @extend .mb-4;
 
   .table-pagination {
     @extend .flex;
@@ -55,4 +56,19 @@
 
   .table-search {
   }
+}
+
+.table-filters {
+  @extend .text--body-md;
+  @extend .flex;
+  @extend .align-items-start;
+  @extend .justify-content-between;
+}
+
+.table-filters-grid {
+  @extend .text--body-md;
+  @extend .mb-4;
+  @extend .grid--col-4;
+
+  width: 100%;
 }

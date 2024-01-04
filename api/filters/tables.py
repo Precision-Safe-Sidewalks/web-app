@@ -2,8 +2,8 @@ import django_filters
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 
-from customers.models import Contact, Customer
 from customers.constants import Segment
+from customers.models import Contact, Customer
 from repairs.models import Project
 
 User = get_user_model()

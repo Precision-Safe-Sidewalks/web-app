@@ -5,6 +5,8 @@ class DataTable {
     this.currentPage = 1
     this.lastPage = 1
     this.query = null
+    this.filters = {}
+    this.openFilter = null
 
     this.initialize()
     this.render()
@@ -13,6 +15,7 @@ class DataTable {
   // Initialize the DOM elements defining the table
   initialize() {
     const actions = $(`<div class="table-actions"></div>`)
+    const filters = $(`<div class="table-filters"></div>`)
     const table = $(`<table class="table"></table>`)
     const thead = $(`<thead></thead>`)
     const tbody = $(`<tbody></tbody>`)
@@ -25,7 +28,10 @@ class DataTable {
     $(table).append(tbody)
 
     $(this.root).append(actions)
+    $(this.root).append(filters)
     $(this.root).append(table)
+
+    $(window).click(this.onClickAway)
   }
 
   // Render the data tbale
@@ -33,6 +39,7 @@ class DataTable {
     const data = await this.fetchData()
     this.renderData(data)
     this.renderActions(data)
+    this.renderFilters(data)
   }
 
   // Render the table data
@@ -63,7 +70,9 @@ class DataTable {
 
   // Render the search bar
   renderSearch(actions, data) {
-    if ($(this.root).find("#id-search").first().length === 0) {
+    const element = $(this.root).find("#id-search").first()
+
+    if ($(element).length === 0) {
       const search = $(`<input id="id-search" type="text" placeholder="Search...">`)
       $(search).on("keyup", (event) => this.onSearch(event.target.value))
       
@@ -109,6 +118,97 @@ class DataTable {
 
     $(actions).append(pagination)
   }
+  
+  // Render the filters
+  renderFilters(data) {
+    $(`div[class="table-filters"]`).empty()
+
+    if (this.options?.filterOptions.length !== 0) {
+      const container = $(`div[class="table-filters"]`)
+      const grid = $(`<div class="table-filters-grid"></div>`)
+
+      const clearButton = $(`<button class="ml-3 btn--tonal">Clear</button>`)
+      $(clearButton).click(() => this.onClearFilters())
+
+      $(container).append(grid)
+      $(container).append(clearButton)
+
+      this.options.filterOptions.map(f => {
+        const count = (this.filters[f.field] || []).length
+        const menuText = count > 0 ? `${count} selected` : "---"
+
+        const formControl = $(`<div class="form-control"></div>`)
+        const menuLabel = $(`<div class="menu-label">${f.label}</div>`)
+        const menuControl = $(`<div class="menu-control"></div>`)
+        const menuControlText = $(`<div class="text">${menuText}</div>`)
+        const menuControlIcon = $(`<span class="icon">arrow_drop_down</span>`)
+        const menu = $(`<div id="menu-${f.field}" class="menu"></div>`)
+        
+        f.options.forEach(o => {
+          const menuItem = $(`<div class="menu-item">${o.value}<div>`)
+          const menuItemIcon = $(`<span class="icon"></span>`)
+
+          if (this.filters[f.field]?.indexOf(o.key) > -1) {
+            $(menuItemIcon).text("done")
+          }
+
+          $(menuItem).click((e) => this.onClickFilterItem(e, f.field, o.key))
+          $(menuItem).prepend(menuItemIcon)
+          $(menu).append(menuItem)
+        })
+
+        $(menuControl).append(menuControlText)
+        $(menuControl).append(menuControlIcon)
+        $(formControl).click((e) => this.onClickFilter(e, f))
+        $(formControl).append(menuControl)
+        $(formControl).append(menuLabel)
+        $(formControl).append(menu)
+        $(grid).append(formControl)
+      })
+
+      if (this.openFilter) {
+        $(`#${this.openFilter}`).trigger("click")
+      }
+    
+      const filters = $(this.root).find(`div[class="table-filters"]`)
+      $(filters).append(container)
+    }
+  }
+
+  // Handler for clicking a filter
+  onClickFilter(e, filter) {
+    e.stopPropagation()
+
+    $(`div[id^="menu-"`)
+      .filter((_, menu) => $(menu).attr("id") !== `menu=${filter.field}`)
+      .removeClass("open")
+
+    const menu = $(`#menu-${filter.field}`)
+    const open = $(menu).hasClass("open")
+
+    if (open) {
+      this.openFilter = null
+      $(menu).removeClass("open")
+    } else {
+      this.openFilter = `menu-${filter.field}`
+      $(menu).addClass("open")
+    }
+  }
+  
+  // Handler for clicking a filter menu item
+  onClickFilterItem(e, field, value) {
+    e.stopPropagation()
+
+    if (!this.filters.hasOwnProperty(field)) {
+      this.filters[field] = [value]
+    } else {
+      this.filters[field].indexOf(value) === -1
+        ? this.filters[field].push(value)
+        : this.filters[field] = this.filters[field].filter(o => o !== value)
+    }
+
+    this.render()
+  }
 
   // Fetch the current page's data from the API
   async fetchData() {
@@ -120,6 +220,14 @@ class DataTable {
       pageUrl.searchParams.set("q", this.query)
     }
 
+    if (this.filters) {
+      Object.keys(this.filters).forEach(key => {
+        this.filters[key].forEach(value => {
+          pageUrl.searchParams.append(key, value)
+        })
+      })
+    }
+
     const resp = await fetch(pageUrl)
     const data = await resp.json()
 
@@ -128,27 +236,45 @@ class DataTable {
 
   onFirstPage() {
     this.currentPage = 1
+    this.openFilter = null
     this.render()
   }
 
   onPrevPage() {
     this.currentPage--
+    this.openFilter = null
     this.render()
   }
 
   onNextPage() {
     this.currentPage++
+    this.openFilter = null
     this.render()
   }
 
   onLastPage() {
     this.currentPage = this.lastPage
+    this.openFilter = null
     this.render()
   }
 
   onSearch(query) {
     this.currentPage = 1
     this.query = query.trim()
+    this.openFilter = null
     this.render()
+  }
+
+  onClearFilters() {
+    this.filters = {}
+    this.query = null
+    this.openFilter = null
+    this.render()
+    $(this.root).find("#id-search").val("")
+  }
+
+  onClickAway() {
+    $(`div[id^="menu-"`).removeClass("open")
+    this.openFilter = null
   }
 }

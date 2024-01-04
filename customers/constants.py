@@ -13,3 +13,8 @@ class Segment(models.TextChoices):
     RESIDENTIAL = ("RESIDENTIAL", "Residential")
     SCHOOLS_SYSTEMS = ("SCHOOLS_SYSTEMS", "Schools Systems")
     CONTRACTOR = ("CONTRACTOR", "Contractor")
+
+    @classmethod
+    def to_options(cls):
+        """Return the list of options dictionaries"""
+        return [{"key": k, "value": v} for (k, v) in cls.choices]
