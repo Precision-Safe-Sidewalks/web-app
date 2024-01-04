@@ -7,6 +7,7 @@ class DataTable {
     this.query = null
     this.filters = {}
     this.openFilter = null
+    this.sortBy = null
 
     this.initialize()
     this.render()
@@ -21,7 +22,29 @@ class DataTable {
     const tbody = $(`<tbody></tbody>`)
 
     const tr = $(`<tr></tr>`)
-    this.options.columns?.forEach(c => $(tr).append($(`<th>${c}</th>`)))
+    this.options.columns?.forEach(column => {
+      const th = $(`<th id="th-${column}"></th>`)//<div class="flex align-items-center" style="cursor: pointer">${column}</div></th>`)
+      const sortOption = this.options.sortOptions?.find(o => o.label === column)
+      $(tr).append(th)
+
+      if (!!sortOption) {
+        const iconAsc = $(`<span id="id-asc" class="icon">arrow_upward_alt</span>`)
+        const iconDesc = $(`<span id="id-desc" class="icon">arrow_downward_alt</span>`)
+        const content = $(`<div class="flex align-items-center">${column}</div>`)
+
+        $(iconAsc).css("display", "none")
+        $(iconDesc).css("display", "none")
+        $(content).css("cursor", "pointer")
+
+        $(content).append(iconAsc)
+        $(content).append(iconDesc)
+        $(th).append(content)
+
+        $(th).click(() => this.onSortColumn(sortOption))
+      } else {
+        $(th).text(column)
+      }
+    })
 
     $(thead).append(tr)
     $(table).append(thead)
@@ -175,41 +198,6 @@ class DataTable {
     }
   }
 
-  // Handler for clicking a filter
-  onClickFilter(e, filter) {
-    e.stopPropagation()
-
-    $(`div[id^="menu-"`)
-      .filter((_, menu) => $(menu).attr("id") !== `menu=${filter.field}`)
-      .removeClass("open")
-
-    const menu = $(`#menu-${filter.field}`)
-    const open = $(menu).hasClass("open")
-
-    if (open) {
-      this.openFilter = null
-      $(menu).removeClass("open")
-    } else {
-      this.openFilter = `menu-${filter.field}`
-      $(menu).addClass("open")
-    }
-  }
-  
-  // Handler for clicking a filter menu item
-  onClickFilterItem(e, field, value) {
-    e.stopPropagation()
-
-    if (!this.filters.hasOwnProperty(field)) {
-      this.filters[field] = [value]
-    } else {
-      this.filters[field].indexOf(value) === -1
-        ? this.filters[field].push(value)
-        : this.filters[field] = this.filters[field].filter(o => o !== value)
-    }
-
-    this.render()
-  }
-
   // Fetch the current page's data from the API
   async fetchData() {
     const pageUrl = new URL(this.options.url, window.location.origin)
@@ -226,6 +214,11 @@ class DataTable {
           pageUrl.searchParams.append(key, value)
         })
       })
+    }
+
+    if (this.sortBy) {
+      const value = this.sortBy.asc ? this.sortBy.sort : `-${this.sortBy.sort}`
+      pageUrl.searchParams.set("sort", value)
     }
 
     const resp = await fetch(pageUrl)
@@ -265,12 +258,63 @@ class DataTable {
     this.render()
   }
 
+  // Handler for clicking a filter
+  onClickFilter(e, filter) {
+    e.stopPropagation()
+
+    $(`div[id^="menu-"`)
+      .filter((_, menu) => $(menu).attr("id") !== `menu=${filter.field}`)
+      .removeClass("open")
+
+    const menu = $(`#menu-${filter.field}`)
+    const open = $(menu).hasClass("open")
+
+    if (open) {
+      this.openFilter = null
+      $(menu).removeClass("open")
+    } else {
+      this.openFilter = `menu-${filter.field}`
+      $(menu).addClass("open")
+    }
+  }
+  
+  // Handler for clicking a filter menu item
+  onClickFilterItem(e, field, value) {
+    e.stopPropagation()
+
+    if (!this.filters.hasOwnProperty(field)) {
+      this.filters[field] = [value]
+    } else {
+      this.filters[field].indexOf(value) === -1
+        ? this.filters[field].push(value)
+        : this.filters[field] = this.filters[field].filter(o => o !== value)
+    }
+
+    this.render()
+  }
+
   onClearFilters() {
     this.filters = {}
     this.query = null
     this.openFilter = null
     this.render()
     $(this.root).find("#id-search").val("")
+  }
+
+  onSortColumn(option) { 
+    $(this.root).find("th").find(`span[class="icon"]`).css("display", "none")
+
+    const th = $(this.root).find(`th[id="th-${option.label}"]`) 
+    const iconAsc = $(th).find("#id-asc")
+    const iconDesc = $(th).find("#id-desc")
+
+    const asc = (option.label === this.sortBy?.label) ? !this.sortBy.asc : true
+
+    $(iconAsc).css("display", asc ? "block" : "none")
+    $(iconDesc).css("display", asc ? "none" : "block")
+    
+    this.sortBy = {...option, asc: asc}
+    this.render()
   }
 
   onClickAway() {

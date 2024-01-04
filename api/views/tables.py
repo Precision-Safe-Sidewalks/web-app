@@ -26,7 +26,7 @@ class SortMixin:
         queryset = super().get_queryset()
 
         if sort := self.request.GET.get("sort"):
-            queryset = queryset.order_by(sort)
+            queryset = queryset.order_by(sort, "id")
 
         return queryset
 
