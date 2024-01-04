@@ -27,8 +27,8 @@ class DataTable {
     $(table).append(thead)
     $(table).append(tbody)
 
-    $(this.root).append(actions)
     $(this.root).append(filters)
+    $(this.root).append(actions)
     $(this.root).append(table)
 
     $(window).click(this.onClickAway)
