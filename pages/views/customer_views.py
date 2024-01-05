@@ -3,6 +3,7 @@ from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, UpdateView
 
 from customers.models import Customer
+from pages.forms.customers import CustomerForm
 
 
 class CustomerListView(ListView):
@@ -22,7 +23,7 @@ class CustomerDetailView(DetailView):
 
 class CustomerCreateView(CreateView):
     model = Customer
-    fields = ("name", "address", "city", "state", "segment")
+    form_class = CustomerForm
     template_name = "customers/customer_form.html"
 
     def get_success_url(self):
@@ -31,7 +32,7 @@ class CustomerCreateView(CreateView):
 
 class CustomerUpdateView(UpdateView):
     model = Customer
-    fields = ("name", "address", "city", "state", "segment")
+    form_class = CustomerForm
     template_name = "customers/customer_form.html"
 
     def get_success_url(self):

@@ -75,6 +75,14 @@ class Project(models.Model):
         """Return the slugified name"""
         return slugify(self.name)
 
+    def save(self, **kwargs):
+        if not self.pk:
+            self.business_development_manager = (
+                self.customer.business_development_manager
+            )
+            self.territory = self.customer.territory
+        return super().save(**kwargs)
+
     def get_bbox(self, buffer_fraction=0):
         """Return the bounding box of the Measurements"""
         union = self.measurements.aggregate(union=Union("coordinate"))["union"]

@@ -49,7 +49,7 @@ func NewPricingSheet(requestId uuid.UUID, projectId int) PricingSheet {
 
 // Generate the S3 key for the document
 func (p PricingSheet) GetKey() string {
-	return fmt.Sprintf("pricing_sheets/%s/%s - Pricing Sheet.xlsx", p.RequestId, p.Data.Name)
+	return fmt.Sprintf("pricing_sheets/%s/Pricing Sheet - %s.xlsx", p.RequestId, p.Data.Name)
 }
 
 // Generate the pricing sheet document

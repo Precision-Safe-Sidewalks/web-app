@@ -70,24 +70,24 @@ class ProjectListView(ListView):
         return json.dumps(
             [
                 {
-                    "label": "Stage",
-                    "field": "status",
-                    "options": Project.Status.to_options(),
-                },
-                {
                     "label": "BD",
                     "field": "business_development_manager",
                     "options": User.bdm.to_options(),
                 },
                 {
-                    "label": "Segment",
-                    "field": "segment",
-                    "options": Segment.to_options(),
-                },
-                {
                     "label": "Territory",
                     "field": "territory",
                     "options": Territory.to_options(),
+                },
+                {
+                    "label": "Stage",
+                    "field": "status",
+                    "options": Project.Status.to_options(),
+                },
+                {
+                    "label": "Segment",
+                    "field": "segment",
+                    "options": Segment.to_options(),
                 },
             ]
         )
