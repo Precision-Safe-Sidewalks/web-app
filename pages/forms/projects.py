@@ -8,9 +8,6 @@ User = get_user_model()
 
 
 class ProjectForm(forms.ModelForm):
-    business_development_manager = forms.ModelChoiceField(
-        queryset=User.bdm.order_by("full_name")
-    )
     business_development_administrator = forms.ModelChoiceField(
         queryset=User.bda.order_by("full_name"), required=False
     )
@@ -47,9 +44,7 @@ class ProjectForm(forms.ModelForm):
             "customer",
             "name",
             "address",
-            "business_development_manager",
             "business_development_administrator",
-            "territory",
             "pricing_model",
             "po_number",
             "primary_contact",

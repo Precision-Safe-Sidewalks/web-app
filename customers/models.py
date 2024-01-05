@@ -1,11 +1,10 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
-from core.models.abstract import AbstractPhoneNumber
 from core.models import Territory
+from core.models.abstract import AbstractPhoneNumber
 from core.models.constants import PhoneNumberType, States
 from customers.constants import Segment
-
 
 User = get_user_model()
 
