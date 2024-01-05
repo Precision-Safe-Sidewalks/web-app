@@ -6,6 +6,7 @@ from app.settings.auth import *
 from app.settings.aws import *
 from app.settings.db import *
 from app.settings.drf import *
+from app.settings.logs import *
 from app.settings.storage import *
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
