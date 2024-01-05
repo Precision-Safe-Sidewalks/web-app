@@ -1,8 +1,13 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 
 from core.models.abstract import AbstractPhoneNumber
+from core.models import Territory
 from core.models.constants import PhoneNumberType, States
 from customers.constants import Segment
+
+
+User = get_user_model()
 
 
 class Customer(models.Model):
@@ -16,6 +21,12 @@ class Customer(models.Model):
     )
     segment = models.CharField(
         max_length=100, choices=Segment.choices, blank=True, null=True
+    )
+    business_development_manager = models.ForeignKey(
+        User, on_delete=models.SET_NULL, blank=True, null=True
+    )
+    territory = models.ForeignKey(
+        Territory, on_delete=models.SET_NULL, blank=True, null=True
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
