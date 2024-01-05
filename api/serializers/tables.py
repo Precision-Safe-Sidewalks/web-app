@@ -73,12 +73,18 @@ class CustomerTableSerializer(serializers.ModelSerializer):
 
 
 class ProjectTableSerializer(serializers.ModelSerializer):
+    customer = serializers.SerializerMethodField()
     name = serializers.SerializerMethodField()
     stage = serializers.SerializerMethodField()
     business_development_manager = serializers.SerializerMethodField()
     segment = serializers.SerializerMethodField()
     territory = serializers.CharField(source="territory.label")
     created = serializers.SerializerMethodField()
+
+    def get_customer(self, obj):
+        href = reverse("customer-detail", kwargs={"pk": obj.customer_id})
+        html = f'<a href="{href}">{obj.customer.name}</a>'
+        return mark_safe(html)
 
     def get_name(self, obj):
         href = reverse("project-detail", kwargs={"pk": obj.pk})
@@ -102,11 +108,12 @@ class ProjectTableSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         fields = (
+            "customer",
             "name",
-            "stage",
             "business_development_manager",
-            "segment",
             "territory",
+            "stage",
+            "segment",
             "created",
         )
 

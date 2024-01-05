@@ -17,15 +17,17 @@
   $(document).ready(() => {
     new DataTable("projects-table", {
       columns: [
+        "Organization",
         "Deal Name",
-        "Stage",
         "BD",
-        "Segment",
         "Territory",
+        "Stage",
+        "Segment",
         "Created",
       ],
       filterOptions: filterOptions,
       sortOptions: [
+        {sort: "customer__name", label: "Organization"},
         {sort: "name", label: "Deal Name"},
         {sort: "status", label: "Stage"},
         {sort: "business_development_manager", label: "BD"},

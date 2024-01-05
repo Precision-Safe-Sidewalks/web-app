@@ -52,11 +52,12 @@
     // Create the active projects data table
     new DataTable("active-projects-table", {
       columns: [
+        "Organization",
         "Deal Name",
-        "Stage",
         "BD",
-        "Segment",
         "Territory",
+        "Stage",
+        "Segment",
         "Created",
       ],
       url: "/api/tables/projects/?customer={{ customer.pk }}&active=true",
@@ -66,11 +67,12 @@
     // Create the completed projects data table
     new DataTable("completed-projects-table", {
       columns: [
+        "Organization",
         "Deal Name",
-        "Stage",
         "BD",
-        "Segment",
         "Territory",
+        "Stage",
+        "Segment",
         "Created",
       ],
       url: "/api/tables/projects/?customer={{ customer.pk }}&active=false",
