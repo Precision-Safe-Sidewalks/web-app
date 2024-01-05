@@ -34,6 +34,8 @@ class ContactTableSerializer(serializers.ModelSerializer):
 
 class CustomerTableSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField()
+    business_development_manager = serializers.SerializerMethodField()
+    territory = serializers.SerializerMethodField()
     location = serializers.SerializerMethodField()
     segment = serializers.SerializerMethodField()
     active_projects = serializers.SerializerMethodField()
@@ -45,8 +47,18 @@ class CustomerTableSerializer(serializers.ModelSerializer):
         html = f'<a href="{href}">{obj.name}</a>'
         return mark_safe(html)
 
+    def get_business_development_manager(self, obj):
+        if obj.business_development_manager:
+            return obj.business_development_manager.full_name
+        return None
+
+    def get_territory(self, obj):
+        if obj.territory:
+            return obj.territory.label
+        return None
+
     def get_location(self, obj):
-        return obj.short_address or ""
+        return obj.short_address
 
     def get_segment(self, obj):
         return obj.get_segment_display()
@@ -64,6 +76,8 @@ class CustomerTableSerializer(serializers.ModelSerializer):
         model = Customer
         fields = (
             "name",
+            "business_development_manager",
+            "territory",
             "location",
             "segment",
             "active_projects",
