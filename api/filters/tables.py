@@ -27,13 +27,28 @@ class CustomerTableFilter(django_filters.FilterSet):
     """Customer data table filters"""
 
     q = django_filters.CharFilter(method="filter_q")
+    business_development_manager = django_filters.ModelMultipleChoiceFilter(
+        queryset=User.objects.all(),
+    )
+    segment = django_filters.MultipleChoiceFilter(
+        field_name="segment",
+        choices=Segment.choices,
+    )
+    territory = django_filters.ModelMultipleChoiceFilter(
+        queryset=Territory.objects.all(),
+    )
 
     def filter_q(self, queryset, name, value):
         return queryset.filter(name__icontains=value)
 
     class Meta:
         model = Customer
-        fields = ("q",)
+        fields = (
+            "business_development_manager",
+            "territory",
+            "segment",
+            "q",
+        )
 
 
 class ProjectTableFilter(django_filters.FilterSet):
