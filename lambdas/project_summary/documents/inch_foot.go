@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	TEMPLATE_INCH_FOOT = "templates/PS 30 tabs Template - MACRO RB 11-9-2023 Modified.xlsm"
+	TEMPLATE_INCH_FOOT = "templates/PS 30 tabs Template - MACRO RB 11-9-2023.xlsm"
 )
 
 type InchFootProjectSummary struct {
@@ -171,7 +171,7 @@ func (s InchFootProjectSummary) UpdateSheetName(f *excelize.File, oldName, newNa
 func (s InchFootProjectSummary) UpdateCompletedCurb(f *excelize.File, sheetName string) {
 	sheet := "SUMMARY"
 	sheetId, _ := f.GetSheetIndex(sheetName)
-	rowId := 51 - sheetId // first survey sheet has index = 2
+	rowId := 50 - sheetId // first survey sheet has index = 1
 
 	f.SetCellFormula(sheet, fmt.Sprintf("E%d", rowId), fmt.Sprintf("='%s'!O8", sheetName))
 	f.SetCellFormula(sheet, fmt.Sprintf("F%d", rowId), fmt.Sprintf("='%s'!P8", sheetName))
@@ -184,7 +184,7 @@ func (s InchFootProjectSummary) UpdateCompletedCurb(f *excelize.File, sheetName 
 func (s InchFootProjectSummary) UpdateCompletedSidewalk(f *excelize.File, sheetName string) {
 	sheet := "SUMMARY"
 	sheetId, _ := f.GetSheetIndex(sheetName)
-	rowId := 89 - sheetId // first survey sheet has index = 2
+	rowId := 88 - sheetId // first survey sheet has index = 1
 
 	// Map columns A:AK to O:AY
 	for i := 1; i < 38; i++ {
