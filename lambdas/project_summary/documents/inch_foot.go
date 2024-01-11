@@ -2,6 +2,7 @@ package documents
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -27,6 +28,7 @@ func NewInchFootProjectSummary(data schema.ProjectSummaryData) InchFootProjectSu
 
 // Generate the inch foot project summary document
 func (s InchFootProjectSummary) Generate() (string, error) {
+	log.Println("Opening template file")
 	workbook, err := excelize.OpenFile(TEMPLATE_INCH_FOOT)
 
 	if err != nil {
@@ -35,13 +37,19 @@ func (s InchFootProjectSummary) Generate() (string, error) {
 
 	defer workbook.Close()
 
+	log.Println("Updating summary")
 	s.UpdateSummary(workbook)
+	log.Println("Updating survey data")
 	s.UpdateSurveyData(workbook)
 
+	log.Println("Updating linked values")
 	workbook.UpdateLinkedValue()
+	log.Println("Setting the active sheet")
 	workbook.SetActiveSheet(1)
 
+	log.Println("Generating the file name")
 	filename := s.GenerateFilename()
+	log.Println("Saving the file")
 	err = workbook.SaveAs(filename)
 
 	return filename, err

@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 
@@ -56,9 +57,11 @@ func (p ProjectSummary) GetKey() string {
 
 // Generate the project summary document
 func (p *ProjectSummary) Generate() error {
+	log.Println("Generating the project summary")
 	var err error
 	var generator documents.ProjectSummaryGenerator
 
+	log.Println("Fetching the survey data")
 	if err = p.Fetch(); err != nil {
 		return err
 	}
@@ -70,18 +73,22 @@ func (p *ProjectSummary) Generate() error {
 		generator = documents.NewSquareFootProjectSummary(p.Data)
 	}
 
+	log.Println("Generating the file")
 	if p.Filename, err = generator.Generate(); err != nil {
 		return err
 	}
 
+	log.Println("Uploading the file to S3")
 	if err = p.Save(); err != nil {
 		return err
 	}
 
+	log.Println("Marking the summary as complete")
 	if err = p.MarkComplete(); err != nil {
 		return err
 	}
 
+	log.Println("Finished")
 	return nil
 }
 
