@@ -68,8 +68,8 @@ func (s InchFootProjectSummary) UpdateSummary(f *excelize.File) {
 	f.SetCellValue(sheet, "R6", s.Data.Hazards.Count)
 	f.SetCellValue(sheet, "R10", s.Data.Hazards.InchFeet)
 	f.SetCellValue(sheet, "R17", s.Data.Hazards.LinearFeetCurb)
-	f.SetCellValue(sheet, "BE53", s.Data.Customer.Name)
-	f.SetCellValue(sheet, "CD53", s.Data.Pricing.EstimatedSidewalkMiles)
+	f.SetCellValue(sheet, "BE89", s.Data.Customer.Name)
+	f.SetCellValue(sheet, "CD89", s.Data.Pricing.EstimatedSidewalkMiles)
 
 	if s.Data.Surveyor != nil {
 		f.SetCellValue(sheet, "P4", s.Data.Surveyor.Initials)
