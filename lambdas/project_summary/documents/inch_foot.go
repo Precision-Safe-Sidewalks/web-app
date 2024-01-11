@@ -68,19 +68,20 @@ func (s InchFootProjectSummary) UpdateSummary(f *excelize.File) {
 	f.SetCellValue(sheet, "R6", s.Data.Hazards.Count)
 	f.SetCellValue(sheet, "R10", s.Data.Hazards.InchFeet)
 	f.SetCellValue(sheet, "R17", s.Data.Hazards.LinearFeetCurb)
-	f.SetCellValue(sheet, "AO53", s.Data.Customer.Name)
-	f.SetCellValue(sheet, "BN53", s.Data.Pricing.EstimatedSidewalkMiles)
+	f.SetCellValue(sheet, "BE89", s.Data.Customer.Name)
+	f.SetCellValue(sheet, "CD89", s.Data.Pricing.EstimatedSidewalkMiles)
 
 	if s.Data.Surveyor != nil {
 		f.SetCellValue(sheet, "P4", s.Data.Surveyor.Initials)
 	}
 
+	// Set the PPR macro information
 	if s.Data.Contact != nil {
-		f.SetCellValue(sheet, "AQ53", SafeString(s.Data.Contact.Address))
-		f.SetCellValue(sheet, "AS53", s.Data.Contact.Name)
-		f.SetCellValue(sheet, "AY53", SafeString(s.Data.Contact.Title))
-		f.SetCellValue(sheet, "BC53", SafeString(s.Data.Contact.PhoneNumber))
-		f.SetCellValue(sheet, "BG53", SafeString(s.Data.Contact.Email))
+		f.SetCellValue(sheet, "BG89", SafeString(s.Data.Contact.Address))
+		f.SetCellValue(sheet, "BI89", s.Data.Contact.Name)
+		f.SetCellValue(sheet, "BO89", SafeString(s.Data.Contact.Title))
+		f.SetCellValue(sheet, "BS89", SafeString(s.Data.Contact.PhoneNumber))
+		f.SetCellValue(sheet, "BW89", SafeString(s.Data.Contact.Email))
 	}
 
 	// Set the tech initials in columns P - AF
