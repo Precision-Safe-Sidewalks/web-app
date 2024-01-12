@@ -10,7 +10,6 @@ from django.contrib.auth import get_user_model
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
-
 LOGGER = logging.getLogger(__name__)
 User = get_user_model()
 
@@ -20,13 +19,16 @@ class AuthMiddleware:
 
     def __init__(self, get_response):
         self.get_response = get_response
+        self.providers = [AzureADProvider()]
 
     def __call__(self, request):
         """Pre-process the request to check if auth is required"""
         if self.is_public(request.path):
             return self.get_response(request)
 
-        AzureADAuthenticator().authenticate(request)
+        for provider in self.providers:
+            if provider.authenticate(request):
+                return self.get_response(request)
 
         if request.user.is_authenticated:
             return self.get_response(request)
@@ -48,7 +50,7 @@ class AuthMiddleware:
         return settings.LAMBDA_API_KEY == token
 
 
-class AzureADAuthenticator:
+class AzureADProvider:
     """Azure AD token authenticator"""
 
     def authenticate(self, request):
@@ -74,7 +76,7 @@ class AzureADAuthenticator:
                     request.user = user
                     return True
 
-            except jwt.exceptions.InvalidTokenError as exc:
+            except jwt.exceptions.InvalidTokenError:
                 return False
 
         return False
