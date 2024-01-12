@@ -1,7 +1,7 @@
 from django.urls import path
 from rest_framework.routers import DefaultRouter
 
-from api.views import measurements, repairs, tables
+from api.views import arcgis, measurements, repairs, tables
 
 router = DefaultRouter()
 
@@ -18,6 +18,8 @@ router.register(
     tables.ContactTableViewSet,
     basename="tables-contacts",
 )
+
+# Datatables API views
 router.register(
     "tables/customers", tables.CustomerTableViewSet, basename="tables-customers"
 )
@@ -45,6 +47,13 @@ router.register(
     "projects",
     repairs.ProjectViewSet,
     basename="projects",
+)
+
+# ArcGIS API views
+router.register(
+    "arcgis/items",
+    arcgis.ArcGISItemViewSet,
+    basename="arcgis_items",
 )
 
 urlpatterns = router.urls + [
