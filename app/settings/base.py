@@ -4,6 +4,7 @@ from pathlib import Path
 
 from app.settings.auth import *
 from app.settings.aws import *
+from app.settings.cors import *
 from app.settings.db import *
 from app.settings.drf import *
 from app.settings.logs import *
@@ -35,6 +36,7 @@ INSTALLED_APPS = [
     "django.contrib.gis",
     "django_extensions",
     "compressor",
+    "corsheaders",
     "microsoft_auth",
     "rest_framework",
     "rest_framework_gis",
@@ -52,6 +54,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",

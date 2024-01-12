@@ -29,7 +29,9 @@ MICROSOFT_AUTH_CLIENT_SECRET = os.environ.get("MICROSOFT_AUTH_CLIENT_SECRET")
 MICROSOFT_AUTH_LOGIN_TYPE = "ma"
 
 # Authentication backends
-AUTHENTICATION_BACKENDS = ["django.contrib.auth.backends.ModelBackend"]
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+]
 
 if MICROSOFT_AUTH_CLIENT_SECRET:
     AUTHENTICATION_BACKENDS.insert(
