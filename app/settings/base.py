@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "customers",
     "pages",
     "repairs",
+    "third_party",
 ]
 
 

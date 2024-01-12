@@ -101,15 +101,15 @@ class ArcGISClient:
 
         return results
 
-    def get_item(self, item_id, return_data=True):
-        """Fetch an Item definition and its data (optional)"""
+    def get_item(self, item_id):
+        """Fetch an Item definition"""
         url = f"/sharing/rest/content/items/{item_id}"
-        item = self._get(url)
+        return self._get(url)
 
-        if return_data:
-            item["data"] = self._get(url + "/data")
-
-        return item
+    def get_item_layers(self, item_id):
+        """Fetch an Item's layer definitions"""
+        url = f"/sharing/rest/content/items/{item_id}/data"
+        return self._get(url).get("operationalLayers", [])
 
     def get_features(self, item_id, layer_title):
         """Fetch a Layer's features by its item and title"""
