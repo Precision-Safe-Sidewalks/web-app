@@ -1,5 +1,4 @@
 import json
-import logging
 import re
 from functools import cache
 
@@ -10,7 +9,6 @@ from django.contrib.auth import get_user_model
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
-LOGGER = logging.getLogger(__name__)
 User = get_user_model()
 
 
@@ -92,7 +90,6 @@ class AzureADProvider:
     @cache
     def _get_public_keys():
         """Return the public keys for validation"""
-        LOGGER.info("Fetching AzureAD public keys")
         client_id = settings.MICROSOFT_AUTH_CLIENT_ID
         tenant_id = settings.MICROSOFT_AUTH_TENANT_ID
         url = f"https://login.microsoftonline.com/{tenant_id}/discovery/keys?appid={client_id}"
