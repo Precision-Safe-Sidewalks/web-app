@@ -8,10 +8,10 @@ class ArcGISItem(models.Model):
         WEB_MAP = "WEB_MAP"
         FEATURE_SERVICE = "FEATURE_SERVICE"
 
-    item_id = models.CharField(max_length=50, unique=True)
+    item_id = models.CharField(max_length=50, db_index=True)
     item_type = models.CharField(max_length=25)
     title = models.CharField(max_length=100)
-    url = models.URLField()
+    url = models.URLField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
