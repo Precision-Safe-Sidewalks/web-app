@@ -14,3 +14,4 @@ class ArcGISItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = ArcGISItem
         fields = "__all__"
+        extra_kwargs = {"item_id": {"validators": []}}

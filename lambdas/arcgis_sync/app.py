@@ -41,16 +41,37 @@ def sync_items(days=1):
     client = ArcGISClient()
     start = datetime.now(timezone.utc) - timedelta(days=days)
 
-    for item_type in client.ItemType:
+    for item_type in (client.ItemType.FEATURE_SERVICE, client.ItemType.WEB_MAP):
         for item in client.search(item_type=item_type, start=start):
             LOGGER.info(f"Upserting {item_type} '{item['title']}'")
+
             data = {
                 "item_id": item["id"],
                 "item_type": item_type.upper().replace(" ", "_"),
                 "title": item["title"],
                 "url": item.get("url"),
+                "parent": None,
             }
-            _post("/api/arcgis/items/", data=data)
+            item = _post("/api/arcgis/items/", data=data)
+
+            # If the item is a Web Map, associate the children feature layers
+            # with the web map.
+            if item_type == client.ItemType.WEB_MAP:
+                for layer in client.get_item_layers(item["item_id"]):
+                    resp = _get(
+                        "/api/arcgis/items/", query={"item_id": layer["itemId"]}
+                    )
+
+                    if resp.get("count", 0) == 1:
+                        child = resp["results"][0]["id"]
+                        data = {"parent": item["id"]}
+                        _patch(f"/api/arcgis/items/{child}/", data=data)
+
+    # Match any Projects without a Web Map to its Web Map
+    # by the title.
+    _post("/api/arcgis/items/match/")
+
+    # TODO: download measurement layers for any modified layers
 
 
 def _request(method, path, query=None, data=None):
@@ -79,3 +100,8 @@ def _get(path, query=None, data=None):
 def _post(path, query=None, data=None):
     """Perform a POST request to the main API"""
     return _request("POST", path, query=query, data=data)
+
+
+def _patch(path, query=None, data=None):
+    """Perform a PATCH request to the main API"""
+    return _request("PATCH", path, query=query, data=data)
