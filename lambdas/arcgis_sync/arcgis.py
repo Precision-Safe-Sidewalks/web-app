@@ -71,7 +71,13 @@ class ArcGISClient:
 
     def is_token_expired(self):
         """Return True if the token is expired"""
-        return self._token is None or (time.time() - 15) * 1000 > self._token_expires
+        if self._token is None:
+            return True
+
+        if time.time() > (self._token_expires / 1000 - 15):
+            return True
+
+        return False
 
     def search(self, item_type=None, start=None, end=None):
         """Search using the content API"""
@@ -113,17 +119,21 @@ class ArcGISClient:
 
     def get_features(self, item_id, layer_title):
         """Fetch a Layer's features by its item and title"""
-        item = self.get_item(item_id)
         url = None
 
-        for layer in item["data"]["operationalLayers"]:
-            if layer["title"] == layer_title:
+        for layer in self.get_item_layers(item_id):
+            # TODO: use a better matching system
+            if layer_title.startswith(layer["title"]):
                 url = layer["url"]
                 break
 
         if not url:
             raise ValueError(f"Layer {layer_title} not found")
 
+        return self.get_features_by_url(url)
+
+    def get_features_by_url(self, url):
+        """Fetch a Layer's features by its feature server URL"""
         query = {
             "where": "1=1",
             "returnGeometry": True,

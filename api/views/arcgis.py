@@ -1,6 +1,7 @@
 import logging
 import re
 
+from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -20,6 +21,16 @@ class ArcGISItemViewSet(ModelViewSet):
     queryset = ArcGISItem.objects.order_by("id")
     serializer_class = ArcGISItemSerializer
     filterset_class = ArcGISItemFilter
+
+    def get_object(self):
+        """Get an item by its pk or item_id"""
+        pk = self.kwargs["pk"]
+        queryset = self.get_queryset()
+
+        if pk.isnumeric():
+            return get_object_or_404(queryset, pk=pk)
+
+        return get_object_or_404(queryset, item_id=pk)
 
     @action(methods=["GET", "POST"], detail=False)
     def match(self, request):

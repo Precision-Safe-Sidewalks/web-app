@@ -1,17 +1,22 @@
 import logging
-import os
+import re
 from datetime import datetime, timedelta, timezone
-from urllib.parse import urlencode
 
-import requests
 from arcgis import ArcGISClient
 
-# Sync all the Items modified in last X days
-# - Match the Items to existing Deals
-# - Sync the data for the newly matched Deals
-# Sync the data for a specified Layer
+from api import (
+    create_project_layer,
+    get_item,
+    get_project_by_item,
+    get_project_layer,
+    match_items,
+    set_item_parent,
+    set_project_layer_features,
+    upsert_item,
+)
 
 LOGGER = logging.getLogger(__name__)
+RE_LAYER_TYPE = re.compile(r"^PSS\s+(?P<layer_type>Survey|Repair)\s+\d{6}$")
 
 
 def handler(event, context):
@@ -20,26 +25,33 @@ def handler(event, context):
     # If the event contains a layer_id, the request is to sync
     # the data for the particular layer
     if layer_id := event.get("layer_id"):
-        return sync_layer(layer_id)
+        sync_layer(layer_id)
 
     # Otherwise, the request is to sync the ArcGIS items, match
     # them to deals, and sync any layers that have been modified
     # in the past N days
-    days = int(event.get("days", 7))
-    sync_items(days=days)
+    else:
+        days = int(event.get("days", 7))
+        sync_items(days=days)
 
     return {"StatusCode": 200}
 
 
 def sync_layer(layer_id):
-    """Synchronize the ArcGIS data for a deal's layer"""
-    raise NotImplementedError
+    """Synchronize the ArcGIS data for a project layer"""
+    project_layer = get_project_layer(layer_id)
+    arcgis_layer = get_item(project_layer["arcgis_item"])
+
+    client = ArcGISClient()
+    features = client.get_features_by_url(arcgis_layer["url"])
+    set_project_layer_features(layer_id, features)
 
 
 def sync_items(days=1):
     """Synchronize the ArcGIS items within the past N days"""
     client = ArcGISClient()
     start = datetime.now(timezone.utc) - timedelta(days=days)
+    layers = {}
 
     for item_type in (client.ItemType.FEATURE_SERVICE, client.ItemType.WEB_MAP):
         for item in client.search(item_type=item_type, start=start):
@@ -49,59 +61,58 @@ def sync_items(days=1):
                 "item_id": item["id"],
                 "item_type": item_type.upper().replace(" ", "_"),
                 "title": item["title"],
-                "url": item.get("url"),
                 "parent": None,
             }
-            item = _post("/api/arcgis/items/", data=data)
+
+            if item_type == client.ItemType.FEATURE_SERVICE:
+                data["url"] = item["url"] + "/0"
+
+            item = upsert_item(data)
 
             # If the item is a Web Map, associate the children feature layers
             # with the web map.
             if item_type == client.ItemType.WEB_MAP:
                 for layer in client.get_item_layers(item["item_id"]):
-                    resp = _get(
-                        "/api/arcgis/items/", query={"item_id": layer["itemId"]}
-                    )
+                    layer_item = get_item(layer["itemId"])
 
-                    if resp.get("count", 0) == 1:
-                        child = resp["results"][0]["id"]
-                        data = {"parent": item["id"]}
-                        _patch(f"/api/arcgis/items/{child}/", data=data)
+                    if layer_item:
+                        layer_item = set_item_parent(layer_item["id"], item["id"])
+                        layers[layer_item["id"]] = layer_item
+            else:
+                layers[item["id"]] = item
 
-    # Match any Projects without a Web Map to its Web Map
-    # by the title.
-    _post("/api/arcgis/items/match/")
+    # Match any Projects without an associated Web Map to the matching
+    # Web Map based on the title.
+    match_items()
 
-    # TODO: download measurement layers for any modified layers
+    # For any layers that have changed in the last N days, sync the data
+    # from ArcGIS if there is a matching Project.
+    for layer_id, layer in layers.items():
+        parent = layer["parent"]
+        title = layer["title"]
+        match = RE_LAYER_TYPE.match(title)
 
+        if not (parent and match):
+            continue
 
-def _request(method, path, query=None, data=None):
-    """Perform an HTTP request to the main API"""
-    token = os.environ.get("API_KEY")
-    headers = {"Authorization": f"Token {token}"}
+        layer_type = match.group("layer_type")
+        project = get_project_by_item(parent)
+        project_layer = None
 
-    base_url = os.environ.get("API_BASE_URL")
-    url = f"{base_url}{path}"
+        if not project:
+            continue
 
-    if query:
-        params = urlencode(query)
-        url += f"?{params}"
+        for candidate in project["layers"]:
+            if candidate["arcgis_item"] == layer_id:
+                project_layer = candidate
+                break
 
-    resp = requests.request(method, url, headers=headers, json=data, timeout=60)
-    resp.raise_for_status()
+        if not project_layer:
+            data = {
+                "project": project["id"],
+                "stage": layer_type.upper().replace("REPAIR", "PRODUCTION"),
+                "arcgis_item": layer_id,
+            }
+            project_layer = create_project_layer(data)
 
-    return resp.json()
-
-
-def _get(path, query=None, data=None):
-    """Perform a GET request to the main API"""
-    return _request("GET", path, query=query, data=data)
-
-
-def _post(path, query=None, data=None):
-    """Perform a POST request to the main API"""
-    return _request("POST", path, query=query, data=data)
-
-
-def _patch(path, query=None, data=None):
-    """Perform a PATCH request to the main API"""
-    return _request("PATCH", path, query=query, data=data)
+        sync_layer(project_layer["id"])

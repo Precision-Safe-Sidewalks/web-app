@@ -43,6 +43,13 @@ router.register(
     repairs.ProjectSummaryViewSet,
     basename="documents-project-summary",
 )
+
+# Project API views
+router.register(
+    "projects/layers",
+    repairs.ProjectLayerViewSet,
+    basename="project-layers",
+)
 router.register(
     "projects",
     repairs.ProjectViewSet,

@@ -195,8 +195,13 @@ class ProjectContact(models.Model):
 class ProjectLayer(models.Model):
     """ArcGIS source layer for a Project's Measurements"""
 
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    project = models.ForeignKey(
+        Project, on_delete=models.CASCADE, related_name="layers"
+    )
     stage = models.CharField(max_length=25, choices=Stage.choices)
     arcgis_item = models.ForeignKey(ArcGISItem, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ("project", "stage")

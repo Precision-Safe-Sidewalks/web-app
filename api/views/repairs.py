@@ -1,5 +1,9 @@
 import io
+from datetime import datetime
+from datetime import timezone as tz
 
+from django.contrib.gis.geos import Point
+from django.db import transaction
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -8,9 +12,11 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from api.filters.projects import ProjectFilter
 from api.serializers.projects import (
     PricingSheetCompleteSerializer,
     PricingSheetSerializer,
+    ProjectLayerSerializer,
     ProjectSerializer,
     ProjectSummaryCompleteSerializer,
     ProjectSummarySerializer,
@@ -18,8 +24,10 @@ from api.serializers.projects import (
 from repairs.documents import ProjectInstructionsGenerator, SurveyInstructionsGenerator
 from repairs.models import (
     Instruction,
+    Measurement,
     PricingSheetRequest,
     Project,
+    ProjectLayer,
     ProjectSummaryRequest,
 )
 from repairs.models.constants import Stage
@@ -178,6 +186,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     queryset = Project.objects.order_by("id")
     serializer_class = ProjectSerializer
+    filterset_class = ProjectFilter
 
     @action(methods=["GET"], detail=True)
     def geocoding(self, request, pk=None):
@@ -188,3 +197,67 @@ class ProjectViewSet(viewsets.ModelViewSet):
             stage=stage, geocoded_address__isnull=False
         ).exists()
         return Response({"complete": complete})
+
+
+class ProjectLayerViewSet(viewsets.ModelViewSet):
+    """Project Layer API view set"""
+
+    queryset = ProjectLayer.objects.order_by("id")
+    serializer_class = ProjectLayerSerializer
+
+    @action(methods=["POST"], detail=True)
+    def features(self, request, pk=None):
+        """Set the layer features from a GeoJSON FeatureCollection"""
+        layer = self.get_object()
+
+        with transaction.atomic():
+            invalid = set(
+                layer.project.measurements.filter(stage=layer.stage).values_list(
+                    "id", flat=True
+                )
+            )
+
+            for feature in request.data.get("features", []):
+                geometry = feature["geometry"]
+                properties = feature["properties"]
+
+                timestamp = properties["CreationDate"] / 1000
+                measured_at = datetime.fromtimestamp(timestamp, tz=tz.utc)
+
+                defaults = {
+                    "length": properties.get("Length"),
+                    "width": properties.get("Width"),
+                    "coordinate": Point(geometry["coordinates"], srid=4326),
+                    "h1": properties.get("H1"),
+                    "h2": properties.get("H2"),
+                    "curb_length": properties.get("CurbLength"),
+                    "measured_hazard_length": properties.get("MeasuredHazardLength"),
+                    "inch_feet": properties.get("InchFeet"),
+                    "special_case": None,  # TODO: get from string
+                    "hazard_size": None,  # TODO: get from string
+                    "tech": properties["Creator"],
+                    "note": properties.get("Notes"),
+                    "survey_group": properties.get("StartStreetArea"),
+                    "slope": properties.get("Slope"),
+                    "measured_at": measured_at,
+                }
+
+                for key in list(defaults):
+                    if defaults[key] is None:
+                        defaults.pop(key)
+
+                obj, _ = Measurement.objects.update_or_create(
+                    project=layer.project,
+                    stage=layer.stage,
+                    object_id=properties["OBJECTID"],
+                    defaults=defaults,
+                )
+
+                if obj.id in invalid:
+                    invalid.remove(obj.id)
+
+            Measurement.objects.filter(id__in=invalid).delete()
+
+        count = layer.project.measurements.filter(stage=layer.stage).count()
+
+        return Response({"count": count})
