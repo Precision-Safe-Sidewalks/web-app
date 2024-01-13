@@ -5,6 +5,7 @@ from django.utils.text import slugify
 
 from customers.models import Contact, Customer
 from repairs.models.constants import PricingModel, Stage
+from third_party.models import ArcGISItem
 
 User = get_user_model()
 
@@ -53,6 +54,9 @@ class Project(models.Model):
     po_number = models.CharField(max_length=100, blank=True, null=True)
     pricing_model = models.IntegerField(
         choices=PricingModel.choices, default=PricingModel.INCH_FOOT
+    )
+    arcgis_item = models.ForeignKey(
+        ArcGISItem, on_delete=models.SET_NULL, blank=True, null=True
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -182,3 +186,13 @@ class ProjectContact(models.Model):
 
     def __str__(self):
         return f"{self.project.name} - {self.contact.name} - {self.order}"
+
+
+class ProjectLayer(models.Model):
+    """ArcGIS source layer for a Project's Measurements"""
+
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    stage = models.CharField(max_length=25, choices=Stage.choices)
+    arcgis_item = models.ForeignKey(ArcGISItem, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
