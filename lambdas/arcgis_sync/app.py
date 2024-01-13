@@ -46,7 +46,7 @@ def sync_items(days=1):
             LOGGER.info(f"Upserting {item_type} '{item['title']}'")
             data = {
                 "item_id": item["id"],
-                "item_type": item_type,
+                "item_type": item_type.upper().replace(" ", "_"),
                 "title": item["title"],
                 "url": item.get("url"),
             }

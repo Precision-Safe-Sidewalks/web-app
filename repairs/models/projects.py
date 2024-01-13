@@ -56,7 +56,11 @@ class Project(models.Model):
         choices=PricingModel.choices, default=PricingModel.INCH_FOOT
     )
     arcgis_item = models.ForeignKey(
-        ArcGISItem, on_delete=models.SET_NULL, blank=True, null=True
+        ArcGISItem,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="projects",
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

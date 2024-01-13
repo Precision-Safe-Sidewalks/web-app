@@ -9,7 +9,7 @@ class ArcGISItem(models.Model):
         FEATURE_SERVICE = "FEATURE_SERVICE"
 
     item_id = models.CharField(max_length=50, db_index=True)
-    item_type = models.CharField(max_length=25)
+    item_type = models.CharField(max_length=25, choices=ItemType.choices)
     title = models.CharField(max_length=100)
     url = models.URLField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
