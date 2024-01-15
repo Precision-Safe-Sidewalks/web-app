@@ -5,8 +5,9 @@ resource "aws_cloudwatch_event_rule" "hourly" {
 }
 
 resource "aws_cloudwatch_event_target" "arcgis_sync" {
-  arn  = aws_lambda_function.arcgis_sync.arn
-  rule = aws_cloudwatch_event_rule.hourly.name
+  arn       = aws_lambda_function.arcgis_sync.arn
+  rule      = aws_cloudwatch_event_rule.hourly.name
+  target_id = "hourly"
 }
 
 resource "aws_lambda_permission" "arcgis_sync" {
