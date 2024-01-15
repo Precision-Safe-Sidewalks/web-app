@@ -1,4 +1,5 @@
 import io
+import logging
 from datetime import datetime
 from datetime import timezone as tz
 
@@ -30,7 +31,10 @@ from repairs.models import (
     ProjectLayer,
     ProjectSummaryRequest,
 )
-from repairs.models.constants import Stage
+from repairs.models.constants import QuickDescription, SpecialCase, Stage
+from utils.choices import value_of
+
+LOGGER = logging.getLogger(__name__)
 
 
 class SurveyInstructionsAPIView(APIView):
@@ -208,56 +212,81 @@ class ProjectLayerViewSet(viewsets.ModelViewSet):
     @action(methods=["POST"], detail=True)
     def features(self, request, pk=None):
         """Set the layer features from a GeoJSON FeatureCollection"""
+
+        # Set the layer status to IN_PROGRESS to signal that the
+        # synchronization has started
         layer = self.get_object()
+        layer.status = ProjectLayer.Status.IN_PROGRESS
+        layer.save()
 
-        with transaction.atomic():
-            invalid = set(
-                layer.project.measurements.filter(stage=layer.stage).values_list(
-                    "id", flat=True
-                )
-            )
-
-            for feature in request.data.get("features", []):
-                geometry = feature["geometry"]
-                properties = feature["properties"]
-
-                timestamp = properties["CreationDate"] / 1000
-                measured_at = datetime.fromtimestamp(timestamp, tz=tz.utc)
-
-                defaults = {
-                    "length": properties.get("Length"),
-                    "width": properties.get("Width"),
-                    "coordinate": Point(geometry["coordinates"], srid=4326),
-                    "h1": properties.get("H1"),
-                    "h2": properties.get("H2"),
-                    "curb_length": properties.get("CurbLength"),
-                    "measured_hazard_length": properties.get("MeasuredHazardLength"),
-                    "inch_feet": properties.get("InchFeet"),
-                    "special_case": None,  # TODO: get from string
-                    "hazard_size": None,  # TODO: get from string
-                    "tech": properties["Creator"],
-                    "note": properties.get("Notes"),
-                    "survey_group": properties.get("StartStreetArea"),
-                    "slope": properties.get("Slope"),
-                    "measured_at": measured_at,
-                }
-
-                for key in list(defaults):
-                    if defaults[key] is None:
-                        defaults.pop(key)
-
-                obj, _ = Measurement.objects.update_or_create(
-                    project=layer.project,
-                    stage=layer.stage,
-                    object_id=properties["OBJECTID"],
-                    defaults=defaults,
+        try:
+            with transaction.atomic():
+                invalid = set(
+                    layer.project.measurements.filter(stage=layer.stage).values_list(
+                        "id", flat=True
+                    )
                 )
 
-                if obj.id in invalid:
-                    invalid.remove(obj.id)
+                for feature in request.data.get("features", []):
+                    geometry = feature["geometry"]
+                    properties = feature["properties"]
 
-            Measurement.objects.filter(id__in=invalid).delete()
+                    timestamp = properties["CreationDate"] / 1000
+                    measured_at = datetime.fromtimestamp(timestamp, tz=tz.utc)
 
-        count = layer.project.measurements.filter(stage=layer.stage).count()
+                    defaults = {
+                        "length": properties.get("Length"),
+                        "width": properties.get("Width"),
+                        "coordinate": Point(geometry["coordinates"], srid=4326),
+                        "h1": properties.get("H1"),
+                        "h2": properties.get("H2"),
+                        "curb_length": properties.get("CurbLength"),
+                        "measured_hazard_length": properties.get(
+                            "MeasuredHazardLength"
+                        ),
+                        "inch_feet": properties.get("InchFeet"),
+                        "special_case": value_of(
+                            SpecialCase, properties.get("SpecialCase")
+                        ),
+                        "hazard_size": value_of(
+                            QuickDescription,
+                            properties.get("HazardSize"),
+                        ),
+                        "tech": properties["Creator"],
+                        "note": properties.get("Notes"),
+                        "survey_group": properties.get("StartStreetArea"),
+                        "slope": properties.get("Slope"),
+                        "measured_at": measured_at,
+                    }
 
-        return Response({"count": count})
+                    for key in list(defaults):
+                        if defaults[key] is None:
+                            defaults.pop(key)
+
+                    obj, _ = Measurement.objects.update_or_create(
+                        project=layer.project,
+                        stage=layer.stage,
+                        object_id=properties["OBJECTID"],
+                        defaults=defaults,
+                    )
+
+                    if obj.id in invalid:
+                        invalid.remove(obj.id)
+
+                # Delete any Measurements that where in the original set
+                # for the project/stage but not in the latest sync
+                Measurement.objects.filter(id__in=invalid).delete()
+
+                # Update the last synced time and status
+                layer.last_synced_at = timezone.now()
+                layer.status = ProjectLayer.Status.COMPLETE
+                layer.save()
+
+        # If the transaction failed, set the layer status to FAILED
+        except Exception as exc:
+            LOGGER.error(f"Error syncing layer: {exc}")
+            layer.refresh_from_db()
+            layer.status = ProjectLayer.Status.FAILED
+            layer.save()
+
+        return Response({"status": layer.status})

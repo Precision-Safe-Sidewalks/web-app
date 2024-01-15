@@ -195,11 +195,22 @@ class ProjectContact(models.Model):
 class ProjectLayer(models.Model):
     """ArcGIS source layer for a Project's Measurements"""
 
+    class Status(models.TextChoices):
+        """Layer sync status"""
+
+        IN_PROGRESS = ("IN_PROGRESS", "In Progress")
+        COMPLETE = ("COMPLETE", "Complete")
+        FAILED = ("FAILED", "Failed")
+
     project = models.ForeignKey(
         Project, on_delete=models.CASCADE, related_name="layers"
     )
     stage = models.CharField(max_length=25, choices=Stage.choices)
     arcgis_item = models.ForeignKey(ArcGISItem, on_delete=models.CASCADE)
+    status = models.CharField(
+        max_length=25, choices=Status.choices, default=Status.IN_PROGRESS
+    )
+    last_synced_at = models.DateTimeField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
