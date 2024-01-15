@@ -13,3 +13,7 @@ data "aws_ecr_repository" "lambda-pricing-sheet" {
 data "aws_ecr_repository" "lambda-project-summary" {
   name = "pss-lambda-project-summary"
 }
+
+data "aws_ecr_repository" "lambda-arcgis-sync" {
+  name = "pss-lambda-arcgis-sync"
+}
