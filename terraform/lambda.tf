@@ -82,8 +82,10 @@ resource "aws_lambda_function" "arcgis_sync" {
 
   environment {
     variables = {
-      API_KEY      = local.secrets.LAMBDA_API_KEY
-      API_BASE_URL = "https://app.bluezoneautomation.com"
+      API_KEY         = local.secrets.LAMBDA_API_KEY
+      API_BASE_URL    = "https://app.bluezoneautomation.com"
+      ARCGIS_USERNAME = local.secrets.ARCGIS_USERNAME
+      ARCGIS_PASSWORD = local.secrets.ARCGIS_PASSWORD
     }
   }
 
