@@ -31,7 +31,7 @@ def handler(event, context):
     # them to deals, and sync any layers that have been modified
     # in the past N days
     else:
-        days = int(event.get("days", 7))
+        days = int(event.get("days", 14))
         sync_items(days=days)
 
     return {"StatusCode": 200}
