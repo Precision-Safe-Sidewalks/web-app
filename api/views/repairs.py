@@ -249,12 +249,15 @@ class ProjectLayerViewSet(viewsets.ModelViewSet):
                     )
                 )
 
+                survey_group = None
+
                 for feature in request.data.get("features", []):
                     geometry = feature["geometry"]
                     properties = feature["properties"]
 
                     timestamp = properties["CreationDate"] / 1000
                     measured_at = datetime.fromtimestamp(timestamp, tz=tz.utc)
+                    survey_group = properties.get("StartStreetArea") or survey_group
 
                     defaults = {
                         "length": properties.get("Length"),
@@ -276,7 +279,7 @@ class ProjectLayerViewSet(viewsets.ModelViewSet):
                         ),
                         "tech": properties["Creator"],
                         "note": properties.get("Notes"),
-                        "survey_group": properties.get("StartStreetArea"),
+                        "survey_group": survey_group,
                         "slope": properties.get("Slope"),
                         "measured_at": measured_at,
                     }
