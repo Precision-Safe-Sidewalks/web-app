@@ -1,7 +1,7 @@
 resource "aws_cloudwatch_event_rule" "hourly" {
   name                = "hourly"
   description         = "Every hour periodic event"
-  schedule_expression = "rate(5 minutes)"
+  schedule_expression = "rate(1 hour)"
 }
 
 resource "aws_cloudwatch_event_target" "arcgis_sync" {
