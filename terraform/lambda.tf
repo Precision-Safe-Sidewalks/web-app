@@ -94,9 +94,3 @@ resource "aws_lambda_function" "arcgis_sync" {
     Environment = local.env
   }
 }
-
-resource "aws_lambda_event_source_mapping" "arcgis_sync" {
-  event_source_arn  = aws_cloudwatch_event_rule.hourly.arn
-  function_name     = aws_lambda_function.arcgis_sync.function_name
-  starting_position = "LATEST"
-}
