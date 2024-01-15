@@ -2,6 +2,7 @@
 import os
 from pathlib import Path
 
+from app.settings.arcgis import *
 from app.settings.auth import *
 from app.settings.aws import *
 from app.settings.cors import *
@@ -46,6 +47,7 @@ INSTALLED_APPS = [
     "customers",
     "pages",
     "repairs",
+    "third_party",
 ]
 
 

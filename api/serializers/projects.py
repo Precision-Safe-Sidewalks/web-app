@@ -3,7 +3,13 @@ from rest_framework import serializers
 from api.serializers.accounts import UserSerializer
 from api.serializers.core import TerritorySerializer
 from api.serializers.customers import CustomerSerializer
-from repairs.models import Measurement, PricingSheet, PricingSheetContact, Project
+from repairs.models import (
+    Measurement,
+    PricingSheet,
+    PricingSheetContact,
+    Project,
+    ProjectLayer,
+)
 from repairs.models.constants import Stage
 
 
@@ -258,7 +264,22 @@ class ProjectSummaryCompleteSerializer(serializers.Serializer):
     s3_key = serializers.CharField(max_length=255)
 
 
+class ProjectLayerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProjectLayer
+        fields = "__all__"
+
+
 class ProjectSerializer(serializers.ModelSerializer):
+    layers = serializers.SerializerMethodField()
+
+    def get_layers(self, obj):
+        if not obj.layers.exists():
+            return []
+
+        layers = obj.layers.all()
+        return ProjectLayerSerializer(layers, many=True).data
+
     class Meta:
         model = Project
         fields = "__all__"

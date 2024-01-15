@@ -82,6 +82,11 @@ urlpatterns = [
         name="project-pricing-sheet",
     ),
     path(
+        "projects/<int:pk>/web-map/",
+        project_views.ProjectWebMapView.as_view(),
+        name="project-web-map",
+    ),
+    path(
         "contacts/<int:pk>/edit/",
         contact_views.ContactUpdateView.as_view(),
         name="contact-update",

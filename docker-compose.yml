@@ -99,3 +99,13 @@ services:
       - .aws-lambda-rie:/aws-lambda
     entrypoint: /aws-lambda/aws-lambda-rie
     command: ./main
+
+  lambda-arcgis-sync:
+    image: pss-lambda-arcgis-sync:latest
+    environment:
+      - API_BASE_URL=http://app:8000 
+      - API_KEY=fake-api-key
+    env_file:
+      - docker/env.secrets
+    ports:
+      - 8004:8080

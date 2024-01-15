@@ -13,5 +13,5 @@ from repairs.models.pricing import (
     PricingSheetContact,
     PricingSheetRequest,
 )
-from repairs.models.projects import Project, ProjectContact
+from repairs.models.projects import Project, ProjectContact, ProjectLayer
 from repairs.models.summary import ProjectSummaryRequest

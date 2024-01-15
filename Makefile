@@ -12,11 +12,12 @@ APP_IMAGE_URI := ${ECR_REGISTRY_URL}/${PROJECT}:${GIT_HASH}
 GEO_IMAGE_URI := ${ECR_REGISTRY_URL}/${PROJECT}-lambda-geocoding:${GIT_HASH}
 PRI_IMAGE_URI := ${ECR_REGISTRY_URL}/${PROJECT}-lambda-pricing-sheet:${GIT_HASH}
 PRS_IMAGE_URI := ${ECR_REGISTRY_URL}/${PROJECT}-lambda-project-summary:${GIT_HASH}
+ARC_IMAGE_URI := ${ECR_REGISTRY_URL}/${PROJECT}-lambda-arcgis-sync:${GIT_HASH}
 
 network:
 	@docker network create ${PROJECT}-dev || true
 
-images: image_app image_geocoding image_pricing_sheet image_project_summary
+images: image_app image_geocoding image_pricing_sheet image_project_summary image_arcgis_sync
 
 image_app:
 	@docker build -t ${PROJECT}:latest -f docker/Dockerfile.app .
@@ -30,7 +31,10 @@ image_pricing_sheet:
 image_project_summary:
 	@docker build -t ${PROJECT}-lambda-project-summary:latest -f docker/Dockerfile.lambda.project_summary .
 
-release_images: release_image_app release_image_geocoding release_image_pricing_sheet release_image_project_summary
+image_arcgis_sync:
+	@docker build -t ${PROJECT}-lambda-arcgis-sync:latest -f docker/Dockerfile.lambda.arcgis_sync .
+
+release_images: release_image_app release_image_geocoding release_image_pricing_sheet release_image_project_summary release_image_arcgis_sync
 
 release_image_app:
 	@docker tag ${PROJECT}:latest ${APP_IMAGE_URI}
@@ -48,6 +52,10 @@ release_image_project_summary:
 	@docker tag ${PROJECT}-lambda-project-summary:latest ${PRS_IMAGE_URI}
 	@docker push ${PRS_IMAGE_URI}
 	
+release_image_arcgis_sync:
+	@docker tag ${PROJECT}-lambda-arcgis-sync:latest ${ARC_IMAGE_URI}
+	@docker push ${ARC_IMAGE_URI}
+
 pull_image:
 	@docker pull ${APP_IMAGE_URI}
 

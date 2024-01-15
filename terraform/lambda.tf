@@ -71,3 +71,26 @@ resource "aws_lambda_function" "project_summary" {
     Environment = local.env
   }
 }
+
+resource "aws_lambda_function" "arcgis_sync" {
+  function_name = "${local.project}-arcgis-sync-${local.env}"
+  role          = aws_iam_role.lambda.arn
+  package_type  = "Image"
+  image_uri     = "${data.aws_ecr_repository.lambda-arcgis-sync.repository_url}:${var.app_version}"
+  timeout       = 300
+  memory_size   = 512
+
+  environment {
+    variables = {
+      API_KEY         = local.secrets.LAMBDA_API_KEY
+      API_BASE_URL    = "https://app.bluezoneautomation.com"
+      ARCGIS_USERNAME = local.secrets.ARCGIS_USERNAME
+      ARCGIS_PASSWORD = local.secrets.ARCGIS_PASSWORD
+    }
+  }
+
+  tags = {
+    Project     = local.project
+    Environment = local.env
+  }
+}

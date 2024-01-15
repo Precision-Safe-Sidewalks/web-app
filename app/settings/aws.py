@@ -16,4 +16,9 @@ LAMBDA = {
         "function_name": os.environ.get("PROJECT_SUMMARY_LAMBDA_FUNCTION_NAME"),
         "enabled": True,
     },
+    "arcgis_sync": {
+        "endpoint_url": os.environ.get("ARCGIS_SYNC_LAMBDA_URL"),
+        "function_name": os.environ.get("ARCGIS_SYNC_LAMBDA_FUNCTION_NAME"),
+        "enabled": True,
+    },
 }
