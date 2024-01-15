@@ -17,7 +17,7 @@ ARC_IMAGE_URI := ${ECR_REGISTRY_URL}/${PROJECT}-lambda-arcgis-sync:${GIT_HASH}
 network:
 	@docker network create ${PROJECT}-dev || true
 
-images: image_app image_geocoding image_pricing_sheet image_project_summary
+images: image_app image_geocoding image_pricing_sheet image_project_summary image_arcgis_sync
 
 image_app:
 	@docker build -t ${PROJECT}:latest -f docker/Dockerfile.app .
