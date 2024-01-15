@@ -36,6 +36,7 @@ from repairs.models import (
     InstructionSpecification,
     Measurement,
     Project,
+    ProjectLayer,
 )
 from repairs.models.constants import (
     ContactMethod,
@@ -250,7 +251,16 @@ class ProjectMeasurementsExportView(View):
 class ProjectMeasurementsClearView(View):
     def post(self, request, pk, stage):
         project = get_object_or_404(Project, pk=pk)
-        project.measurements.filter(stage=stage.upper()).delete()
+        stage = stage.upper()
+
+        with transaction.atomic():
+            project.measurements.filter(stage=stage).delete()
+
+            # If the layer with a matching stage exists, update
+            # the sync status to reflect the deleted data.
+            if layer := project.layers.filter(stage=stage).first():
+                layer.status = ProjectLayer.Status.NOT_SYNCED
+                layer.save()
 
         redirect_url = reverse("project-detail", kwargs={"pk": pk})
         return redirect(redirect_url)

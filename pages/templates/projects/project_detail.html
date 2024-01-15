@@ -79,6 +79,67 @@
       </tbody>
     </table>
   </div>
+  
+  <div class="mt-12">
+    <h4>Data Sources</h4>
+    <table class="table mt-2">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th align="center">Sync Status</th>
+          <th align="center">Last Sync</th>
+          <th align="center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ project.arcgis_item.title|default:"---" }}</td>
+          <td>{{ project.arcgis_item.get_item_type_display|default:"Web Map" }}</td>
+          <td align="center">{% if project.arcgis_item %}Assigned{% else %}Unassigned{% endif %}</td>
+          <td align="center">---</td>
+          <td align="center">
+            <div class="flex--center">
+              <!-- Manually set the WebMap source -->
+              <button class="btn--icon-sm">
+                <span class="icon">edit</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+        {% for layer in project.layers.all|dictsort:"id" %}
+        <tr>
+          <td>{{ layer.arcgis_item.title }}</td>
+          <td>{{ layer.arcgis_item.get_item_type_display }}</td>
+          <td align="center" id="layer:status:{{ layer.id }}">{{ layer.get_status_display }}</td>
+          <td align="center">{{ layer.last_synced_at }}</td>
+          <td>
+            <div class="flex--center">
+              <!-- Manually sync the layer data from ArcGIS -->
+              <button class="btn--icon-sm" onclick="onSyncLayer({{ layer.id }})">
+                <span class="icon">sync</span>
+              </button>
+              
+              <!-- Modal for syncing -->
+              <div class="dialog" id="id_modal_layer_sync_{{ layer.id }}" data-no-click-away="true">
+                <div class="dialog-content">
+                  <div class="dialog-body">
+                    <div class="flex--center flex--column m-4">
+                      <div class="m-8">
+                        <div class="progress-circle">progress_activity</div>
+                      </div>
+                      Synchronizing layer {{ layer.title }} from ArcGIS. This may take a moment.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 
   <div class="mt-12">
     <h4>Documents</h4>
@@ -407,17 +468,19 @@
   // Constants
   const pricingSheetUrl = "{% url 'documents-pricing-sheet-detail' pk=project.pk %}"
   const projectSummaryUrl = "{% url 'documents-project-summary-detail' pk=project.pk %}"
-  const centroid = JSON.parse("{{ centroid }}")
   const hasMeasurements = "{{ project.measurements.exists }}" === "True"
+  const centroid = hasMeasurements ? JSON.parse("{{ centroid }}") : null
 
   // Global variables
   var map = null;
   var imageId = 1;
 
   $(document).ready(() => {
-    map = new MeasurementsMap("map", "{{ project.pk }}", center=centroid)
-    $(`input[id^="map:filter"]`).prop("checked", true)
-    $(`input[id="map:labels"]`).prop("checked", false)
+    if (hasMeasurements) {
+      map = new MeasurementsMap("map", "{{ project.pk }}", center=centroid)
+      $(`input[id^="map:filter"]`).prop("checked", true)
+      $(`input[id="map:labels"]`).prop("checked", false)
+    }
 
     enableProjectSummaryDownload()
   })
@@ -578,6 +641,39 @@
   // Sleep for n seconds
   const delay = async (seconds) => {
     return new Promise(res => setTimeout(res, seconds * 1000))  
+  }
+
+  // Handler for synchronizing a layer
+  const onSyncLayer = async (layerId, timeout = 300) => {
+    const start = Date.now()
+
+    const dialog = $(`#id_modal_layer_sync_${layerId}`)
+    $(dialog).addClass("open")
+    $(`td[id="layer:status:${layerId}"`).text("In Progress")
+
+    const url = `/api/projects/layers/${layerId}/sync/`
+    await fetch(url, { method: "POST", headers: { "X-CSRFToken": "{{ csrf_token }}" }})
+
+    while (Date.now() - start < timeout * 1000) {
+      const layerUrl = `/api/projects/layers/${layerId}/`
+      const resp = await fetch(layerUrl)
+
+      if (resp.ok) {
+        const { status } = await resp.json()
+
+        if (status === "COMPLETE" || status === "FAILED") {
+          window.location.reload()
+          return true
+        }
+      }
+
+      await delay(5)
+    }
+
+    $(`#layer:status:${layerId}`).text("Sync Timed Out")
+    $(dialog).removeClass("open")
+
+    return false
   }
 </script>
 {% endblock %}

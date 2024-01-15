@@ -1,6 +1,6 @@
 import io
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from datetime import timezone as tz
 
 from django.contrib.gis.geos import Point
@@ -32,6 +32,7 @@ from repairs.models import (
     ProjectSummaryRequest,
 )
 from repairs.models.constants import QuickDescription, SpecialCase, Stage
+from utils.aws import invoke_lambda_function
 from utils.choices import value_of
 
 LOGGER = logging.getLogger(__name__)
@@ -208,6 +209,27 @@ class ProjectLayerViewSet(viewsets.ModelViewSet):
 
     queryset = ProjectLayer.objects.order_by("id")
     serializer_class = ProjectLayerSerializer
+
+    @action(methods=["POST"], detail=True)
+    def sync(self, request, pk=None):
+        """Synchronize the layer with ArcGIS"""
+        layer = self.get_object()
+
+        # If the layer is marked as IN_PROGRESS and was updated
+        # less than 5 minutes ago, assume the sync is still running.
+        if layer.status == ProjectLayer.Status.IN_PROGRESS:
+            if timezone.now() > layer.updated_at + timedelta(minutes=5):
+                return Response({"status": layer.status})
+            else:
+                LOGGER.info(
+                    f"Previous sync for layer {layer.id} appears stuck. Re-syncing."
+                )
+
+        layer.status = ProjectLayer.Status.IN_PROGRESS
+        layer.save()
+        invoke_lambda_function("arcgis_sync", {"layer_id": layer.id})
+
+        return Response({"status": layer.status})
 
     @action(methods=["POST"], detail=True)
     def features(self, request, pk=None):

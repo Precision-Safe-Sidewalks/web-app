@@ -198,6 +198,7 @@ class ProjectLayer(models.Model):
     class Status(models.TextChoices):
         """Layer sync status"""
 
+        NOT_SYNCED = ("NOT_SYNCED", "Not Synced")
         IN_PROGRESS = ("IN_PROGRESS", "In Progress")
         COMPLETE = ("COMPLETE", "Complete")
         FAILED = ("FAILED", "Failed")
@@ -208,7 +209,7 @@ class ProjectLayer(models.Model):
     stage = models.CharField(max_length=25, choices=Stage.choices)
     arcgis_item = models.ForeignKey(ArcGISItem, on_delete=models.CASCADE)
     status = models.CharField(
-        max_length=25, choices=Status.choices, default=Status.IN_PROGRESS
+        max_length=25, choices=Status.choices, default=Status.NOT_SYNCED
     )
     last_synced_at = models.DateTimeField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
