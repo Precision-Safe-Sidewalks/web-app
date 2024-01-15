@@ -31,7 +31,7 @@ from repairs.models import (
     ProjectLayer,
     ProjectSummaryRequest,
 )
-from repairs.models.constants import QuickDescription, SpecialCase, Stage
+from repairs.models.constants import PricingModel, QuickDescription, SpecialCase, Stage
 from utils.aws import invoke_lambda_function
 from utils.choices import value_of
 
@@ -303,6 +303,17 @@ class ProjectLayerViewSet(viewsets.ModelViewSet):
                 layer.last_synced_at = timezone.now()
                 layer.status = ProjectLayer.Status.COMPLETE
                 layer.save()
+
+                # For square foot pricing models, calculate the estimated sidewalk
+                # miles from the measurements.
+                if layer.project.pricing_model == PricingModel.SQUARE_FOOT:
+                    layer.project.pricing_sheet.calculate_sidewalk_miles()
+
+                # Trigger the Lambda function to reverse geocode the addresses
+                # based on the coordinates by adding the (project_id, stage) to
+                # the SQS queue
+                payload = {"project_id": layer.project_id, "stage": layer.stage}
+                invoke_lambda_function("geocoding", payload)
 
         # If the transaction failed, set the layer status to FAILED
         except Exception as exc:
