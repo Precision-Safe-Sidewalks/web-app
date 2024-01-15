@@ -50,6 +50,8 @@ from repairs.models.constants import (
     SpecialCase,
     Stage,
 )
+from third_party.models import ArcGISItem
+from utils.aws import invoke_lambda_function
 
 LOGGER = logging.getLogger(__name__)
 
@@ -179,6 +181,46 @@ class ProjectStatusUpdateView(View):
         project = get_object_or_404(Project, pk=pk)
         project.status = int(request.POST.get("status"))
         project.save()
+
+        redirect_url = reverse("project-detail", kwargs={"pk": self.kwargs["pk"]})
+        return redirect(redirect_url)
+
+
+class ProjectWebMapView(DetailView):
+    model = Project
+    template_name = "projects/project_web_map.html"
+    context_object_name = "project"
+
+    def post(self, request, pk):
+        project = get_object_or_404(Project, pk=pk)
+        layers = []
+
+        with transaction.atomic():
+            web_map = int(request.POST.get("web_map"))
+            item = ArcGISItem.objects.filter(pk=web_map).first()
+
+            if web_map != project.arcgis_item != item and item is not None:
+                project.arcgis_item_id = item
+                project.save()
+
+                project.layers.all().delete()
+                project.measurements.all().delete()
+
+                for child in item.children.all():
+                    if child.title.startswith("PSS Survey"):
+                        layer = ProjectLayer.objects.create(
+                            project=project, stage=Stage.SURVEY, arcgis_item=child
+                        )
+                        layers.append(layer.id)
+
+                    elif child.title.startswith("PSS Repair"):
+                        layer = ProjectLayer.objects.create(
+                            project=project, stage=Stage.PRODUCTION, arcgis_item=child
+                        )
+                        layers.append(layer.id)
+
+        for layer in layers:
+            invoke_lambda_function("arcgis_sync", {"layer_id": layer})
 
         redirect_url = reverse("project-detail", kwargs={"pk": self.kwargs["pk"]})
         return redirect(redirect_url)

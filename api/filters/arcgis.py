@@ -11,7 +11,9 @@ class ArcGISItemFilter(django_filters.FilterSet):
 
     def filter_autocomplete(self, queryset, name, value):
         """Filter by the autocomplete query"""
-        return queryset.filter(title__istartswith=value)
+        return queryset.filter(
+            Q(title__istartswith=value) | Q(title__istartswith=f"pss {value}")
+        )
 
     class Meta:
         model = ArcGISItem

@@ -18,7 +18,7 @@ RE_ITEM_TITLE = re.compile(r"^PSS\s+(?P<name>.*)\s+(?P<template_date>\d{6})$")
 class ArcGISItemViewSet(ModelViewSet):
     """ArcGIS Item API view set"""
 
-    queryset = ArcGISItem.objects.order_by("id")
+    queryset = ArcGISItem.objects.order_by("title")
     serializer_class = ArcGISItemSerializer
     filterset_class = ArcGISItemFilter
 

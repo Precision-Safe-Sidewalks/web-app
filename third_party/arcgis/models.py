@@ -10,7 +10,7 @@ class ArcGISItem(models.Model):
 
     item_id = models.CharField(max_length=50, unique=True)
     item_type = models.CharField(max_length=25, choices=ItemType.choices)
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=100, db_index=True)
     url = models.URLField(blank=True, null=True)
     parent = models.ForeignKey(
         "ArcGISItem",
