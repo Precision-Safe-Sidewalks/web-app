@@ -41,9 +41,14 @@
           Needed by
         </div>
         <div class="form-control w-64">
-          <input type="text" name="needed_by" placeholder="mm/dd/yyyy or ASAP" 
-            {% if instruction.needed_by %}value="{{ instruction.needed_by|date:'n/j/Y' }}"{% endif %}
-            {% if instruction.needed_asap %}value="ASAP"{% endif %}
+          <input type="text" name="needed_by" placeholder="mm/dd/yyyy, ASAP, or TBD" 
+            {% if instruction.needed_by %}
+              value="{{ instruction.needed_by|date:'n/j/Y' }}"
+            {% elif instruction.needed_asap %}
+              value="ASAP"
+            {% else %}
+              value="TBD"
+            {% endif %}
           >
         </div>
 

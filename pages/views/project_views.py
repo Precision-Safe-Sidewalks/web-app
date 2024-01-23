@@ -354,14 +354,13 @@ class BaseInstructionsView(TemplateView):
 
     def process_needed_by(self, instruction):
         """Process the needed_by/needed_asap fields"""
-        needed_by = self.request.POST.get("needed_by")
+        needed_by = self.request.POST.get("needed_by") or "TBD"
+        needed_by = needed_by.upper().strip()
 
-        if not needed_by:
+        if needed_by == "TBD":
             instruction.needed_by = None
             instruction.needed_asap = False
             return
-        else:
-            needed_by = needed_by.strip().upper()
 
         if needed_by == "ASAP":
             instruction.needed_by = None
