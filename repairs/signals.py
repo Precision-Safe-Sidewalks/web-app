@@ -55,6 +55,6 @@ def generate_project_summary(sender, instance, created, **kwargs):
 @receiver(post_save, sender=Customer)
 def update_project_bdm(sender, instance, **kwargs):
     """Update the BDM for all customer projects"""
-    for project in instance.projects:
+    for project in instance.projects.all():
         project.business_development_manager = instance.business_development_manager
         project.save()
