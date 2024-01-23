@@ -43,7 +43,12 @@ class SurveyInstructionsAPIView(APIView):
 
     def get(self, request, pk):
         instruction = get_object_or_404(Instruction, pk=pk)
+        preview = str(self.request.GET.get("preview")).lower() == "true"
         generator = SurveyInstructionsGenerator(instruction)
+
+        if preview:
+            content = generator.render()
+            return HttpResponse(content)
 
         with io.BytesIO() as f:
             generator.generate(f)
@@ -60,7 +65,12 @@ class ProjectInstructionsAPIView(APIView):
 
     def get(self, request, pk):
         instruction = get_object_or_404(Instruction, pk=pk)
+        preview = str(self.request.GET.get("preview")).lower() == "true"
         generator = ProjectInstructionsGenerator(instruction)
+
+        if preview:
+            content = generator.render()
+            return HttpResponse(content)
 
         with io.BytesIO() as f:
             generator.generate(f)

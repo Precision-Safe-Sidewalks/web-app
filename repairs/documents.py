@@ -31,12 +31,17 @@ class BaseInstructionsGenerator(AbstractDocumentGenerator):
 
     def generate(self, file_obj):
         """Generate the survey instructions PDF"""
-        template = loader.get_template(self.template_name)
-        context = self.get_context_data()
-        content = template.render(context)
+        content = self.render()
         css = CSS(self.stylesheet)
         html = HTML(string=content)
         html.write_pdf(file_obj, stylesheets=[css])
+
+    def render(self):
+        """Render the template to HTML"""
+        template = loader.get_template(self.template_name)
+        context = self.get_context_data()
+        content = template.render(context)
+        return content
 
     def get_context_data(self):
         """Return the context data to render"""
