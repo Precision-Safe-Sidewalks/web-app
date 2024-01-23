@@ -1,6 +1,7 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+from customers.models import Customer
 from repairs.models import (
     Instruction,
     InstructionChecklist,
@@ -49,3 +50,11 @@ def generate_project_summary(sender, instance, created, **kwargs):
             "project_id": instance.project_id,
         }
         invoke_lambda_function("project_summary", payload=payload)
+
+
+@receiver(post_save, sender=Customer)
+def update_project_bdm(sender, instance, **kwargs):
+    """Update the BDM for all customer projects"""
+    for project in instance.projects:
+        project.business_development_manager = instance.business_development_manager
+        project.save()
