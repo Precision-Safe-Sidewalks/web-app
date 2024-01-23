@@ -170,6 +170,10 @@
               <a href="{% url 'documents-survey-instructions' pk=si.pk %}" class="btn--icon-sm ml-1">
                 <span class="icon">download</span>
               </a>
+              {% else %}
+              <a href="{% url 'documents-survey-instructions' pk=si.pk %}?preview=true" target="_blank" class="btn--icon-sm ml-1">
+                <span class="icon">preview</span>
+              </a>
               {% endif %}
             </div>
           </td>
@@ -287,6 +291,10 @@
               {% if exists %}
               <a href="{% url 'documents-project-instructions' pk=pi.pk %}" class="btn--icon-sm ml-1">
                 <span class="icon">download</span>
+              </a>
+              {% else %}
+              <a href="{% url 'documents-project-instructions' pk=si.pk %}?preview=true" target="_blank" class="btn--icon-sm ml-1">
+                <span class="icon">preview</span>
               </a>
               {% endif %}
             </div>

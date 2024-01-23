@@ -18,8 +18,7 @@
   margin: 0.25in 0.25in 0.25in 0.25in;
 }
 
-@media print {
-
+@media all {
   body {
     font-family: "Inter", sans-serif;
   }
@@ -123,5 +122,16 @@
 
   td[data-highlight="true"] {
     background-color: var(--color-green);
+  }
+
+  .new-page {
+    page-break-before: always;
+  }
+}
+
+@media screen {
+  body {
+    padding-left: 10%;
+    padding-right: 10%;
   }
 }
