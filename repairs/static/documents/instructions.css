@@ -123,6 +123,10 @@
   td[data-highlight="true"] {
     background-color: var(--color-green);
   }
+
+  .new-page {
+    page-break-before: always;
+  }
 }
 
 @media screen {

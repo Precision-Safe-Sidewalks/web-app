@@ -80,7 +80,7 @@ class SurveyInstructionsGenerator(BaseInstructionsGenerator):
         context["hazards"] = self.get_specification("H", Hazard.choices)
         context["special_cases"] = self.get_specification("SC", SpecialCase.choices)
         context["dr_specs"] = self.get_specification("DR", DRSpecification.choices)
-        context["notes_placeholder"] = list(range(5))
+        context["notes_placeholder"] = list(range(3))
         return context
 
 
@@ -97,7 +97,7 @@ class ProjectInstructionsGenerator(BaseInstructionsGenerator):
         )
         context["special_cases"] = self.get_specification("SC", SpecialCase.choices)
         context["dr_specs"] = self.get_specification("DR", DRSpecification.choices)
-        context["notes_placeholder"] = list(range(5))
+        context["notes_placeholder"] = list(range(3))
         context[
             "linear_feet_curb_note"
         ] = f"{self.instruction.linear_feet_curb:g} linear feet."
