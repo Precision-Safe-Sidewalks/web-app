@@ -60,7 +60,7 @@ class MeasurementsMap {
       layout: {
         "icon-image": ["get", "symbol"],
         "icon-allow-overlap": true,
-        "icon-size": ["interpolate", ["exponential", 2], ["zoom"], 15, 0.15, 22, 8],
+        "icon-size": ["interpolate", ["exponential", 2], ["zoom"], 15, 0.25, 22, 8],
         "icon-anchor": "bottom",
       },
       paint: {
