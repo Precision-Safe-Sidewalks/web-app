@@ -124,6 +124,11 @@
     background-color: var(--color-green);
   }
 
+  /* Checklist */
+  .checklist-item {
+    padding-bottom: 56px;
+  }
+
   .new-page {
     page-break-before: always;
   }
