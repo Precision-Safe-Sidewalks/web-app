@@ -25,7 +25,6 @@ class MeasurementsMap {
       this.mapConfig.zoom = this.map.getZoom()
       this.mapConfig.container = this.map.getContainer()
       this.mapLabels = this.map.getLayoutProperty(LAYER_LABELS, "visibility")
-      this.mapFilter = this.map.getFilter(LAYER)
       this.map.remove()
     }
 
@@ -45,6 +44,7 @@ class MeasurementsMap {
 
     if (!this.mapData) {
       this.mapData = await this.fetchFeatures()
+      this.mapFilter = this.calculateFilters(this.mapData.features)
       bounds = this.mapData.bbox
     }
     
@@ -81,8 +81,9 @@ class MeasurementsMap {
       },
     })
 
-    await this.map.setFilter(LAYER, this.mapFilter)
-    await this.map.setFilter(LAYER_LABELS, this.mapFilter)
+    const filter = this.buildMapboxFilter()
+    await this.map.setFilter(LAYER, filter)
+    await this.map.setFilter(LAYER_LABELS, filter)
 
     this.map.fitBounds(bounds)
   }
@@ -111,44 +112,52 @@ class MeasurementsMap {
 
   // Handler for applying filters to the layer
   async addFilter(property, value) {
-    const layer = this.map.getLayer(LAYER)
+    const layer = await this.map.getLayer(LAYER)
 
     if (!layer) {
       return
     }
-    
-    const currentFilter = this.map.getFilter(LAYER)
-    const nextFilter = ["!=", ["get", property], value]
 
-    if (currentFilter === undefined) {
-      this.map.setFilter(LAYER, ["all", nextFilter])
-      this.map.setFilter(LAYER_LABELS, ["all", nextFilter])
-    } else {
-      this.map.setFilter(LAYER, [...currentFilter, nextFilter])
-      this.map.setFilter(LAYER_LABELS, [...currentFilter, nextFilter])
-    }
+    this.mapFilter[property] = this.mapFilter[property].map(
+      filter => ({ ...filter, visible: filter.value === value ? true : filter.visible })
+    )
+
+    const filter = this.buildMapboxFilter()
+    await this.map.setFilter(LAYER, filter)
+    await this.map.setFilter(LAYER_LABELS, filter)
+
   }
 
   // Handler fo removing filters from the layer
   async removeFilter(property, value) {
-    const currentFilter = this.map.getFilter(LAYER)
-    const layer = this.map.getLayer(LAYER)
+    const layer = await this.map.getLayer(LAYER)
 
-    if (currentFilter === undefined || layer === undefined) {
+    if (!layer) {
       return
     }
 
-    const nextFilter = currentFilter
-      .slice(1, -1)
-      .filter(f => (!(f[1][1] === property && f[2] === value)))
+    this.mapFilter[property] = this.mapFilter[property].map(
+      filter => ({ ...filter, visible: filter.value === value ? false : filter.visible })
+    )
 
-    if (nextFilter.length === 0) {
-      this.map.setFilter(LAYER, null)
-      this.map.setFilter(LAYER_LABELS, null)
-    } else {
-      this.map.setFilter(LAYER, ["all", ...nextFilter])
-      this.map.setFilter(LAYER_LABELS, ["all", ...nextFilter])
-    }
+    const filter = this.buildMapboxFilter()
+    await this.map.setFilter(LAYER, filter)
+    await this.map.setFilter(LAYER_LABELS, filter)
+  }
+
+  // Convert the filters to Mapbox's format
+  buildMapboxFilter() {
+    let filters = ["all"]
+
+    Object.keys(this.mapFilter).forEach(property => {
+      const values = this.mapFilter[property]
+        .filter(filter => filter.visible)
+        .map(filter => ["==", ["get", property], filter.value])
+
+      filters.push(["any", ...values])
+    })
+
+    return filters
   }
 
   // Handler to toggle the visbility for the labels
@@ -235,6 +244,18 @@ class MeasurementsMap {
     const dy = (maxY - minY) * buffer
 
     return [minX - dx, minY - dy, maxX + dx, maxY + dy]
+  }
+
+  calculateFilters(features) {
+    let options = {}
+    const properties = ["stage", "hazard_size", "special_case"]
+
+    for (const property of properties) {
+      const values = [...new Set(features.map(f => f.properties[property]))]
+      options[property] = values.map(value => ({value, visible: true}))
+    }
+
+    return options
   }
 
   // Return the HTML template for the feature to render inside the
