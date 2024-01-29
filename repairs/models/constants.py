@@ -133,7 +133,8 @@ class PanelSize(models.IntegerChoices):
 
 SYMBOLS = {
     None: "location_on",
-    SpecialCase.REPLACE: "square",
+    SpecialCase.REPLACE: "square",  # TODO: deprecate
+    QuickDescription.REPLACE: "square",
     SpecialCase.BOTTOM_HC: "accessible",
     SpecialCase.GUTTER_PAN: "accessible",
     SpecialCase.CURB: "square",
@@ -152,8 +153,9 @@ SYMBOLS = {
 
 SYMBOL_COLORS = {
     None: "black",
-    SpecialCase.REPLACE: "#00a707",
     SpecialCase.CURB: "#f48fb9",
+    SpecialCase.REPLACE: "#00a707",  # TODO: deprecate
+    QuickDescription.REPLACE: "#00a707",
     QuickDescription.SMALL: "#eed300",
     QuickDescription.MEDIUM: "#0290ee",
     QuickDescription.LARGE: "#ee0202",
