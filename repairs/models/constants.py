@@ -9,7 +9,7 @@ class Stage(models.TextChoices):
 class SpecialCase(models.TextChoices):
     """Special case type choices"""
 
-    REPLACE = ("R", "Replace")
+    REPLACE = ("R", "Replace")  # TODO: deprecate (moved to QuickDescription)
     CURB = ("C", "Curb")
     BOTTOM_HC = ("BHC", "Bottom HC")
     GUTTER_PAN = ("GP", "Gutter Pan")
@@ -32,6 +32,7 @@ class QuickDescription(models.TextChoices):
     SMALL = ("S", "Small")
     MEDIUM = ("M", "Medium")
     LARGE = ("L", "Large")
+    REPLACE = ("R", "Replace")
     OTHER = ("O", "Other")
 
 
