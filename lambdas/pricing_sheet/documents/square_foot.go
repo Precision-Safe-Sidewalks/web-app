@@ -94,7 +94,7 @@ func (p SquareFootPricingSheet) UpdateSurveyData(f *excelize.File) {
 			f.SetCellValue(sheet, fmt.Sprintf("I%d", offset+i), item.Length)
 			f.SetCellValue(sheet, fmt.Sprintf("X%d", offset+i), item.ObjectId)
 
-			if utils.SafeString(item.SpecialCase) == "Replace" {
+			if utils.SafeString(item.HazardSize) == "Replace" {
 				f.SetCellValue(sheet, fmt.Sprintf("D%d", offset+i), "")
 				f.SetCellValue(sheet, fmt.Sprintf("E%d", offset+i), "")
 			}
