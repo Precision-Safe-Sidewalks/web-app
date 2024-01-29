@@ -2,6 +2,20 @@
 
 from django.db import migrations, models
 
+from repairs.models.constants import QuickDescription, SpecialCase
+
+
+def forward(apps, schema_editor):
+    Measurement = apps.get_model("repairs", "Measurement")
+
+    for obj in Measurement.objects.filter(special_case=SpecialCase.REPLACE):
+        obj.hazard_size = QuickDescription.REPLACE
+        obj.save()
+
+
+def reverse(apps, schema_editor):
+    pass
+
 
 class Migration(migrations.Migration):
     dependencies = [
@@ -25,4 +39,5 @@ class Migration(migrations.Migration):
                 null=True,
             ),
         ),
+        migrations.RunPython(forward, reverse),
     ]
