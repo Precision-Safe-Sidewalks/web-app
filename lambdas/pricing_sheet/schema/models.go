@@ -148,14 +148,5 @@ func (m Measurement) GetHighlightColor() string {
 		}
 	}
 
-	// If replace, highlight if:
-	// - Hazard size is Small, Medium, or Large [Green]
-	// FIXME: determine if rule is necessary
-	if hazardSize == "Replace" {
-		if hazardSize == "Small" || hazardSize == "Medium" || hazardSize == "Large" {
-			return constants.COLOR_GREEN
-		}
-	}
-
 	return ""
 }
