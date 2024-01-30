@@ -2,13 +2,13 @@
 
 from django.db import migrations, models
 
-from repairs.models.constants import QuickDescription, SpecialCase
+from repairs.models.constants import QuickDescription
 
 
 def forward(apps, schema_editor):
     Measurement = apps.get_model("repairs", "Measurement")
 
-    for obj in Measurement.objects.filter(special_case=SpecialCase.REPLACE):
+    for obj in Measurement.objects.filter(special_case="R"):
         obj.hazard_size = QuickDescription.REPLACE
         obj.save()
 
