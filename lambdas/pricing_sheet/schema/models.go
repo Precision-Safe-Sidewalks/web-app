@@ -39,7 +39,7 @@ func (p PricingSheetData) TotalReplaceArea() float64 {
 
 	for _, group := range p.Measurements {
 		for _, measurement := range group.Measurements {
-			if measurement.SpecialCase != nil && *measurement.SpecialCase == "Replace" {
+			if measurement.HazardSize != nil && *measurement.HazardSize == "Replace" {
 				area += measurement.Area
 			}
 		}
@@ -145,14 +145,6 @@ func (m Measurement) GetHighlightColor() string {
 	if specialCase == "Recuts" {
 		if hazardSize != "Large" {
 			return constants.COLOR_PINK
-		}
-	}
-
-	// If replace, highlight if:
-	// - Hazard size is Small, Medium, or Large [Green]
-	if specialCase == "Replace" {
-		if hazardSize == "Small" || hazardSize == "Medium" || hazardSize == "Large" {
-			return constants.COLOR_GREEN
 		}
 	}
 

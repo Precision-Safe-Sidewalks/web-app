@@ -9,7 +9,7 @@ class Stage(models.TextChoices):
 class SpecialCase(models.TextChoices):
     """Special case type choices"""
 
-    REPLACE = ("R", "Replace")
+    REPLACE = ("R", "Replace")  # TODO: deprecate (moved to QuickDescription)
     CURB = ("C", "Curb")
     BOTTOM_HC = ("BHC", "Bottom HC")
     GUTTER_PAN = ("GP", "Gutter Pan")
@@ -32,6 +32,7 @@ class QuickDescription(models.TextChoices):
     SMALL = ("S", "Small")
     MEDIUM = ("M", "Medium")
     LARGE = ("L", "Large")
+    REPLACE = ("R", "Replace")
     OTHER = ("O", "Other")
 
 
@@ -132,7 +133,8 @@ class PanelSize(models.IntegerChoices):
 
 SYMBOLS = {
     None: "location_on",
-    SpecialCase.REPLACE: "square",
+    SpecialCase.REPLACE: "square",  # TODO: deprecate
+    QuickDescription.REPLACE: "square",
     SpecialCase.BOTTOM_HC: "accessible",
     SpecialCase.GUTTER_PAN: "accessible",
     SpecialCase.CURB: "square",
@@ -151,8 +153,9 @@ SYMBOLS = {
 
 SYMBOL_COLORS = {
     None: "black",
-    SpecialCase.REPLACE: "#00a707",
     SpecialCase.CURB: "#f48fb9",
+    SpecialCase.REPLACE: "#00a707",  # TODO: deprecate
+    QuickDescription.REPLACE: "#00a707",
     QuickDescription.SMALL: "#eed300",
     QuickDescription.MEDIUM: "#0290ee",
     QuickDescription.LARGE: "#ee0202",

@@ -61,6 +61,11 @@ class Measurement(models.Model):
             if self.stage == Stage.PRODUCTION:
                 self.length = 0.5
 
+        # Temporarily force hazard_size = Replace if the special case
+        # is Replace for backwards compatibility
+        if self.special_case == SpecialCase.REPLACE:
+            self.hazard_size = QuickDescription.REPLACE
+
         super().save(*args, **kwargs)
 
     @staticmethod
