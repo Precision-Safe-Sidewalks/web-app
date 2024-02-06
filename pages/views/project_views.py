@@ -433,6 +433,7 @@ class BaseInstructionsView(TemplateView):
         """Process the instruction special cases"""
         index = {
             "hazard": InstructionSpecification.SpecificationType.HAZARD,
+            "hazard_size": InstructionSpecification.SpecificationType.HAZARD_SIZE,
             "special_case": InstructionSpecification.SpecificationType.SPECIAL_CASE,
             "dr": InstructionSpecification.SpecificationType.DR,
             "project": InstructionSpecification.SpecificationType.PROJECT,
