@@ -144,19 +144,15 @@
           </td>
           <td colspan="4">
             {% with phone=instruction.project.business_development_manager.get_cell_phone %}
-            C: {{ phone }}
+            C: {{ phone|default:"" }}
             {% endwith %}
           </td>
           <td colspan="2">
-            {% if instruction.project.business_development_administrator %}
-              BDA/{{ instruction.project.business_development_administrator.first_name }}
-            {% else %}
-              BDA/{{ instruction.project.business_development_manager.first_name }}
-            {% endif %}
+            BDA/{{ instruction.project.business_development_administrator.first_name }}
           </td>
           <td colspan="4">
             {% with phone=instruction.project.business_development_administrator.get_cell_phone %}
-            C: {% if phone %}{{ phone }}{% endif %}
+            C: {{ phone|default:"" }}
             {% endwith %}
           </td>
         </tr>
