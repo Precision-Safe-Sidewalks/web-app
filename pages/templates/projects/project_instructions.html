@@ -234,6 +234,21 @@
       </h6>
 
       <div class="mt-4 grid" style="grid-template-columns: 256px auto;">
+      <!-- Handle Replace separately -->
+      {% get_spec "HS" "R" as spec %}
+      <div class="chip--filter" onclick="onToggleSpecialCaseChip(event)" {% if spec %}data-active="true"{% endif %}>
+        Replace
+        <input type="checkbox" name="hazard_size:state:R" {% if spec %}checked{% endif %} hidden>
+      </div>
+      <div class="form-control">
+        <input 
+          type="text" 
+          name="hazard_size:note:R"
+          placeholder="Add a note" 
+          {% if spec and spec.note %}value="{{ spec.note }}"{% endif %}
+          {% if not spec %}hidden{% endif %}>
+      </div>
+
       {% for special_case in special_cases %}
         {% if special_case.0 != 'R' %}
           {% get_spec "SC" special_case.0 as spec %}

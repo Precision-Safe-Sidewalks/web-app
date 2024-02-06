@@ -224,6 +224,23 @@
           {% endfor %}
         </tr>
         
+        <!-- Handle Replace -->
+        {% for key, value in hazard_sizes.items %}
+        {% if key == "R" %}
+        <tr>
+          <td colspan="1" class="center" {% if value.obj %}data-highlight="true"{% endif %}>
+            {% if value.obj %}YES{% else %}NO{% endif %}
+          </td>
+          <td colspan="2" data-special-case="{{ key }}">
+            {{ value.label }}
+          </td>
+          <td colspan="9">
+            {% if value.obj.note %}{{ value.obj.note }}{% endif %}
+          </td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+        
         {% for key, value in project_specifications.items %}
         <tr>
           <td colspan="1" class="center" {% if value.obj %}data-highlight="true"{% endif %}>

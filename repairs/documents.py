@@ -8,8 +8,8 @@ from repairs.models.constants import (
     DRSpecification,
     Hazard,
     ProjectSpecification,
-    SpecialCase,
     QuickDescription,
+    SpecialCase,
 )
 
 
@@ -68,7 +68,6 @@ class BaseInstructionsGenerator(AbstractDocumentGenerator):
                 specification_type=spec_type, specification=key
             ).first()
 
-        print(data)
         return data
 
 
@@ -80,9 +79,7 @@ class SurveyInstructionsGenerator(BaseInstructionsGenerator):
     def get_context_data(self):
         context = super().get_context_data()
         context["hazards"] = self.get_specification("H", Hazard.choices)
-        context["hazard_sizes"] = self.get_specification(
-            "HS", QuickDescription.choices
-        )  # only Replace rendered
+        context["hazard_sizes"] = self.get_specification("HS", QuickDescription.choices)
         context["special_cases"] = self.get_specification("SC", SpecialCase.choices)
         context["dr_specs"] = self.get_specification("DR", DRSpecification.choices)
         context["notes_placeholder"] = list(range(3))
@@ -97,6 +94,7 @@ class ProjectInstructionsGenerator(BaseInstructionsGenerator):
     def get_context_data(self):
         context = super().get_context_data()
         context["hazards"] = self.get_hazards()
+        context["hazard_sizes"] = self.get_specification("HS", QuickDescription.choices)
         context["project_specifications"] = self.get_specification(
             "P", ProjectSpecification.choices
         )
