@@ -147,6 +147,7 @@ class InstructionSpecification(models.Model):
         """Specification type choices"""
 
         HAZARD = ("H", "Hazard")
+        HAZARD_SIZE = ("HS", "Hazard size")
         SPECIAL_CASE = ("SC", "Special case")
         DR = ("DR", "D&R specification")
         PROJECT = ("P", "Project specification")

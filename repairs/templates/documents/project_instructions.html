@@ -144,19 +144,15 @@
           </td>
           <td colspan="4">
             {% with phone=instruction.project.business_development_manager.get_cell_phone %}
-            C: {{ phone }}
+            C: {{ phone|default:"" }}
             {% endwith %}
           </td>
           <td colspan="2">
-            {% if instruction.project.business_development_administrator %}
-              BDA/{{ instruction.project.business_development_administrator.first_name }}
-            {% else %}
-              BDA/{{ instruction.project.business_development_manager.first_name }}
-            {% endif %}
+            BDA/{{ instruction.project.business_development_administrator.first_name }}
           </td>
           <td colspan="4">
             {% with phone=instruction.project.business_development_administrator.get_cell_phone %}
-            C: {% if phone %}{{ phone }}{% endif %}
+            C: {{ phone|default:"" }}
             {% endwith %}
           </td>
         </tr>
@@ -223,6 +219,23 @@
             {% endif %}
           {% endfor %}
         </tr>
+        
+        <!-- Handle Replace -->
+        {% for key, value in hazard_sizes.items %}
+        {% if key == "R" %}
+        <tr>
+          <td colspan="1" class="center" {% if value.obj %}data-highlight="true"{% endif %}>
+            {% if value.obj %}YES{% else %}NO{% endif %}
+          </td>
+          <td colspan="2" data-special-case="{{ key }}">
+            {{ value.label }}
+          </td>
+          <td colspan="9">
+            {% if value.obj.note %}{{ value.obj.note }}{% endif %}
+          </td>
+        </tr>
+        {% endif %}
+        {% endfor %}
         
         {% for key, value in project_specifications.items %}
         <tr>
