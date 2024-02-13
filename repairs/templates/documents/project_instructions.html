@@ -252,25 +252,25 @@
         {% endfor %}
 
         {% for key, value in special_cases.items %}
-          {% if key != 'R' %}
-          <tr>
-            <td colspan="1" class="center" {% if value.obj %}data-highlight="true"{% endif %}>
-              {% if value.obj %}YES{% else %}NO{% endif %}
-            </td>
-            <td colspan="2" data-special-case="{{ key }}">
-              {{ value.label }}
-            </td>
-            <td colspan="9">
-              {% if value.obj and key == 'C' %}
-                {{ linear_feet_curb_note }}
-              {% endif %}
-              
-              {% if value.obj.note %}
-                {{ value.obj.note }}
-              {% endif %}
-            </td>
-          </tr>
-          {% endif %}
+        {% if key != "NONE" %}
+        <tr>
+          <td colspan="1" class="center" {% if value.obj %}data-highlight="true"{% endif %}>
+            {% if value.obj %}YES{% else %}NO{% endif %}
+          </td>
+          <td colspan="2" data-special-case="{{ key }}">
+            {{ value.label }}
+          </td>
+          <td colspan="9">
+            {% if value.obj and key == 'C' %}
+              {{ linear_feet_curb_note }}
+            {% endif %}
+            
+            {% if value.obj.note %}
+              {{ value.obj.note }}
+            {% endif %}
+          </td>
+        </tr>
+        {% endif %}
         {% endfor %}
 
         <tr>
