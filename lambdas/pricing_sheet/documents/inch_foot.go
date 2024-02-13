@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	TEMPLATE_INCH_FOOT = "templates/TEMP Pricing Inch Foot - 1-10-241.xlsx"
+	TEMPLATE_INCH_FOOT = "templates/TEMP Pricing Inch Foot 2-12-24.xlsx"
 )
 
 type InchFootPricingSheet struct {
