@@ -241,6 +241,7 @@
         {% endfor %}
 
         {% for key, value in special_cases.items %}
+        {% if key != "NONE" %}
         <tr>
           <td colspan="1" class="center" {% if value.obj %}data-highlight="true"{% endif %}>
             {% if value.obj %}YES{% else %}NO{% endif %}
@@ -252,6 +253,7 @@
             {% if value.obj.note %}{{ value.obj.note }}{% endif %}
           </td>
         </tr>
+        {% endif %}
         {% endfor %}
 
         <tr>
