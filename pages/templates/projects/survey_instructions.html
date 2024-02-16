@@ -73,6 +73,16 @@
             <input id="id_survey_method" type="text" name="survey_method" hidden>
           </div>
         </div>
+        
+        <div class="text--body-md">
+          Include Field Maps Instructions
+        </div>
+        <div class="flex align-items-end">
+          <div class="form-control">
+            <input type="checkbox" name="include_fieldmaps_supplement"
+              {% if instruction.include_fieldmaps_supplement %}checked{% endif %}>
+          </div>
+        </div>
       </div>
     </div>
 

@@ -118,8 +118,8 @@ class ProjectInstructionsGenerator(BaseInstructionsGenerator):
     """Project instructions PDF generator"""
 
     template_name = "documents/project_instructions.html"
-    instruction_fieldmaps = "assets/FieldMaps Repair Layer Instructions for PIs.pdf"
-    instruction_bidboss = "assets/BidBoss Instructions - 2-15-24.pdf"
+    instructions_fieldmaps = "assets/FieldMaps Repair Layer Instructions for PIs.pdf"
+    instructions_bidboss = "assets/BidBoss Instructions - 2-15-24.pdf"
 
     def get_context_data(self):
         context = super().get_context_data()

@@ -322,6 +322,7 @@ class BaseInstructionsView(TemplateView):
             self.process_needed_by(instruction)
             self.process_survey_details(instruction)
             self.process_survey_method(instruction)
+            self.process_supplements(instruction)
             self.process_cut(instruction)
             self.process_linear_feet_curb(instruction)
             self.process_hazards(instruction)
@@ -383,6 +384,17 @@ class BaseInstructionsView(TemplateView):
         """Process the survey method"""
         survey_method = self.request.POST.get("survey_method", "").strip()
         instruction.survey_method = survey_method or None
+
+    def process_supplements(self, instruction):
+        """Process the supplemental PDFs"""
+        instruction.include_fieldmaps_supplement = False
+        instruction.include_bidboss_supplement = False
+
+        if self.request.POST.get("include_fieldmaps_supplement") == "on":
+            instruction.include_fieldmaps_supplement = True
+
+        if self.request.POST.get("include_bidboss_supplement") == "on":
+            instruction.include_bidboss_supplement = True
 
     def process_cut(self, instruction):
         """Process the cut"""
