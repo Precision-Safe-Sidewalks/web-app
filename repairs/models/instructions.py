@@ -49,6 +49,8 @@ class Instruction(models.Model):
         default=0, help_text="Approved PI curb linear feet"
     )
     published = models.BooleanField(default=False)
+    include_fieldmaps_supplement = models.BooleanField(default=False)
+    include_bidboss_supplement = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

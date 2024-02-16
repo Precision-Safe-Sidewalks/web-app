@@ -78,6 +78,26 @@
         <div class="form-control w-64">
           <input type="number" name="linear_feet_curb" value="{{ instruction.linear_feet_curb }}">
         </div>
+        
+        <div class="text--body-md">
+          Include Field Maps Instructions
+        </div>
+        <div class="flex align-items-end">
+          <div class="form-control">
+            <input type="checkbox" name="include_fieldmaps_supplement"
+              {% if instruction.include_fieldmaps_supplement %}checked{% endif %}>
+          </div>
+        </div>
+        
+        <div class="text--body-md">
+          Include BidBoss Instructions
+        </div>
+        <div class="flex align-items-end">
+          <div class="form-control">
+            <input type="checkbox" name="include_bidboss_supplement"
+              {% if instruction.include_bidboss_supplement %}checked{% endif %}>
+          </div>
+        </div>
       </div>
     </div>
 
