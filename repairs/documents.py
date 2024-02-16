@@ -1,7 +1,10 @@
+import io
 from abc import abstractmethod
 from base64 import b64encode
 
+from django.contrib.staticfiles import finders
 from django.template import loader
+from pypdf import PdfWriter
 from weasyprint import CSS, HTML
 
 from repairs.models.constants import (
@@ -32,10 +35,21 @@ class BaseInstructionsGenerator(AbstractDocumentGenerator):
 
     def generate(self, file_obj):
         """Generate the survey instructions PDF"""
-        content = self.render()
-        css = CSS(self.stylesheet)
-        html = HTML(string=content)
-        html.write_pdf(file_obj, stylesheets=[css])
+        with io.BytesIO() as document:
+            content = self.render()
+            css = CSS(self.stylesheet)
+            html = HTML(string=content)
+            html.write_pdf(document, stylesheets=[css])
+
+            document.seek(0)
+            merger = PdfWriter()
+            merger.append(fileobj=document)
+
+            for supplement in self.get_supplemental_files():
+                merger.append(supplement)
+
+            merger.write(file_obj)
+            merger.close()
 
     def render(self):
         """Render the template to HTML"""
@@ -70,11 +84,16 @@ class BaseInstructionsGenerator(AbstractDocumentGenerator):
 
         return data
 
+    def get_supplemental_files(self):
+        """Return the list of supplemental files"""
+        return []
+
 
 class SurveyInstructionsGenerator(BaseInstructionsGenerator):
     """Survey instructions PDF generator"""
 
     template_name = "documents/survey_instructions.html"
+    instructions_fieldmaps = "assets/FieldMaps Survey Instructions for SI.pdf"
 
     def get_context_data(self):
         context = super().get_context_data()
@@ -85,11 +104,22 @@ class SurveyInstructionsGenerator(BaseInstructionsGenerator):
         context["notes_placeholder"] = list(range(3))
         return context
 
+    def get_supplemental_files(self):
+        """Return the supplemental files"""
+        supplements = []
+
+        if self.instruction.include_fieldmaps_supplement:
+            supplements.append(finders.find(self.instructions_fieldmaps))
+
+        return supplements
+
 
 class ProjectInstructionsGenerator(BaseInstructionsGenerator):
     """Project instructions PDF generator"""
 
     template_name = "documents/project_instructions.html"
+    instruction_fieldmaps = "assets/FieldMaps Repair Layer Instructions for PIs.pdf"
+    instruction_bidboss = "assets/BidBoss Instructions - 2-15-24.pdf"
 
     def get_context_data(self):
         context = super().get_context_data()
@@ -136,3 +166,15 @@ class ProjectInstructionsGenerator(BaseInstructionsGenerator):
                     hazards[key][i] = int(value)
 
         return hazards
+
+    def get_supplemental_files(self):
+        """Return the supplemental files"""
+        supplements = []
+
+        if self.instruction.include_fieldmaps_supplement:
+            supplements.append(finders.find(self.instructions_fieldmaps))
+
+        if self.instruction.include_bidboss_supplement:
+            supplements.append(finders.find(self.instructions_bidboss))
+
+        return supplements
