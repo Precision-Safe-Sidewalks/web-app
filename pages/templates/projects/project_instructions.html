@@ -385,6 +385,24 @@
       {% endfor %}
       </div>
     </div>
+    
+    <!-- Debris disposal & trailer parking notes -->
+    <div class="mb-12">
+      <div class="flex align-items-center justify-content-between">
+        <div>
+          <h4>Debris Disposal and Tailer Parking</h4>
+          <h6 class="text--body-md text--muted">
+            Add notes about debris and trailer parking.
+          </h6>
+        </div>
+      </div>
+      
+      <div class="flex align-items-center mt-3">
+        <div class="form-control flex-grow">
+          <input id="debris_notes" name="debris_notes" type="text" value="{{ instruction.debris_notes|default:'' }}">
+        </div>
+      </div>
+    </div>
 
     <!-- Checklist -->
     <div class="mb-12" id="id_checklist_container" style="display: {% if instruction.get_checklist_visible %}block{% else %}none{% endif %}">

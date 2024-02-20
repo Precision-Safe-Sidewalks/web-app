@@ -331,6 +331,7 @@ class BaseInstructionsView(TemplateView):
             self.process_specifications(instruction)
             self.process_reference_images(instruction)
             self.process_notes(instruction)
+            self.process_debris_notes(instruction)
             self.process_checklist(instruction)
             self.process_published(instruction)
 
@@ -519,6 +520,10 @@ class BaseInstructionsView(TemplateView):
                     keep.append(pk)
 
         instruction.notes.exclude(pk__in=keep).delete()
+
+    def process_debris_notes(self, instruction):
+        """Process the debris and trailer parking notes"""
+        instruction.debris_notes = self.request.POST.get("debris_notes")
 
     def process_checklist(self, instruction):
         """Process the instruction checklist"""

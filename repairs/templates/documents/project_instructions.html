@@ -431,7 +431,9 @@
         </tr>
         <tr>
           <td colspan="12" class="text-red" style="padding-bottom: 56px">
-            Trailer parking is for remote project locations where weekend secure trailer storage would be helpful.
+          {% if instruction.debris_notes %}
+            {{ instruction.debris_notes }}
+          {% endif %}
           </td>
         </tr>
 
