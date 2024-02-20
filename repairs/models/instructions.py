@@ -51,6 +51,7 @@ class Instruction(models.Model):
     published = models.BooleanField(default=False)
     include_fieldmaps_supplement = models.BooleanField(default=False)
     include_bidboss_supplement = models.BooleanField(default=False)
+    debris_notes = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
