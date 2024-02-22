@@ -52,7 +52,7 @@ func NewProjectSummary(requestId uuid.UUID, projectId int) ProjectSummary {
 // Generate the S3 key for the document
 func (p ProjectSummary) GetKey() string {
 	ext := filepath.Ext(p.Filename)
-	return fmt.Sprintf("project_summarys/%s/Project Summary - %s%s", p.RequestId, p.Data.Name, ext)
+	return fmt.Sprintf("project_summarys/%s/PS - %s%s", p.RequestId, p.Data.Name, ext)
 }
 
 // Generate the project summary document
