@@ -111,3 +111,11 @@ class UserTableFilter(django_filters.FilterSet):
     class Meta:
         model = User
         fields = ("q",)
+
+
+class DashboardTableFilter(django_filters.FilterSet):
+    """Dashboard data table filters"""
+
+    class Meta:
+        model = Project
+        fields = ("business_development_manager", "territory", "status")

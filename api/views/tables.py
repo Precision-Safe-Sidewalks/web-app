@@ -4,12 +4,14 @@ from rest_framework import viewsets
 from api.filters.tables import (
     ContactTableFilter,
     CustomerTableFilter,
+    DashboardTableFilter,
     ProjectTableFilter,
     UserTableFilter,
 )
 from api.serializers.tables import (
     ContactTableSerializer,
     CustomerTableSerializer,
+    DashboardTableSerializer,
     ProjectTableSerializer,
     UserTableSerializer,
 )
@@ -53,3 +55,9 @@ class UserTableViewSet(SortMixin, viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.order_by("id")
     serializer_class = UserTableSerializer
     filterset_class = UserTableFilter
+
+
+class DashboardTableViewSet(SortMixin, viewsets.ReadOnlyModelViewSet):
+    queryset = Project.objects.order_by("id")
+    serializer_class = DashboardTableSerializer
+    filterset_class = DashboardTableFilter

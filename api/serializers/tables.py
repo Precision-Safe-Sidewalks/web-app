@@ -1,10 +1,12 @@
 from django.contrib.auth import get_user_model
+from django.db.models import Max, Min, F
 from django.shortcuts import reverse
 from django.utils.html import mark_safe
 from rest_framework import serializers
 
 from customers.models import Contact, Customer
 from repairs.models import Project
+from repairs.models.constants import Stage
 
 User = get_user_model()
 
@@ -190,4 +192,37 @@ class UserTableSerializer(serializers.ModelSerializer):
             "phone_work",
             "phone_cell",
             "last_login",
+        )
+
+
+class DashboardTableSerializer(serializers.ModelSerializer):
+    dates = serializers.SerializerMethodField()
+    techs = serializers.SerializerMethodField()
+
+    def get_dates(self, obj):
+        queryset = obj.measurements.filter(stage=Stage.PRODUCTION).aggregate(
+            Min("measured_at"), Max("measured_at")
+        )
+        return {
+            "start": queryset["measured_at__min"],
+            "last": queryset["measured_at__max"],
+        }
+
+    def get_techs(self, obj):
+        queryset = (
+            obj.measurements.filter(stage=Stage.PRODUCTION, tech__isnull=False)
+            .order_by("tech")
+            .values_list("tech", flat=True)
+            .distinct()
+        )
+        return [f"{t[0]}{t[3]}".upper() for t in queryset]
+
+    class Meta:
+        model = Project
+        fields = (
+            "id",
+            "customer",
+            "status",
+            "dates",
+            "techs",
         )
