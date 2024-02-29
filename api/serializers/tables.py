@@ -1,18 +1,18 @@
 import functools
 
 from django.contrib.auth import get_user_model
-from django.db.models import Max, Min, F, Sum, Count
+from django.db.models import Count, Max, Min, Sum
 from django.db.models.functions import Round
 from django.shortcuts import reverse
 from django.utils.html import mark_safe
 from rest_framework import serializers
 
+from api.serializers.core import SimpleTerritorySerializer
 from api.serializers.customers import SimpleCustomerSerializer
 from api.serializers.users import SimpleUserSerializer
-from api.serializers.core import SimpleTerritorySerializer
 from customers.models import Contact, Customer
 from repairs.models import Project
-from repairs.models.constants import Stage
+from repairs.models.constants import SpecialCase, Stage
 
 User = get_user_model()
 
@@ -217,17 +217,32 @@ class DashboardTableSerializer(serializers.ModelSerializer):
     curb_length_repaired = serializers.SerializerMethodField()
     business_development_manager = SimpleUserSerializer()
     territory = SimpleTerritorySerializer()
+    last_synced_at = serializers.SerializerMethodField()
 
     @functools.cache
-    def get_aggregated_data(self, obj):
-        return obj.measurements.filter(stage=Stage.PRODUCTION).aggregate(
+    def get_aggregated_values(self, obj):
+        queryset = obj.measurements.filter(stage=Stage.PRODUCTION)
+
+        agg_all = queryset.aggregate(
             start_date=Min("measured_at"),
             last_date=Max("measured_at"),
+            curb_length=Round(Sum("curb_length", default=0), 2),
+        )
+
+        agg_non_curb = queryset.exclude(special_case=SpecialCase.CURB).aggregate(
             inch_feet=Round(Sum("inch_feet", default=0), 2),
             square_feet=Round(Sum("area", default=0), 2),
-            curb_length=Round(Sum("curb_length", default=0), 2),
             count=Count("id"),
         )
+
+        return {
+            "start_date": agg_all["start_date"],
+            "last_date": agg_all["last_date"],
+            "curb_length": agg_all["curb_length"],
+            "count": agg_non_curb["count"],
+            "inch_feet": agg_non_curb["inch_feet"],
+            "square_feet": agg_non_curb["square_feet"],
+        }
 
     @functools.cache
     def get_expected_values(self, obj):
@@ -244,14 +259,15 @@ class DashboardTableSerializer(serializers.ModelSerializer):
 
         values["inch_feet"] = round(values["inch_feet"], 2)
         values["square_feet"] = round(values["square_feet"], 2)
+        values["curb_length"] = instruction.linear_feet_curb
 
         return values
 
     def get_start_date(self, obj):
-        return self.get_aggregated_data(obj)["start_date"]
+        return self.get_aggregated_values(obj)["start_date"]
 
     def get_last_date(self, obj):
-        return self.get_aggregated_data(obj)["last_date"]
+        return self.get_aggregated_values(obj)["last_date"]
 
     def get_techs(self, obj):
         queryset = (
@@ -280,25 +296,30 @@ class DashboardTableSerializer(serializers.ModelSerializer):
         return self.get_expected_values(obj)["count"]
 
     def get_hazards_repaired(self, obj):
-        return self.get_aggregated_data(obj)["count"]
+        return self.get_aggregated_values(obj)["count"]
 
     def get_inch_feet_expected(self, obj):
         return self.get_expected_values(obj)["inch_feet"]
 
     def get_inch_feet_repaired(self, obj):
-        return self.get_aggregated_data(obj)["inch_feet"]
+        return self.get_aggregated_values(obj)["inch_feet"]
 
     def get_square_feet_expected(self, obj):
         return self.get_expected_values(obj)["square_feet"]
 
     def get_square_feet_repaired(self, obj):
-        return self.get_aggregated_data(obj)["square_feet"]
+        return self.get_aggregated_values(obj)["square_feet"]
 
     def get_curb_length_expected(self, obj):
         return self.get_expected_values(obj)["curb_length"]
 
     def get_curb_length_repaired(self, obj):
-        return self.get_aggregated_data(obj)["curb_length"]
+        return self.get_aggregated_values(obj)["curb_length"]
+
+    def get_last_synced_at(self, obj):
+        if layer := obj.layers.filter(stage=Stage.PRODUCTION).first():
+            return layer.last_synced_at
+        return None
 
     class Meta:
         model = Project
@@ -320,4 +341,5 @@ class DashboardTableSerializer(serializers.ModelSerializer):
             "curb_length_repaired",
             "business_development_manager",
             "territory",
+            "last_synced_at",
         )
