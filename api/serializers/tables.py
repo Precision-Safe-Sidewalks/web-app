@@ -7,9 +7,6 @@ from django.shortcuts import reverse
 from django.utils.html import mark_safe
 from rest_framework import serializers
 
-from api.serializers.core import SimpleTerritorySerializer
-from api.serializers.customers import SimpleCustomerSerializer
-from api.serializers.users import SimpleUserSerializer
 from customers.models import Contact, Customer
 from repairs.models import Project
 from repairs.models.constants import SpecialCase, Stage
@@ -222,7 +219,9 @@ class DashboardTableSerializer(serializers.ModelSerializer):
     square_feet_remaining = serializers.SerializerMethodField()
     percent_complete_hazards = serializers.SerializerMethodField()
     percent_complete_inch_feet = serializers.SerializerMethodField()
-    business_development_manager = serializers.CharField(source="business_development_manager.full_name")
+    business_development_manager = serializers.CharField(
+        source="business_development_manager.full_name"
+    )
     territory = serializers.CharField(source="territory.label")
 
     @functools.cache
@@ -268,7 +267,7 @@ class DashboardTableSerializer(serializers.ModelSerializer):
         values["curb_length"] = instruction.linear_feet_curb
 
         return values
-    
+
     def get_customer(self, obj):
         href = reverse("customer-detail", kwargs={"pk": obj.customer_id})
         html = f'<a href="{href}">{obj.customer.name}</a>'

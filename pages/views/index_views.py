@@ -6,7 +6,6 @@ from django.views.generic import TemplateView
 from core.models import Territory
 from repairs.models import Project
 
-
 User = get_user_model()
 
 
@@ -42,5 +41,3 @@ class IndexView(TemplateView):
                 },
             ]
         )
-
-
