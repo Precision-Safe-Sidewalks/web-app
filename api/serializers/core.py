@@ -7,3 +7,9 @@ class TerritorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Territory
         fields = "__all__"
+
+
+class SimpleTerritorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Territory
+        fields = ("id", "label")

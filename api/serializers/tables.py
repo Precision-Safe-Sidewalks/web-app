@@ -1,9 +1,15 @@
+import functools
+
 from django.contrib.auth import get_user_model
-from django.db.models import Max, Min, F
+from django.db.models import Max, Min, F, Sum, Count
+from django.db.models.functions import Round
 from django.shortcuts import reverse
 from django.utils.html import mark_safe
 from rest_framework import serializers
 
+from api.serializers.customers import SimpleCustomerSerializer
+from api.serializers.users import SimpleUserSerializer
+from api.serializers.core import SimpleTerritorySerializer
 from customers.models import Contact, Customer
 from repairs.models import Project
 from repairs.models.constants import Stage
@@ -196,17 +202,56 @@ class UserTableSerializer(serializers.ModelSerializer):
 
 
 class DashboardTableSerializer(serializers.ModelSerializer):
-    dates = serializers.SerializerMethodField()
+    customer = SimpleCustomerSerializer()
+    start_date = serializers.SerializerMethodField()
+    last_date = serializers.SerializerMethodField()
     techs = serializers.SerializerMethodField()
+    status = serializers.SerializerMethodField()
+    hazards_expected = serializers.SerializerMethodField()
+    hazards_repaired = serializers.SerializerMethodField()
+    inch_feet_expected = serializers.SerializerMethodField()
+    inch_feet_repaired = serializers.SerializerMethodField()
+    square_feet_expected = serializers.SerializerMethodField()
+    square_feet_repaired = serializers.SerializerMethodField()
+    curb_length_expected = serializers.SerializerMethodField()
+    curb_length_repaired = serializers.SerializerMethodField()
+    business_development_manager = SimpleUserSerializer()
+    territory = SimpleTerritorySerializer()
 
-    def get_dates(self, obj):
-        queryset = obj.measurements.filter(stage=Stage.PRODUCTION).aggregate(
-            Min("measured_at"), Max("measured_at")
+    @functools.cache
+    def get_aggregated_data(self, obj):
+        return obj.measurements.filter(stage=Stage.PRODUCTION).aggregate(
+            start_date=Min("measured_at"),
+            last_date=Max("measured_at"),
+            inch_feet=Round(Sum("inch_feet", default=0), 2),
+            square_feet=Round(Sum("area", default=0), 2),
+            curb_length=Round(Sum("curb_length", default=0), 2),
+            count=Count("id"),
         )
-        return {
-            "start": queryset["measured_at__min"],
-            "last": queryset["measured_at__max"],
-        }
+
+    @functools.cache
+    def get_expected_values(self, obj):
+        """Return the expected values (inch feet, square feet, hazard count)"""
+        values = {"count": 0, "inch_feet": 0, "square_feet": 0, "curb_length": 0}
+        instruction = obj.instructions.filter(stage=Stage.PRODUCTION).first()
+
+        if not instruction:
+            return values
+
+        for _, entry in instruction.hazards.items():
+            for key in values:
+                values[key] += entry.get(key, 0)
+
+        values["inch_feet"] = round(values["inch_feet"], 2)
+        values["square_feet"] = round(values["square_feet"], 2)
+
+        return values
+
+    def get_start_date(self, obj):
+        return self.get_aggregated_data(obj)["start_date"]
+
+    def get_last_date(self, obj):
+        return self.get_aggregated_data(obj)["last_date"]
 
     def get_techs(self, obj):
         queryset = (
@@ -215,14 +260,64 @@ class DashboardTableSerializer(serializers.ModelSerializer):
             .values_list("tech", flat=True)
             .distinct()
         )
-        return [f"{t[0]}{t[3]}".upper() for t in queryset]
+
+        techs = []
+
+        for username in queryset:
+            tech = {"username": username, "initials": None}
+
+            if len(username) >= 3:
+                tech["initials"] = f"{username[0]}{username[2]}".upper()
+
+            techs.append(tech)
+
+        return techs
+
+    def get_status(self, obj):
+        return obj.get_status_display()
+
+    def get_hazards_expected(self, obj):
+        return self.get_expected_values(obj)["count"]
+
+    def get_hazards_repaired(self, obj):
+        return self.get_aggregated_data(obj)["count"]
+
+    def get_inch_feet_expected(self, obj):
+        return self.get_expected_values(obj)["inch_feet"]
+
+    def get_inch_feet_repaired(self, obj):
+        return self.get_aggregated_data(obj)["inch_feet"]
+
+    def get_square_feet_expected(self, obj):
+        return self.get_expected_values(obj)["square_feet"]
+
+    def get_square_feet_repaired(self, obj):
+        return self.get_aggregated_data(obj)["square_feet"]
+
+    def get_curb_length_expected(self, obj):
+        return self.get_expected_values(obj)["curb_length"]
+
+    def get_curb_length_repaired(self, obj):
+        return self.get_aggregated_data(obj)["curb_length"]
 
     class Meta:
         model = Project
         fields = (
             "id",
             "customer",
+            "name",
             "status",
-            "dates",
+            "start_date",
+            "last_date",
             "techs",
+            "hazards_expected",
+            "hazards_repaired",
+            "inch_feet_expected",
+            "inch_feet_repaired",
+            "square_feet_expected",
+            "square_feet_repaired",
+            "curb_length_expected",
+            "curb_length_repaired",
+            "business_development_manager",
+            "territory",
         )
