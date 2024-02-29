@@ -7,9 +7,3 @@ class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
         fields = "__all__"
-
-
-class SimpleCustomerSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Customer
-        fields = ("id", "name")
