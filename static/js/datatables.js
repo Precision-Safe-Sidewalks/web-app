@@ -17,13 +17,20 @@ class DataTable {
   initialize() {
     const actions = $(`<div class="table-actions"></div>`)
     const filters = $(`<div class="table-filters"></div>`)
+    const tableContainer = $(`<div class="table-container"></div>`)
     const table = $(`<table class="table"></table>`)
     const thead = $(`<thead></thead>`)
     const tbody = $(`<tbody></tbody>`)
 
+    // Set the default filters (if specified)
+    this.filters = this.options?.filterOptions?.reduce(
+      (acc, cur) => cur.default ? ({ ...acc, [cur.field]: cur.default }) : acc,
+      {},
+    )
+
     const tr = $(`<tr></tr>`)
     this.options.columns?.forEach(column => {
-      const th = $(`<th id="th-${column}"></th>`)//<div class="flex align-items-center" style="cursor: pointer">${column}</div></th>`)
+      const th = $(`<th id="th-${column}"></th>`)
       const sortOption = this.options.sortOptions?.find(o => o.label === column)
       $(tr).append(th)
 
@@ -49,10 +56,11 @@ class DataTable {
     $(thead).append(tr)
     $(table).append(thead)
     $(table).append(tbody)
+    $(tableContainer).append(table)
 
     $(this.root).append(filters)
     $(this.root).append(actions)
-    $(this.root).append(table)
+    $(this.root).append(tableContainer)
 
     $(window).click(this.onClickAway)
   }

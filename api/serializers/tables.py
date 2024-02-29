@@ -202,22 +202,28 @@ class UserTableSerializer(serializers.ModelSerializer):
 
 
 class DashboardTableSerializer(serializers.ModelSerializer):
-    customer = SimpleCustomerSerializer()
+    customer = serializers.SerializerMethodField()
+    status = serializers.SerializerMethodField()
     start_date = serializers.SerializerMethodField()
     last_date = serializers.SerializerMethodField()
-    techs = serializers.SerializerMethodField()
-    status = serializers.SerializerMethodField()
-    hazards_expected = serializers.SerializerMethodField()
-    hazards_repaired = serializers.SerializerMethodField()
-    inch_feet_expected = serializers.SerializerMethodField()
-    inch_feet_repaired = serializers.SerializerMethodField()
-    square_feet_expected = serializers.SerializerMethodField()
-    square_feet_repaired = serializers.SerializerMethodField()
-    curb_length_expected = serializers.SerializerMethodField()
-    curb_length_repaired = serializers.SerializerMethodField()
-    business_development_manager = SimpleUserSerializer()
-    territory = SimpleTerritorySerializer()
     last_synced_at = serializers.SerializerMethodField()
+    techs = serializers.SerializerMethodField()
+    hazards_expected = serializers.SerializerMethodField()
+    inch_feet_expected = serializers.SerializerMethodField()
+    curb_length_expected = serializers.SerializerMethodField()
+    square_feet_expected = serializers.SerializerMethodField()
+    hazards_repaired = serializers.SerializerMethodField()
+    inch_feet_repaired = serializers.SerializerMethodField()
+    curb_length_repaired = serializers.SerializerMethodField()
+    square_feet_repaired = serializers.SerializerMethodField()
+    hazards_remaining = serializers.SerializerMethodField()
+    inch_feet_remaining = serializers.SerializerMethodField()
+    curb_length_remaining = serializers.SerializerMethodField()
+    square_feet_remaining = serializers.SerializerMethodField()
+    percent_complete_hazards = serializers.SerializerMethodField()
+    percent_complete_inch_feet = serializers.SerializerMethodField()
+    business_development_manager = serializers.CharField(source="business_development_manager.full_name")
+    territory = serializers.CharField(source="territory.label")
 
     @functools.cache
     def get_aggregated_values(self, obj):
@@ -262,12 +268,21 @@ class DashboardTableSerializer(serializers.ModelSerializer):
         values["curb_length"] = instruction.linear_feet_curb
 
         return values
+    
+    def get_customer(self, obj):
+        href = reverse("customer-detail", kwargs={"pk": obj.customer_id})
+        html = f'<a href="{href}">{obj.customer.name}</a>'
+        return mark_safe(html)
 
     def get_start_date(self, obj):
-        return self.get_aggregated_values(obj)["start_date"]
+        if start_date := self.get_aggregated_values(obj)["start_date"]:
+            return start_date.date()
+        return None
 
     def get_last_date(self, obj):
-        return self.get_aggregated_values(obj)["last_date"]
+        if last_date := self.get_aggregated_values(obj)["last_date"]:
+            return last_date.date()
+        return None
 
     def get_techs(self, obj):
         queryset = (
@@ -277,17 +292,7 @@ class DashboardTableSerializer(serializers.ModelSerializer):
             .distinct()
         )
 
-        techs = []
-
-        for username in queryset:
-            tech = {"username": username, "initials": None}
-
-            if len(username) >= 3:
-                tech["initials"] = f"{username[0]}{username[2]}".upper()
-
-            techs.append(tech)
-
-        return techs
+        return ", ".join([f"{t[0]}{t[2]}".upper() for t in queryset if len(t) >= 3])
 
     def get_status(self, obj):
         return obj.get_status_display()
@@ -298,17 +303,17 @@ class DashboardTableSerializer(serializers.ModelSerializer):
     def get_hazards_repaired(self, obj):
         return self.get_aggregated_values(obj)["count"]
 
+    def get_hazards_remaining(self, obj):
+        return self.get_hazards_expected(obj) - self.get_hazards_repaired(obj)
+
     def get_inch_feet_expected(self, obj):
         return self.get_expected_values(obj)["inch_feet"]
 
     def get_inch_feet_repaired(self, obj):
         return self.get_aggregated_values(obj)["inch_feet"]
 
-    def get_square_feet_expected(self, obj):
-        return self.get_expected_values(obj)["square_feet"]
-
-    def get_square_feet_repaired(self, obj):
-        return self.get_aggregated_values(obj)["square_feet"]
+    def get_inch_feet_remaining(self, obj):
+        return self.get_inch_feet_expected(obj) - self.get_inch_feet_repaired(obj)
 
     def get_curb_length_expected(self, obj):
         return self.get_expected_values(obj)["curb_length"]
@@ -316,30 +321,65 @@ class DashboardTableSerializer(serializers.ModelSerializer):
     def get_curb_length_repaired(self, obj):
         return self.get_aggregated_values(obj)["curb_length"]
 
+    def get_curb_length_remaining(self, obj):
+        return self.get_curb_length_expected(obj) - self.get_curb_length_repaired(obj)
+
+    def get_square_feet_expected(self, obj):
+        return self.get_expected_values(obj)["square_feet"]
+
+    def get_square_feet_repaired(self, obj):
+        return self.get_aggregated_values(obj)["square_feet"]
+
+    def get_square_feet_remaining(self, obj):
+        return self.get_square_feet_expected(obj) - self.get_square_feet_repaired(obj)
+
+    def get_percent_complete_hazards(self, obj):
+        expected = self.get_hazards_expected(obj)
+        repaired = self.get_hazards_repaired(obj)
+
+        if expected == 0:
+            return "---"
+
+        return f"{round(100 * repaired / expected)}%"
+
+    def get_percent_complete_inch_feet(self, obj):
+        expected = self.get_inch_feet_expected(obj)
+        repaired = self.get_inch_feet_repaired(obj)
+
+        if expected == 0:
+            return "---"
+
+        return f"{round(100 * repaired / expected)}%"
+
     def get_last_synced_at(self, obj):
         if layer := obj.layers.filter(stage=Stage.PRODUCTION).first():
-            return layer.last_synced_at
+            return layer.last_synced_at.date()
         return None
 
     class Meta:
         model = Project
         fields = (
-            "id",
             "customer",
             "name",
             "status",
             "start_date",
             "last_date",
+            "last_synced_at",
             "techs",
             "hazards_expected",
-            "hazards_repaired",
             "inch_feet_expected",
-            "inch_feet_repaired",
-            "square_feet_expected",
-            "square_feet_repaired",
             "curb_length_expected",
+            "square_feet_expected",
+            "hazards_repaired",
+            "inch_feet_repaired",
             "curb_length_repaired",
+            "square_feet_repaired",
+            "hazards_remaining",
+            "inch_feet_remaining",
+            "curb_length_remaining",
+            "square_feet_remaining",
+            "percent_complete_hazards",
+            "percent_complete_inch_feet",
             "business_development_manager",
             "territory",
-            "last_synced_at",
         )
