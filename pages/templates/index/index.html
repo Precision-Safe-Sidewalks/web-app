@@ -43,7 +43,12 @@
       ],
       filterOptions: filterOptions,
       sortOptions: [
-        {sort: "name", label: "Organization Name"},
+        {sort: "customer__name", label: "Organization Name"},
+        {sort: "name", label: "Deal Name"},
+        {sort: "status", label: "Stage"},
+        {sort: "start_date", label:"Start Date"},
+        {sort: "last_date", label:"Last Date"},
+        {sort: "last_synced_at", label: "Last Synced"},
         {sort: "business_development_manager__full_name", label: "BD"},
         {sort: "territory__name", label: "Territory"},
       ],
