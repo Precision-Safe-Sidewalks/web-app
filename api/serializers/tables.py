@@ -200,6 +200,7 @@ class UserTableSerializer(serializers.ModelSerializer):
 
 class DashboardTableSerializer(serializers.ModelSerializer):
     customer = serializers.SerializerMethodField()
+    name = serializers.SerializerMethodField()
     status = serializers.SerializerMethodField()
     start_date = serializers.SerializerMethodField()
     last_date = serializers.SerializerMethodField()
@@ -271,6 +272,11 @@ class DashboardTableSerializer(serializers.ModelSerializer):
     def get_customer(self, obj):
         href = reverse("customer-detail", kwargs={"pk": obj.customer_id})
         html = f'<a href="{href}">{obj.customer.name}</a>'
+        return mark_safe(html)
+
+    def get_name(self, obj):
+        href = reverse("project-detail", kwargs={"pk": obj.pk})
+        html = f'<a href="{href}">{obj.name}</a>'
         return mark_safe(html)
 
     def get_start_date(self, obj):
