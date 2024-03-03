@@ -357,8 +357,11 @@ class DashboardTableSerializer(serializers.ModelSerializer):
         return f"{round(100 * repaired / expected)}%"
 
     def get_last_synced_at(self, obj):
-        if layer := obj.layers.filter(stage=Stage.PRODUCTION).first():
+        layer = obj.layers.filter(stage=Stage.PRODUCTION).first()
+
+        if layer and layer.last_synced_at:
             return layer.last_synced_at.date()
+
         return None
 
     class Meta:
