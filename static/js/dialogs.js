@@ -1,20 +1,24 @@
 $(document).ready(() => {
-  $(`div[class="dialog"]:not([data-no-click-away])`).each((_, dialog) => {
-    const controlId = $(dialog).data("control")
-    const control = document.getElementById(controlId)
-      
-    // If the control button is clicked, toggle the "open" class to
-    // control the state of the dialog menu
-    $(control).on("click", () => {
-      $(dialog).is(":hidden") ? $(dialog).addClass("open") : $(dialog).removeClass("open")
-    })
-
-    // If the background scrim is clicked (i.e. "dialog"), then close
-    // the dialog by removing the "open" class
-    $(dialog).on("click", (event) => {
-      if ($(event.target).is(dialog)) {
-        $(dialog).removeClass("open")
-      }
-    })
-  })
+  $(`div[class="dialog"]:not([data-no-click-away])`).each(
+    (_, dialog) => initializeDialog(dialog)
+  )
 })
+
+const initializeDialog = (dialog) => {
+  const controlId = $(dialog).data("control")
+  const control = document.getElementById(controlId)
+    
+  // If the control button is clicked, toggle the "open" class to
+  // control the state of the dialog menu
+  $(control).on("click", () => {
+    $(dialog).is(":hidden") ? $(dialog).addClass("open") : $(dialog).removeClass("open")
+  })
+
+  // If the background scrim is clicked (i.e. "dialog"), then close
+  // the dialog by removing the "open" class
+  $(dialog).on("click", (event) => {
+    if ($(event.target).is(dialog)) {
+      $(dialog).removeClass("open")
+    }
+  })
+}

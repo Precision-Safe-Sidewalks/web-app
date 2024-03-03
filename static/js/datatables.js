@@ -8,6 +8,8 @@ class DataTable {
     this.filters = {}
     this.openFilter = null
     this.sortBy = null
+    this.visibleColumns = {}
+    this.visibleColumnsDraft = {}
 
     this.initialize()
     this.render()
@@ -22,38 +24,26 @@ class DataTable {
     const thead = $(`<thead></thead>`)
     const tbody = $(`<tbody></tbody>`)
 
+    // Set the default visible columns (from localStorage or from the
+    // columns available in the options on first load.
+    this.visibleColumns = this.options.columns?.reduce(
+      (acc, cur) => ({ ...acc, [cur]: true }),
+      {},
+    )
+
+    const storageKey = `${this.root.id}::columns`
+    const storageColumns = localStorage.getItem(storageKey)
+
+    if (storageColumns) {
+      this.visibleColumns = { ...this.visibleColumns, ...storageColumns } 
+    }
+
     // Set the default filters (if specified)
     this.filters = this.options?.filterOptions?.reduce(
       (acc, cur) => cur.default ? ({ ...acc, [cur.field]: cur.default }) : acc,
       {},
     )
 
-    const tr = $(`<tr></tr>`)
-    this.options.columns?.forEach(column => {
-      const th = $(`<th id="th-${column}"></th>`)
-      const sortOption = this.options.sortOptions?.find(o => o.label === column)
-      $(tr).append(th)
-
-      if (!!sortOption) {
-        const iconAsc = $(`<span id="id-asc" class="icon">arrow_upward_alt</span>`)
-        const iconDesc = $(`<span id="id-desc" class="icon">arrow_downward_alt</span>`)
-        const content = $(`<div class="flex align-items-center">${column}</div>`)
-
-        $(iconAsc).css("display", "none")
-        $(iconDesc).css("display", "none")
-        $(content).css("cursor", "pointer")
-
-        $(content).append(iconAsc)
-        $(content).append(iconDesc)
-        $(th).append(content)
-
-        $(th).click(() => this.onSortColumn(sortOption))
-      } else {
-        $(th).text(column)
-      }
-    })
-
-    $(thead).append(tr)
     $(table).append(thead)
     $(table).append(tbody)
     $(tableContainer).append(table)
@@ -68,9 +58,45 @@ class DataTable {
   // Render the data tbale
   async render() {
     const data = await this.fetchData()
+    this.renderHeader()
     this.renderData(data)
     this.renderActions(data)
     this.renderFilters(data)
+  }
+
+  // Render the table header
+  async renderHeader() {
+    const thead = $(this.root).find("thead")
+    $(thead).empty()
+
+    const tr = $("<tr></tr>")
+    $(thead).append(tr)
+
+    this.options.columns?.forEach(column => {
+      if (this.visibleColumns[column]) {
+        const th = $(`<th id="th-${column}"></th>`)
+        const sortOption = this.options.sortOptions?.find(o => o.label === column)
+        $(tr).append(th)
+
+        if (!!sortOption) {
+          const iconAsc = $(`<span id="id-asc" class="icon">arrow_upward_alt</span>`)
+          const iconDesc = $(`<span id="id-desc" class="icon">arrow_downward_alt</span>`)
+          const content = $(`<div class="flex align-items-center">${column}</div>`)
+
+          $(iconAsc).css("display", "none")
+          $(iconDesc).css("display", "none")
+          $(content).css("cursor", "pointer")
+
+          $(content).append(iconAsc)
+          $(content).append(iconDesc)
+          $(th).append(content)
+
+          $(th).click(() => this.onSortColumn(sortOption))
+        } else {
+          $(th).text(column)
+        }
+      }
+    })
   }
 
   // Render the table data
@@ -85,8 +111,13 @@ class DataTable {
 
     data.results?.forEach(row => {
       const tr = $("<tr></tr>")
-      Object.values(row).forEach(value => {
-        $(tr).append(`<td>${value === null ? '---' : value}</td>`)
+      Object.values(row).forEach((value, index) => {
+        const column = this.options.columns[index]
+        const isVisible = this.visibleColumns[column]
+        
+        if (isVisible) {
+          $(tr).append(`<td>${value === null ? '---' : value}</td>`)
+        }
       })
       $(tbody).append(tr)
     })
@@ -96,6 +127,7 @@ class DataTable {
     const actions = $(this.root).find(`div[class="table-actions"]`)
     
     this.renderSearch(actions, data)
+    this.renderColumnSettings(actions,  data)
     this.renderPagination(actions, data)
   }
 
@@ -111,6 +143,55 @@ class DataTable {
       $(container).append(`<span class="icon">search</span>`)
       $(container).append(search)
       $(actions).prepend(container)
+    }
+  }
+
+  // Render the column settings
+  renderColumnSettings(actions, data) {
+    const element = $(this.root).find("#id-columns").first()
+
+    if ($(element).length === 0) {
+      const container = $(`<div id="id-columns" class="table-column-settings"></div`)
+
+      const button = $(`
+        <button id="btn-columns" class="btn--icon">
+          <span class="icon">settings</span>
+        </button>
+      `)
+
+      const dialog = $(`<div id="id-columns-dialog" class="dialog" data-control="btn-columns"></div>`)
+      const dialogContent = $(`<div class="dialog-content"></div>`)
+      const dialogTitle = $(`<div class="dialog-title">Table Columns</div>`)
+      const dialogBody = $(`<div class="dialog-body"></div>`)
+      const dialogActions = $(`<div class="dialog-actions"></div>`)
+
+      this.options?.columns?.forEach((column, index) => {
+        const label = $(`<label class="ml-2" style="cursor: pointer">${column}</label>`)
+        const input = $(`<input type="checkbox" id="dialog_column_${index}">`)
+        $(input).prop("checked", this.visibleColumns[column])
+
+        const div = $(`<div class="pb-1"></div>`)
+        $(div).on("click", () => this.onToggleColumn(index))
+        $(div).append(input)
+        $(div).append(label)
+
+        $(dialogBody).append(div)
+      })
+      
+      const saveButton = $(`<button class="btn">Save</button>`)
+      saveButton.on("click", () => this.onSaveColumns())
+
+      $(dialogActions).append(saveButton)
+      $(dialogContent).append(dialogTitle)
+      $(dialogContent).append(dialogBody)
+      $(dialogContent).append(dialogActions)
+      $(dialog).append(dialogContent)
+
+      $(container).append(button)
+      $(container).append(dialog)
+      $(actions).append(container)
+
+      initializeDialog(dialog)
     }
   }
 
@@ -330,5 +411,27 @@ class DataTable {
   onClickAway() {
     $(`div[id^="menu-"`).removeClass("open")
     this.openFilter = null
+  }
+
+  onToggleColumn(index) {
+    const input = $(`#dialog_column_${index}`)
+    const isChecked = $(input).is(":checked")
+    const column = this.options.columns[index]
+
+    this.visibleColumnsDraft[column] = !isChecked
+    $(input).prop("checked", !isChecked)
+  }
+
+  onSaveColumns() {
+    this.visibleColumns = { ...this.visibleColumns, ...this.visibleColumnsDraft }
+    this.visibleColumnsDraft = {}
+
+    const storageKey = `${this.root.id}::columns`
+    localStorage.setItem(storageKey, JSON.stringify(this.visibleColumns))
+
+    const dialog = $("#id-columns-dialog")
+    $(dialog).removeClass("open")
+
+    this.render()
   }
 }
