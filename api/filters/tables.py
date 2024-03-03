@@ -116,6 +116,16 @@ class UserTableFilter(django_filters.FilterSet):
 class DashboardTableFilter(django_filters.FilterSet):
     """Dashboard data table filters"""
 
+    business_development_manager = django_filters.ModelMultipleChoiceFilter(
+        queryset=User.objects.all(),
+    )
+    territory = django_filters.ModelMultipleChoiceFilter(
+        queryset=Territory.objects.all(),
+    )
+    status = django_filters.MultipleChoiceFilter(
+        field_name="status", choices=Project.Status.choices
+    )
+
     class Meta:
         model = Project
         fields = ("business_development_manager", "territory", "status")
