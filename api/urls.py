@@ -13,15 +13,17 @@ router.register(
     measurements.SymbologyViewSet,
     basename="symbology",
 )
+
+# Datatables API views
 router.register(
     "tables/contacts",
     tables.ContactTableViewSet,
     basename="tables-contacts",
 )
-
-# Datatables API views
 router.register(
-    "tables/customers", tables.CustomerTableViewSet, basename="tables-customers"
+    "tables/customers",
+    tables.CustomerTableViewSet,
+    basename="tables-customers",
 )
 router.register(
     "tables/projects",
@@ -34,14 +36,9 @@ router.register(
     basename="tables-users",
 )
 router.register(
-    "pricing_sheet",
-    repairs.PricingSheetViewSet,
-    basename="documents-pricing-sheet",
-)
-router.register(
-    "project_summary",
-    repairs.ProjectSummaryViewSet,
-    basename="documents-project-summary",
+    "tables/dashboard",
+    tables.DashboardTableViewSet,
+    basename="tables-dashboard",
 )
 
 # Project API views
@@ -54,6 +51,16 @@ router.register(
     "projects",
     repairs.ProjectViewSet,
     basename="projects",
+)
+router.register(
+    "pricing_sheet",
+    repairs.PricingSheetViewSet,
+    basename="documents-pricing-sheet",
+)
+router.register(
+    "project_summary",
+    repairs.ProjectSummaryViewSet,
+    basename="documents-project-summary",
 )
 
 # ArcGIS API views

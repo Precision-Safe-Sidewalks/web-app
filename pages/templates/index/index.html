@@ -2,6 +2,58 @@
 
 {% block content %}
 <div class="pane pane--full-height">
-  <h2>Dashboard</h2>
+  <div class="flex align-items-center justify-content-between">
+    <h2>Dashboard</h2>
+  </div>
+
+  <div class="my-12">
+    <div id="dashboard-table"></div>
+  </div>
 </div>
+
+<script>
+  const filterOptions = {{ table_filters|safe }}
+
+  $(document).ready(() => {
+    new DataTable("dashboard-table", {
+      columns: [
+        "Organization Name",
+        "Deal Name",
+        "Stage",
+        "Start Date",
+        "Last Date",
+        "Last Synced",
+        "Techs",
+        "PI # To Repair",
+        "PI Inch Feet",
+        "PI Curbs",
+        "PI Square Feet",
+        "# Repaired",
+        "Inch Feet Repaired",
+        "Curbs Repaired",
+        "Square Feet Repaired",
+        "# Remaining",
+        "Inch Feet Remaining",
+        "Curbs Remaining",
+        "Square Feet Remaining",
+        "% Complete #",
+        "% Complete Inch Feet",
+        "BD",
+        "Territory",
+      ],
+      filterOptions: filterOptions,
+      sortOptions: [
+        {sort: "customer__name", label: "Organization Name"},
+        {sort: "name", label: "Deal Name"},
+        {sort: "status", label: "Stage"},
+        {sort: "start_date", label:"Start Date"},
+        {sort: "last_date", label:"Last Date"},
+        {sort: "business_development_manager__full_name", label: "BD"},
+        {sort: "territory__name", label: "Territory"},
+      ],
+      url: "/api/tables/dashboard/",
+      perPage: 30,
+    })
+  })
+</script>
 {% endblock %}
