@@ -428,8 +428,18 @@ class DataTable {
   }
 
   onSaveColumns() {
-    this.visibleColumns = { ...this.visibleColumns, ...this.visibleColumnsDraft }
-    this.visibleColumnsDraft = {}
+    let visibleColumns = {}
+
+    for (const column of this.options.columns) {
+      if (this.visibleColumnsDraft.hasOwnProperty(column)) {
+        visibleColumns[column] = this.visibleColumnsDraft[column]
+        delete this.visibleColumnsDraft[column]
+      } else {
+        visibleColumns[column] = this.visibleColumns[column]
+      }
+    }
+
+    this.visibleColumns = visibleColumns
 
     const storageKey = `${this.root.id}::columns`
     localStorage.setItem(storageKey, JSON.stringify(this.visibleColumns))
