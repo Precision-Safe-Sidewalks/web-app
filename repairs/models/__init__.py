@@ -1,17 +1,7 @@
-# ruff: noqa
-from repairs.models.instructions import (
-    Instruction,
-    InstructionChecklist,
-    InstructionChecklistQuestion,
-    InstructionContactNote,
-    InstructionNote,
-    InstructionSpecification,
-)
-from repairs.models.measurements import Measurement, MeasurementImage
-from repairs.models.pricing import (
-    PricingSheet,
-    PricingSheetContact,
-    PricingSheetRequest,
-)
-from repairs.models.projects import Project, ProjectContact, ProjectLayer
-from repairs.models.summary import ProjectSummaryRequest
+# ruff: noqa: F403
+from repairs.models.instructions import *
+from repairs.models.measurements import *
+from repairs.models.pricing import *
+from repairs.models.projects import *
+from repairs.models.summary import *
+from repairs.models.views import *

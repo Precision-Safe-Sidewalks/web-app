@@ -5,7 +5,7 @@ from django.db.models import Q
 from core.models import Territory
 from customers.constants import Segment
 from customers.models import Contact, Customer
-from repairs.models import Project
+from repairs.models import Project, ProjectDashboard
 
 User = get_user_model()
 
@@ -118,14 +118,28 @@ class DashboardTableFilter(django_filters.FilterSet):
 
     business_development_manager = django_filters.ModelMultipleChoiceFilter(
         queryset=User.objects.all(),
+        method="filter_business_development_manager",
     )
     territory = django_filters.ModelMultipleChoiceFilter(
         queryset=Territory.objects.all(),
+        method="filter_territory",
     )
     status = django_filters.MultipleChoiceFilter(
         field_name="status", choices=Project.Status.choices
     )
 
+    def filter_business_development_manager(self, queryset, name, value):
+        if value:
+            bd_ids = [bd.id for bd in value]
+            queryset = queryset.filter(bd_id__in=bd_ids)
+        return queryset
+
+    def filter_territory(self, queryset, name, value):
+        if value:
+            territory_ids = [territory.id for territory in value]
+            queryset = queryset.filter(territory_id__in=territory_ids)
+        return queryset
+
     class Meta:
-        model = Project
+        model = ProjectDashboard
         fields = ("business_development_manager", "territory", "status")
