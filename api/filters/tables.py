@@ -5,7 +5,7 @@ from django.db.models import Q
 from core.models import Territory
 from customers.constants import Segment
 from customers.models import Contact, Customer
-from repairs.models import Project
+from repairs.models import Project, ProjectDashboard
 
 User = get_user_model()
 
@@ -127,5 +127,5 @@ class DashboardTableFilter(django_filters.FilterSet):
     )
 
     class Meta:
-        model = Project
+        model = ProjectDashboard
         fields = ("business_development_manager", "territory", "status")
