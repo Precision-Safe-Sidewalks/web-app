@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import connection, models
 
 
 class ProjectDashboard(models.Model):
@@ -34,4 +34,5 @@ class ProjectDashboard(models.Model):
     @staticmethod
     def refresh():
         """Refresh the materialized view"""
-        raise NotImplementedError
+        with connection.cursor() as cursor:
+            cursor.execute("REFRESH MATERIALIZED VIEW repairs_dashboard")

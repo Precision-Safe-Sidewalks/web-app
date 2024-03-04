@@ -28,6 +28,7 @@ from repairs.models import (
     Measurement,
     PricingSheetRequest,
     Project,
+    ProjectDashboard,
     ProjectLayer,
     ProjectSummaryRequest,
 )
@@ -327,6 +328,9 @@ class ProjectLayerViewSet(viewsets.ModelViewSet):
                 # the SQS queue
                 payload = {"project_id": layer.project_id, "stage": layer.stage}
                 invoke_lambda_function("geocoding", payload)
+
+                # Refresh the dashboard view
+                ProjectDashboard.refresh()
 
         # If the transaction failed, set the layer status to FAILED
         except Exception as exc:

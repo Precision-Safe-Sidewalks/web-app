@@ -12,6 +12,7 @@ from repairs.models import (
     ProjectSummaryRequest,
 )
 from repairs.models.constants import Stage
+from repairs.models.views import ProjectDashboard
 from utils.aws import invoke_lambda_function
 
 
@@ -58,3 +59,19 @@ def update_project_bdm(sender, instance, **kwargs):
     for project in instance.projects.all():
         project.business_development_manager = instance.business_development_manager
         project.save()
+
+
+@receiver(post_save, sender=Project)
+def refresh_dashboard_view_project(sender, instance, **kwargs):
+    ProjectDashboard.refresh()
+
+
+@receiver(post_save, sender=Customer)
+def refresh_dashboard_view_customer(sender, instance, **kwargs):
+    ProjectDashboard.refresh()
+
+
+@receiver(post_save, sender=Instruction)
+def refresh_dashboard_view_instruction(sender, instance, **kwargs):
+    if instance.stage == Stage.PRODUCTION:
+        ProjectDashboard.refresh()
