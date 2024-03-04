@@ -35,7 +35,7 @@ class DataTable {
     const storageColumns = localStorage.getItem(storageKey)
 
     if (storageColumns) {
-      this.visibleColumns = { ...this.visibleColumns, ...storageColumns } 
+      this.visibleColumns = { ...this.visibleColumns, ...JSON.parse(storageColumns) } 
     }
 
     // Set the default filters (if specified)
