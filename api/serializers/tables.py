@@ -201,8 +201,14 @@ class DashboardTableSerializer(serializers.ModelSerializer):
     last_date = serializers.SerializerMethodField()
     last_synced_at = serializers.SerializerMethodField()
     hazards_remaining = serializers.SerializerMethodField()
+    inch_feet_expected = serializers.SerializerMethodField()
+    inch_feet_repaired = serializers.SerializerMethodField()
     inch_feet_remaining = serializers.SerializerMethodField()
+    curb_length_expected = serializers.SerializerMethodField()
+    curb_length_repaired = serializers.SerializerMethodField()
     curb_length_remaining = serializers.SerializerMethodField()
+    square_feet_expected = serializers.SerializerMethodField()
+    square_feet_repaired = serializers.SerializerMethodField()
     square_feet_remaining = serializers.SerializerMethodField()
     percent_complete_hazards = serializers.SerializerMethodField()
     percent_complete_inch_feet = serializers.SerializerMethodField()
@@ -234,14 +240,32 @@ class DashboardTableSerializer(serializers.ModelSerializer):
     def get_hazards_remaining(self, obj):
         return obj.hazards_expected - obj.hazards_repaired
 
+    def get_inch_feet_expected(self, obj):
+        return round(obj.inch_feet_expected, 2)
+
+    def get_inch_feet_repaired(self, obj):
+        return round(obj.inch_feet_repaired, 2)
+
     def get_inch_feet_remaining(self, obj):
-        return obj.inch_feet_expected - obj.inch_feet_repaired
+        return round(obj.inch_feet_expected - obj.inch_feet_repaired, 2)
+
+    def get_curb_length_expected(self, obj):
+        return round(obj.curb_length_expected, 2)
+
+    def get_curb_length_repaired(self, obj):
+        return round(obj.curb_length_repaired, 2)
 
     def get_curb_length_remaining(self, obj):
-        return obj.curb_length_expected - obj.curb_length_repaired
+        return round(obj.curb_length_expected - obj.curb_length_repaired, 2)
+
+    def get_square_feet_expected(self, obj):
+        return round(obj.square_feet_expected, 2)
+
+    def get_square_feet_repaired(self, obj):
+        return round(obj.square_feet_repaired, 2)
 
     def get_square_feet_remaining(self, obj):
-        return obj.square_feet_expected - obj.square_feet_repaired
+        return round(obj.square_feet_expected - obj.square_feet_repaired, 2)
 
     def get_percent_complete_hazards(self, obj):
         if obj.hazards_expected == 0:
