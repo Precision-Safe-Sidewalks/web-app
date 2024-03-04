@@ -83,10 +83,15 @@ class DataTable {
           const iconDesc = $(`<span id="id-desc" class="icon">arrow_downward_alt</span>`)
           const content = $(`<div class="flex align-items-center">${column}</div>`)
 
-          $(iconAsc).css("display", "none")
-          $(iconDesc).css("display", "none")
-          $(content).css("cursor", "pointer")
+          if (this.sortBy?.label === column) {
+            $(iconAsc).css("display", this.sortBy.asc ? "block" : "none")
+            $(iconDesc).css("display", this.sortBy.asc ? "none": "block")
+          } else {
+            $(iconAsc).css("display", "none")
+            $(iconDesc).css("display", "none")
+          }
 
+          $(content).css("cursor", "pointer")
           $(content).append(iconAsc)
           $(content).append(iconDesc)
           $(th).append(content)
