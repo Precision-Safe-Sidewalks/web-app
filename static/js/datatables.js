@@ -156,7 +156,7 @@ class DataTable {
     const element = $(this.root).find("#id-columns").first()
 
     if ($(element).length === 0) {
-      const container = $(`<div id="id-columns" class="table-column-settings"></div`)
+      const container = $(`<div id="id-columns" class="table-columns"></div`)
 
       const button = $(`
         <button id="btn-columns" class="btn--icon">

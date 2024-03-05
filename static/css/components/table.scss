@@ -24,6 +24,14 @@
     padding: 12px;
   }
 
+  th.sortable {
+    cursor: pointer;
+  }
+
+  th.hidden, td.hidden {
+    display: none;
+  }
+
   td {
     border-top: 1px solid rgba($outline, 0.24);
     white-space: nowrap;
@@ -59,10 +67,10 @@
     @extend .flex;
     @extend .align-items-center;
 
-    margin-bottom: -16px;
+    margin-bottom: -12px;
   }
 
-  .table-column-settings {
+  .table-columns {
     @extend .flex;
     @extend .align-items-center;
 
