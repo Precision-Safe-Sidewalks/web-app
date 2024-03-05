@@ -229,13 +229,13 @@ class DashboardTableSerializer(serializers.ModelSerializer):
         return Project.Status(obj.status).label
 
     def get_start_date(self, obj):
-        return obj.start_date.strftime("%d/%m/%y") if obj.start_date else None
+        return obj.start_date.strftime("%m/%d/%y") if obj.start_date else None
 
     def get_last_date(self, obj):
-        return obj.last_date.strftime("%d/%m/%y") if obj.last_date else None
+        return obj.last_date.strftime("%m/%d/%y") if obj.last_date else None
 
     def get_last_synced_at(self, obj):
-        return obj.last_synced_at.strftime("%d/%m/%y") if obj.last_synced_at else None
+        return obj.last_synced_at.strftime("%m/%d/%y") if obj.last_synced_at else None
 
     def get_hazards_remaining(self, obj):
         return obj.hazards_expected - obj.hazards_repaired
