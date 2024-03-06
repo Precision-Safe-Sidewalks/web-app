@@ -18,35 +18,6 @@ class DataGrid {
     this.initializePagination()
     this.initializeDOM()
     this.fetchData()
-
-    // If the previous key exists in localStorage, remove the item
-    const key = `${this.root.id}::columns`
-    localStorage.removeItem(key)
-  }
-
-  // Fetch the data from the API
-  async fetchData() {
-    const url = new URL(this.options.url, window.location.origin)
-    url.searchParams.set("page", this.pagination.page)
-    url.searchParams.set("per_page", this.pagination.perPage)
-
-    if (this.sort) {
-      url.searchParams.set("sort", this.sort)
-    }
-
-    // TODO: query search
-    // TODO: filters
-    // TODO: error handling
-
-    const resp = await fetch(url)
-    const data = await resp.json()
-
-    this.data = data.results
-    this.pagination.hasNext = !!data.next
-    this.pagination.hasPrev = !!data.previous
-    this.pagination.count = data.count
-
-    this.render()
   }
 
   // Initialize the visible columns
@@ -232,6 +203,31 @@ class DataGrid {
       $(tbody).append(tr)
       $(table).append(tbody)
     })
+  }
+
+  // Fetch the data from the API
+  async fetchData() {
+    const url = new URL(this.options.url, window.location.origin)
+    url.searchParams.set("page", this.pagination.page)
+    url.searchParams.set("per_page", this.pagination.perPage)
+
+    if (this.sort) {
+      url.searchParams.set("sort", this.sort)
+    }
+
+    // TODO: query search
+    // TODO: filters
+    // TODO: error handling
+
+    const resp = await fetch(url)
+    const data = await resp.json()
+
+    this.data = data.results
+    this.pagination.hasNext = !!data.next
+    this.pagination.hasPrev = !!data.previous
+    this.pagination.count = data.count
+
+    this.render()
   }
 
   // Return true if the column is visible in the table
