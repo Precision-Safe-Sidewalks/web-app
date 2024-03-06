@@ -269,8 +269,13 @@ class DataGrid {
       })
 
       $(tbody).append(tr)
-      $(table).append(tbody)
     })
+
+    if (this.data.length === 0) {
+      $(tbody).append(`<tr><td align="center" colspan="100%">No available data</td></tr>`)
+    } 
+      
+    $(table).append(tbody)
   }
 
   // Fetch the data from the API
