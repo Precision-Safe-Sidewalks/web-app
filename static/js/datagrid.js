@@ -1,5 +1,6 @@
 const ArrowUp = `<span class="icon">arrow_upward_alt</span>`
 const ArrowDown = `<span class="icon">arrow_downward_alt</span>`
+const ArrowDropDown = `<span class="icon">arrow_drop_down</span>`
 const ChevronLeftIcon = `<span class="icon">chevron_left</span>`
 const ChevronRightIcon = `<span class="icon">chevron_right</span>`
 const SettingsIcon = `<span class="icon">settings</span>`
@@ -13,40 +14,24 @@ class DataGrid {
     this.pagination = {}
     this.dom = {}
     this.sort = null
+    this.filters = {}
 
+    this.initializeFilters()
     this.initializeColumns()
     this.initializePagination()
     this.initializeDOM()
     this.fetchData()
-
-    // If the previous key exists in localStorage, remove the item
-    const key = `${this.root.id}::columns`
-    localStorage.removeItem(key)
   }
 
-  // Fetch the data from the API
-  async fetchData() {
-    const url = new URL(this.options.url, window.location.origin)
-    url.searchParams.set("page", this.pagination.page)
-    url.searchParams.set("per_page", this.pagination.perPage)
+  // Initialize the filters
+  initializeFilters() {
+    if (!this.options.filterOptions?.length) return
 
-    if (this.sort) {
-      url.searchParams.set("sort", this.sort)
+    for (const filter of this.options.filterOptions) {
+      this.filters[filter.field] = filter.default || []
     }
 
-    // TODO: query search
-    // TODO: filters
-    // TODO: error handling
-
-    const resp = await fetch(url)
-    const data = await resp.json()
-
-    this.data = data.results
-    this.pagination.hasNext = !!data.next
-    this.pagination.hasPrev = !!data.previous
-    this.pagination.count = data.count
-
-    this.render()
+    $(window).on("click", (event) => this.closeFilters(event))
   }
 
   // Initialize the visible columns
@@ -80,19 +65,72 @@ class DataGrid {
 
   // Initialize the DOM components
   initializeDOM() {
+    const filtersContainer = $(`<div class="table-filters"></div>`)
     const actionsContainer = $(`<div class="table-actions"></div>`)
     const tableContainer = $(`<div class="table-container"></div>`)
 
+    $(this.root).append(filtersContainer)
     $(this.root).append(actionsContainer)
     $(this.root).append(tableContainer)
 
-    this.dom = { actionsContainer, tableContainer }
+    this.dom = { filtersContainer, actionsContainer, tableContainer }
   }
 
   // Render the component in the DOM
   render() {
+    this.renderTableFilters()
     this.renderTableActions()
     this.renderTable()
+  }
+
+  // Render the table filters
+  renderTableFilters() {
+    if (!this.options.filterOptions?.length) return
+
+    if (this.hasOpenFilters()) return
+    
+    const grid = $(`<div class="table-filters-grid"></div>`)
+    const btnClear = $(`<button class="ml-3 btn--tonal">Clear</button>`)
+    $(btnClear).on("click", () => this.clearFilters())
+
+    this.options.filterOptions.forEach(filterOption => {
+      const { field, label, options } = filterOption
+      const count = this.filters[field]?.length || 0
+      const menuLabelText = count !== 0 ? `${count} selected` : "---"
+
+      const formControl = $(`<div class="form-control"></div>`)
+      $(formControl).on("click", () => this.openFilter(event, field))
+
+      const menuLabel = $(`<div class="menu-label">${label}</div>`)
+      const menuControl = $(`<div class="menu-control"></div>`)
+      const menuControlText = $(`<div class="text">${menuLabelText}</div>`)
+      const menu = $(`<div id="menu-${field}" class="menu"></div>`)
+
+      options.forEach(option => {
+        const menuItem = $(`<div class="menu-item">${option.value}</div>`)
+        $(menuItem).on("click", (event) => this.toggleFilter(event, field, option.key))
+
+        const menuItemIcon = $(`<span class="icon"></span>`)
+
+        if (this.filters[field]?.indexOf(option.key) !== -1) {
+          $(menuItemIcon).text("done")
+        }
+
+        $(menuItem).prepend(menuItemIcon)
+        $(menu).append(menuItem)
+      })
+
+      $(menuControl).append(menuControlText)
+      $(menuControl).append(ArrowDropDown)
+      $(formControl).append(menuControl)
+      $(formControl).append(menuLabel)
+      $(formControl).append(menu)
+      $(grid).append(formControl)
+    })
+    
+    $(grid).append(btnClear)
+    $(this.dom.filtersContainer).empty()
+    $(this.dom.filtersContainer).append(grid)
   }
 
   // Render the table actions
@@ -113,12 +151,13 @@ class DataGrid {
 
   // Render the table actions for search
   renderTableActionsSearch(searchContainer) {
+    // TODO: implement
   }
 
   // Render the table actions for columns
   renderTableActionsColumns(columnsContainer) {
     const dialog = $(`<div class="dialog"></div>`)
-    $(dialog).on("click", (event) => this.clickAwayDialog(event, dialog))
+    $(dialog).on("click", (event) => this.clickAway(event, dialog))
     
     const dialogContent = $(`<div class="dialog-content"></div>`)
     const dialogTitle = $(`<div class="dialog-title">Column Visibility</div>`)
@@ -186,7 +225,7 @@ class DataGrid {
     this.options.columns.forEach((column, index) => {
       const sortable = this.options.sortOptions?.find(opt => opt.label === column)
       const th = $(`<th data-column=${index}></th>`)
-      const div = $(`<div class="flex--center">${column}</div>`)
+      const div = $(`<div class="flex align-items-center">${column}</div>`)
       
       if (sortable) {
         $(th).on("click", () => this.toggleSort(sortable.sort))
@@ -234,6 +273,36 @@ class DataGrid {
     })
   }
 
+  // Fetch the data from the API
+  async fetchData() {
+    const url = new URL(this.options.url, window.location.origin)
+    url.searchParams.set("page", this.pagination.page)
+    url.searchParams.set("per_page", this.pagination.perPage)
+
+    if (this.sort) {
+      url.searchParams.set("sort", this.sort)
+    }
+
+    Object.keys(this.filters).forEach(key => {
+      this.filters[key].forEach(
+        value => url.searchParams.append(key, value)
+      )
+    })
+
+    // TODO: query search
+    // TODO: error handling
+
+    const resp = await fetch(url)
+    const data = await resp.json()
+
+    this.data = data.results
+    this.pagination.hasNext = !!data.next
+    this.pagination.hasPrev = !!data.previous
+    this.pagination.count = data.count
+
+    this.render()
+  }
+
   // Return true if the column is visible in the table
   isColumnVisible(column) {
     return !!this.visibleColumns[column]
@@ -252,8 +321,8 @@ class DataGrid {
   }
 
   // Click away from a dialog
-  clickAwayDialog(event, dialog) {
-    $(event.target).is(dialog) && $(dialog).removeClass("open")
+  clickAway(event, element) {
+    $(event.target).is(element) && $(element).removeClass("open")
   }
   
   // Toggle a dialog open/closed
@@ -292,5 +361,66 @@ class DataGrid {
     }
 
     this.fetchData()
+  }
+
+  // Togle a filter
+  toggleFilter(event, field, value) {
+    event.stopPropagation()
+
+    const isSelected = this.filters[field].indexOf(value) === -1
+    const icon = $(event.target).find(`span[class="icon"]`)
+    const formControl = $(event.target).parents(`div[class="form-control"]`)
+    const menuControlText = $(formControl).find(`div[class="text"]`)
+
+    isSelected
+      ? this.filters[field].push(value)
+      : this.filters[field] = this.filters[field].filter(v => v !== value)
+
+    isSelected
+      ? $(icon).text("done")
+      : $(icon).text("")
+
+    isSelected
+      ? $(menuControlText).text(`${this.filters[field].length} selected`)
+      : $(menuControlText).text("---")
+
+    this.fetchData()
+  }
+
+  // Open a filter menu
+  openFilter(event, field) {
+    event.stopPropagation()
+    const menuId = `menu-${field}`
+
+    $(`div[id^="menu-"]`)
+      .filter((_, menu) => menu.id !== menuId)
+      .removeClass("open")
+
+    const menu = $(`#${menuId}`).addClass("open")
+  }
+
+  // Close all filters
+  closeFilters(event) {
+    const formControls = this.dom.filtersContainer.find(`div[class="form-control"]`)
+    const isFilter = $(formControls).has(event.target).length !== 0
+
+    if (!isFilter) {
+      $(`div[id^="menu-"]`).removeClass("open")
+    }
+  }
+
+  // Clear the filters
+  clearFilters() {
+    for (const key in this.filters) {
+      this.filters[key] = []
+    }
+
+    this.fetchData()
+  }
+
+  // Return true if there are any open filters
+  hasOpenFilters() {
+    return $(`div[id^="menu-"]`)
+      .filter((_, menu) => $(menu).hasClass("open")).length > 0
   }
 }
