@@ -241,31 +241,31 @@ class DashboardTableSerializer(serializers.ModelSerializer):
         return obj.hazards_expected - obj.hazards_repaired
 
     def get_inch_feet_expected(self, obj):
-        return round(obj.inch_feet_expected, 2)
+        return round(obj.inch_feet_expected, 1)
 
     def get_inch_feet_repaired(self, obj):
-        return round(obj.inch_feet_repaired, 2)
+        return round(obj.inch_feet_repaired, 1)
 
     def get_inch_feet_remaining(self, obj):
-        return round(obj.inch_feet_expected - obj.inch_feet_repaired, 2)
+        return round(obj.inch_feet_expected - obj.inch_feet_repaired, 1)
 
     def get_curb_length_expected(self, obj):
-        return round(obj.curb_length_expected, 2)
+        return round(obj.curb_length_expected, 1)
 
     def get_curb_length_repaired(self, obj):
-        return round(obj.curb_length_repaired, 2)
+        return round(obj.curb_length_repaired, 1)
 
     def get_curb_length_remaining(self, obj):
-        return round(obj.curb_length_expected - obj.curb_length_repaired, 2)
+        return round(obj.curb_length_expected - obj.curb_length_repaired, 1)
 
     def get_square_feet_expected(self, obj):
-        return round(obj.square_feet_expected, 2)
+        return round(obj.square_feet_expected, 1)
 
     def get_square_feet_repaired(self, obj):
-        return round(obj.square_feet_repaired, 2)
+        return round(obj.square_feet_repaired, 1)
 
     def get_square_feet_remaining(self, obj):
-        return round(obj.square_feet_expected - obj.square_feet_repaired, 2)
+        return round(obj.square_feet_expected - obj.square_feet_repaired, 1)
 
     def get_percent_complete_hazards(self, obj):
         if obj.hazards_expected == 0:

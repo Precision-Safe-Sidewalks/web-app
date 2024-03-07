@@ -281,6 +281,7 @@ class ProjectLayerViewSet(viewsets.ModelViewSet):
                             "MeasuredHazardLength"
                         ),
                         "inch_feet": properties.get("InchFeet"),
+                        "area": properties.get("SQFT"),
                         "special_case": value_of(
                             SpecialCase, properties.get("SpecialCase")
                         ),
