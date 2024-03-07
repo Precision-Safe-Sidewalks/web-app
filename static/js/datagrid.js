@@ -3,6 +3,7 @@ const ArrowDown = `<span class="icon">arrow_downward_alt</span>`
 const ArrowDropDown = `<span class="icon">arrow_drop_down</span>`
 const ChevronLeftIcon = `<span class="icon">chevron_left</span>`
 const ChevronRightIcon = `<span class="icon">chevron_right</span>`
+const SearchIcon = `<span class="icon">search</span>`
 const SettingsIcon = `<span class="icon">settings</span>`
 
 class DataGrid {
@@ -135,23 +136,40 @@ class DataGrid {
 
   // Render the table actions
   renderTableActions() {
-    const searchContainer = $(`<div class="table-search"></div>`)
+
+    // If the table has been rendered before, remove the old columns and
+    // pagination containers but leave the search container.
+    if (this.dom.actionsContainer.children().length !== 0) {
+      $(this.dom.actionsContainer).find(`div[class="table-columns"]`).remove()
+      $(this.dom.actionsContainer).find(`div[class="table-pagination"]`).remove()
+
+    // If the table has not been rendered before, create the search container
+    // and add it to the parent container.
+    } else {
+      const searchContainer = $(`<div class="table-search"></div>`)
+      this.renderTableActionsSearch(searchContainer)
+      $(this.dom.actionsContainer).append(searchContainer)
+    }
+    
     const columnsContainer = $(`<div class="table-columns"></div>`)
     const paginationContainer = $(`<div class="table-pagination"></div>`)
 
-    this.renderTableActionsSearch(searchContainer)
     this.renderTableActionsColumns(columnsContainer)
     this.renderTableActionsPagination(paginationContainer)
 
-    $(this.dom.actionsContainer).empty()
-    $(this.dom.actionsContainer).append(searchContainer)
     $(this.dom.actionsContainer).append(columnsContainer)
     $(this.dom.actionsContainer).append(paginationContainer)
   }
 
   // Render the table actions for search
   renderTableActionsSearch(searchContainer) {
-    // TODO: implement
+    const container = $(`<div class="search-bar"></div>`)
+    const input = $(`<input type="text" placeholder="Search...">`)
+    $(input).on("keyup", (event) => this.search(event))
+    
+    $(container).append(SearchIcon)
+    $(container).append(input)
+    $(searchContainer).append(container)
   }
 
   // Render the table actions for columns
@@ -294,7 +312,6 @@ class DataGrid {
       )
     })
 
-    // TODO: query search
     // TODO: error handling
 
     const resp = await fetch(url)
@@ -416,9 +433,9 @@ class DataGrid {
 
   // Clear the filters
   clearFilters() {
-    for (const key in this.filters) {
-      this.filters[key] = []
-    }
+    Object.keys(this.filters)
+      .filter(key => key !== "q")
+      .forEach(key => this.filters[key] = [])
 
     this.fetchData()
   }
@@ -427,5 +444,12 @@ class DataGrid {
   hasOpenFilters() {
     return $(`div[id^="menu-"]`)
       .filter((_, menu) => $(menu).hasClass("open")).length > 0
+  }
+
+  // Search using the text search query
+  search(event) {
+    const query = event.target.value.trim()
+    this.filters.q = !!query ? [query] : []
+    this.fetchData()
   }
 }
