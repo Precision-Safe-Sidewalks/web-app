@@ -116,6 +116,7 @@ class UserTableFilter(django_filters.FilterSet):
 class DashboardTableFilter(django_filters.FilterSet):
     """Dashboard data table filters"""
 
+    q = django_filters.CharFilter(method="filter_q")
     business_development_manager = django_filters.ModelMultipleChoiceFilter(
         queryset=User.objects.all(),
         method="filter_business_development_manager",
@@ -127,6 +128,13 @@ class DashboardTableFilter(django_filters.FilterSet):
     status = django_filters.MultipleChoiceFilter(
         field_name="status", choices=Project.Status.choices
     )
+
+    def filter_q(self, queryset, name, value):
+        return queryset.filter(
+            Q(name__icontains=value)
+            | Q(customer_name__icontains=value)
+            | Q(bd_name__icontains=value)
+        )
 
     def filter_business_development_manager(self, queryset, name, value):
         if value:
