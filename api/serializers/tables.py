@@ -286,6 +286,7 @@ class DashboardTableSerializer(serializers.ModelSerializer):
         fields = (
             "customer",
             "name",
+            "business_development_manager",
             "status",
             "start_date",
             "last_date",
@@ -305,6 +306,5 @@ class DashboardTableSerializer(serializers.ModelSerializer):
             "square_feet_remaining",
             "percent_complete_hazards",
             "percent_complete_inch_feet",
-            "business_development_manager",
             "territory",
         )
