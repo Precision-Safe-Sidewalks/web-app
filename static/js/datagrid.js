@@ -258,7 +258,7 @@ class DataGrid {
         }
       }
 
-      if (!this.isColumnVisible) {
+      if (!this.isColumnVisible(column)) {
         $(th).addClass("hidden")
       }
       
