@@ -1,7 +1,9 @@
 import csv
+from datetime import datetime, timedelta
 
+from dateutil.parser import parse as parse_dt
 from django.contrib.gis.db.models.fields import PointField
-from django.db import models, transaction
+from django.db import connection, models, transaction
 
 from repairs.models.constants import (
     SYMBOL_COLORS,
@@ -141,6 +143,43 @@ class Measurement(models.Model):
         writer.writeheader()
         writer.writerows(measurements)
         file_obj.seek(0)
+
+    @classmethod
+    def get_tech_production(cls, start_date, end_date, techs=[]):
+        """Get the tech production in the date range"""
+        if isinstance(start_date, str):
+            start_date = parse_dt(start_date).date()
+
+        if isinstance(end_date, str):
+            end_date = parse_dt(end_date).date()
+
+        days = (end_date - start_date).days
+        dates = [start_date + timedelta(days=d) for d in range(days)]
+
+        columns = ["tech", "COUNT(id) AS total_records", "COUNT(DISTINCT(DATE(measured_at))) AS total_days", "SUM(inch_feet) AS total_inch_feet"]
+        params = {"start_date": start_date, "end_date": end_date}
+
+        for i, date in enumerate(dates):
+            column = f"SUM(inch_feet) FILTER (WHERE DATE(measured_at) = '{date}') AS \"{date}\""
+            columns.append(column)
+
+        query = f"""
+            SELECT
+                {", ".join(columns)}
+            FROM repairs_measurement
+            WHERE DATE(measured_at) >= '{start_date}'
+                AND DATE(measured_at) <= '{end_date}'
+            GROUP BY tech
+            ORDER BY tech
+        """
+
+        with connection.cursor() as cursor:
+            cursor.execute(query, params=params)
+            columns = [column.name for column in cursor.description]
+            results = [dict(zip(columns, row)) for row in cursor.fetchall()]
+
+        return results
+
 
     def get_symbol(self):
         """Return the symbol to represent the measurement"""

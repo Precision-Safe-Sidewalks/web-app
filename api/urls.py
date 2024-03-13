@@ -36,6 +36,11 @@ router.register(
     basename="tables-users",
 )
 router.register(
+    "tables/dashboard/tech-production",
+    tables.TechProductionDashboardTableViewSet,
+    basename="tables-dashboard-tech-production",
+)
+router.register(
     "tables/dashboard",
     tables.DashboardTableViewSet,
     basename="tables-dashboard",
