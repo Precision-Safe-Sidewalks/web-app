@@ -113,3 +113,13 @@ ci_run_migrations:
 		-e DB_PASSWORD=${DB_PASSWORD} \
 		-e DB_NAME=${DB_NAME} \
 		--rm ${APP_IMAGE_URI} bash -c 'python3 manage.py migrate'
+
+ci_run_sync_pgviews:
+	@docker run \
+		-e DJANGO_SETTINGS_MODULE=app.settings.development \
+		-e DJANGO_SECRET_KEY=fake \
+		-e DB_HOST=${DB_HOST} \
+		-e DB_USER=${DB_USER} \
+		-e DB_PASSWORD=${DB_PASSWORD} \
+		-e DB_NAME=${DB_NAME} \
+		--rm ${APP_IMAGE_URI} bash -c 'python3 manage.py sync_pgviews'
