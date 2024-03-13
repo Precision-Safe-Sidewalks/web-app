@@ -4,7 +4,7 @@ from django.utils.html import mark_safe
 from rest_framework import serializers
 
 from customers.models import Contact, Customer
-from repairs.models import Project, ProjectDashboard
+from repairs.models import Project, ProjectManagementDashboardView
 
 User = get_user_model()
 
@@ -282,7 +282,7 @@ class DashboardTableSerializer(serializers.ModelSerializer):
         return f"{round(100 * percent)}%"
 
     class Meta:
-        model = ProjectDashboard
+        model = ProjectManagementDashboardView
         fields = (
             "customer",
             "name",

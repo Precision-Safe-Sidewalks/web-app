@@ -12,7 +12,6 @@ from repairs.models.constants import (
     Stage,
 )
 from repairs.models.projects import Project
-from repairs.models.views import ProjectDashboard
 from repairs.parsers import get_parser_class
 from utils.aws import invoke_lambda_function
 
@@ -87,9 +86,6 @@ class Measurement(models.Model):
         # the SQS queue
         payload = {"project_id": project.pk, "stage": stage}
         invoke_lambda_function("geocoding", payload)
-
-        # Update the dashboard view
-        ProjectDashboard.refresh()
 
         return Measurement.objects.filter(project=project, stage=stage)
 

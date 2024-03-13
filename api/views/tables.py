@@ -16,7 +16,7 @@ from api.serializers.tables import (
     UserTableSerializer,
 )
 from customers.models import Contact, Customer
-from repairs.models import Project, ProjectDashboard
+from repairs.models import Project, ProjectManagementDashboardView
 
 User = get_user_model()
 
@@ -58,6 +58,6 @@ class UserTableViewSet(SortMixin, viewsets.ReadOnlyModelViewSet):
 
 
 class DashboardTableViewSet(SortMixin, viewsets.ReadOnlyModelViewSet):
-    queryset = ProjectDashboard.objects.order_by("project_id")
+    queryset = ProjectManagementDashboardView.objects.order_by("project_id")
     serializer_class = DashboardTableSerializer
     filterset_class = DashboardTableFilter
