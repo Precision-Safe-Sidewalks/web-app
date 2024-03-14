@@ -1,5 +1,5 @@
 import csv
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from dateutil.parser import parse as parse_dt
 from django.contrib.gis.db.models.fields import PointField
@@ -155,18 +155,24 @@ class Measurement(models.Model):
 
         days = (end_date - start_date).days
         dates = [start_date + timedelta(days=d) for d in range(days)]
+        params = {"start_date": start_date, "end_date": end_date}
 
         columns = [
             "tech",
-            "COUNT(id) AS total_records",
-            "COUNT(DISTINCT(DATE(measured_at))) AS total_days",
-            "SUM(inch_feet) AS total_inch_feet",
+            "COALESCE(COUNT(id), 0) AS total_records",
+            "COALESCE(COUNT(DISTINCT(DATE(measured_at))), 0) AS total_days",
+            "COALESCE(SUM(inch_feet), 0) AS total_inch_feet",
         ]
-        params = {"start_date": start_date, "end_date": end_date}
 
         for i, date in enumerate(dates):
             column = f"SUM(inch_feet) FILTER (WHERE DATE(measured_at) = '{date}') AS \"{date}\""
             columns.append(column)
+
+        if techs:
+            techs = ", ".join([f"'{tech}'" for tech in techs])
+            filter_techs = f"AND tech IN ({techs})"
+        else:
+            filter_techs = ""
 
         query = f"""
             SELECT
@@ -174,6 +180,7 @@ class Measurement(models.Model):
             FROM repairs_measurement
             WHERE DATE(measured_at) >= '{start_date}'
                 AND DATE(measured_at) <= '{end_date}'
+                {filter_techs}
             GROUP BY tech
             ORDER BY tech
         """
@@ -182,6 +189,12 @@ class Measurement(models.Model):
             cursor.execute(query, params=params)
             columns = [column.name for column in cursor.description]
             results = [dict(zip(columns, row)) for row in cursor.fetchall()]
+
+        for row in results:
+            if row["total_days"]:
+                row["average_per_day"] = row["total_inch_feet"] / row["total_days"]
+            else:
+                row["average_per_day"] = None
 
         return results
 
