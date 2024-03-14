@@ -83,9 +83,11 @@ class TechProductionDashboardTableViewSet(viewsets.ViewSet):
         days = (end_date - start_date).days
 
         if days <= 0 or days > 100:
-            data = {"detail": "start_date must be before and within 100 days of end_date"}
+            data = {
+                "detail": "start_date must be before and within 100 days of end_date"
+            }
             return Response(data, status=400)
-        
+
         data = self._get_data(start_date, end_date)
 
         return Response(data)
@@ -151,14 +153,3 @@ class TechProductionDashboardTableViewSet(viewsets.ViewSet):
                     row["average_per_day"] = None
 
         return results
-
-
-
-
-
-
-
-
-
-
-

@@ -156,7 +156,12 @@ class Measurement(models.Model):
         days = (end_date - start_date).days
         dates = [start_date + timedelta(days=d) for d in range(days)]
 
-        columns = ["tech", "COUNT(id) AS total_records", "COUNT(DISTINCT(DATE(measured_at))) AS total_days", "SUM(inch_feet) AS total_inch_feet"]
+        columns = [
+            "tech",
+            "COUNT(id) AS total_records",
+            "COUNT(DISTINCT(DATE(measured_at))) AS total_days",
+            "SUM(inch_feet) AS total_inch_feet",
+        ]
         params = {"start_date": start_date, "end_date": end_date}
 
         for i, date in enumerate(dates):
@@ -179,7 +184,6 @@ class Measurement(models.Model):
             results = [dict(zip(columns, row)) for row in cursor.fetchall()]
 
         return results
-
 
     def get_symbol(self):
         """Return the symbol to represent the measurement"""
