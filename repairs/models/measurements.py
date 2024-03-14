@@ -194,14 +194,3 @@ class Measurement(models.Model):
             return color
 
         return "black"
-
-
-class MeasurementImage(models.Model):
-    """Reference image for a Measurement"""
-
-    measurement = models.ForeignKey(
-        Measurement, on_delete=models.CASCADE, related_name="images"
-    )
-    url = models.URLField()
-    captured_at = models.DateTimeField()
-    created_at = models.DateTimeField(auto_now_add=True)
