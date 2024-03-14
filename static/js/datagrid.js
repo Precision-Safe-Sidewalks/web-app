@@ -37,20 +37,22 @@ class DataGrid {
 
   // Initialize the visible columns
   initializeColumns() {
-    const key = `${this.root.id}-columns`
-    const preset = localStorage.getItem(key)
+    if (!this.options.dynamicColumns) {
+      const key = `${this.root.id}-columns`
+      const preset = localStorage.getItem(key)
 
-    if (preset) {
-      this.visibleColumns = JSON.parse(preset)
-    }
-
-    for (const column of this.options.columns) {
-      if (!this.visibleColumns.hasOwnProperty(column)) {
-        this.visibleColumns[column] = true
+      if (preset) {
+        this.visibleColumns = JSON.parse(preset)
       }
-    }
 
-    localStorage.setItem(key, JSON.stringify(this.visibleColumns))
+      for (const column of this.options.columns) {
+        if (!this.visibleColumns.hasOwnProperty(column)) {
+          this.visibleColumns[column] = true
+        }
+      }
+
+      localStorage.setItem(key, JSON.stringify(this.visibleColumns))
+    }
   }
 
   // Initialize the pagination
@@ -181,7 +183,7 @@ class DataGrid {
     const dialogTitle = $(`<div class="dialog-title">Column Visibility</div>`)
     const dialogBody = $(`<div class="dialog-body"></div>`)
 
-    this.options.columns.forEach(column => {
+    this.options.columns?.forEach(column => {
       const container = $(`<div class="mb-1"></div>`)
       const input = $(`<input type="checkbox" class="mr-2">`)
       const label = $(`<label>${column}<label>`)
@@ -240,7 +242,7 @@ class DataGrid {
     const thead = $(`<thead></thead>`)
     const tr = $(`<tr></tr>`)
 
-    this.options.columns.forEach((column, index) => {
+    this.options.columns?.forEach((column, index) => {
       const sortable = this.options.sortOptions?.find(opt => opt.label === column)
       const th = $(`<th data-column=${index}></th>`)
       const div = $(`<div class="flex align-items-center">${column}</div>`)
@@ -278,7 +280,7 @@ class DataGrid {
       const tr = $(`<tr></tr>`)
       const values = Object.keys(row).map(key => row[key])
 
-      this.options.columns.forEach((column, index) => {
+      this.options.columns?.forEach((column, index) => {
         if (this.isColumnVisible(column)) {
           const value = values[index] !== null ? values[index] : "---"
           const td = $(`<td data-column=${index}>${value}</td>`)
@@ -317,10 +319,16 @@ class DataGrid {
     const resp = await fetch(url)
     const data = await resp.json()
 
-    this.data = data.results
-    this.pagination.hasNext = !!data.next
-    this.pagination.hasPrev = !!data.previous
-    this.pagination.count = data.count
+    if (this.options.dynamicColumns) {
+      this.options.columns = Object.keys(data.length > 0 ? data[0] : {})
+      this.visibleColumns = this.options.columns.reduce((acc, cur) => ({...acc, [cur]: true}), {})
+      this.data = data.map(row => this.options.columns.map(column => row[column]))
+    } else {
+      this.data = data.results
+      this.pagination.hasNext = !!data.next
+      this.pagination.hasPrev = !!data.previous
+      this.pagination.count = data.count
+    }
 
     this.render()
   }

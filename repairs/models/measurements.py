@@ -172,6 +172,8 @@ class Measurement(models.Model):
             techs = ", ".join([f"'{tech}'" for tech in techs])
             filter_techs = f"AND tech IN ({techs})"
         else:
+            # TODO: improve default tech list
+            techs = sorted(cls.objects.values_list("tech", flat=True).distinct())
             filter_techs = ""
 
         query = f"""
@@ -190,13 +192,35 @@ class Measurement(models.Model):
             columns = [column.name for column in cursor.description]
             results = [dict(zip(columns, row)) for row in cursor.fetchall()]
 
+        index = {}
+
         for row in results:
             if row["total_days"]:
                 row["average_per_day"] = row["total_inch_feet"] / row["total_days"]
             else:
                 row["average_per_day"] = None
 
-        return results
+            tech = row["tech"]
+            index[tech] = row
+
+        # Ensure that each tech in the list has a row of data. If no data is
+        # available from the query, fill with None.
+        data = []
+
+        for tech in techs:
+            row = index.get(tech)
+
+            if row is None:
+                row = {column: None for column in columns}
+                row["tech"] = tech
+                row["total_records"] = 0
+                row["total_days"] = 0
+                row["total_inch_feet"] = 0
+                row["average_per_day"] = None
+
+            data.append(row)
+
+        return data
 
     def get_symbol(self):
         """Return the symbol to represent the measurement"""

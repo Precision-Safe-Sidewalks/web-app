@@ -41,3 +41,18 @@ class IndexView(TemplateView):
                 },
             ]
         )
+
+
+class TechProductionDashboard(TemplateView):
+    """Tech production dashboard view"""
+
+    template_name = "dashboards/tech_production.html"
+
+    def get_context_data(self):
+        context = super().get_context_data()
+        context["table_filters"] = self.get_table_filters()
+        return context
+
+    def get_table_filters(self):
+        """Return the JSON list of table filter ooptions dictionaries"""
+        return json.dumps([])

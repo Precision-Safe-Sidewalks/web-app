@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="pane pane--full-height">
+  <div class="flex align-items-center justify-content-between">
+    <h2>Tech Production Dashboard</h2>
+  </div>
+
+  <div class="my-12">
+    <div id="tech-production-table"></div>
+  </div>
+</div>
+
+<script>
+  const filterOptions = {{ table_filters|safe }}
+  const startDate = "{{ start_date }}"
+  const endDate = "{{ end_date }}"
+
+  $(document).ready(() => {
+    new DataGrid("tech-production-table", {
+      dynamicColumns: true,
+      pagination: false,
+      filterOptions: filterOptions,
+      sortOptions: [],
+      url: "/api/tables/dashboard/tech-production/",
+      perPage: 30,
+    })
+  })
+</script>
+{% endblock %}

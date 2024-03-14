@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from dateutil.parser import ParserError
 from dateutil.parser import parse as parse_dt
 from django.contrib.auth import get_user_model
@@ -69,6 +71,14 @@ class DashboardTableViewSet(SortMixin, viewsets.ReadOnlyModelViewSet):
 class TechProductionDashboardTableViewSet(viewsets.ViewSet):
     """Tech production dashboard table view set"""
 
+    _columns = {
+        "tech": "Tech",
+        "total_inch_feet": "Total",
+        "total_days": "# Days Worked",
+        "average_per_day": "Avg/Day",
+        "total_records": "# Records",
+    }
+
     def list(self, request):
         """List the tech production between the start/end dates"""
         start_date = self._get_date(request, "start_date")
@@ -76,10 +86,31 @@ class TechProductionDashboardTableViewSet(viewsets.ViewSet):
         techs = request.GET.getlist("tech", [])
 
         if not (start_date and end_date):
-            data = {"detail": "start_date and end_date are required"}
-            return Response(data, status=400)
+            # TODO: get current pay period
+            start_date = (datetime.now() - timedelta(days=14)).date()
+            end_date = datetime.now().date()
 
         data = Measurement.get_tech_production(start_date, end_date, techs=techs)
+
+        for row in data:
+            date_keys = [key for key in row if key not in self._columns]
+            keys = (
+                ["tech"]
+                + date_keys
+                + ["total_inch_feet", "total_days", "average_per_day", "total_records"]
+            )
+
+            for key in keys:
+                if key in self._columns:
+                    label = self._columns[key]
+                else:
+                    (year, month, day) = key.split("-")
+                    label = f"{month}/{day}/{year}"
+
+                row[label] = row.pop(key)
+
+                if isinstance(row[label], float):
+                    row[label] = round(row[label], 2)
 
         return Response(data)
 
