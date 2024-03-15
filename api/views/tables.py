@@ -1,7 +1,3 @@
-from datetime import datetime, timedelta
-
-from dateutil.parser import ParserError
-from dateutil.parser import parse as parse_dt
 from django.contrib.auth import get_user_model
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -21,6 +17,7 @@ from api.serializers.tables import (
     UserTableSerializer,
 )
 from customers.models import Contact, Customer
+from lib.pay_periods import get_pay_period_dates
 from repairs.models import Measurement, Project, ProjectManagementDashboardView
 
 User = get_user_model()
@@ -81,15 +78,10 @@ class TechProductionDashboardTableViewSet(viewsets.ViewSet):
 
     def list(self, request):
         """List the tech production between the start/end dates"""
-        start_date = self._get_date(request, "start_date")
-        end_date = self._get_date(request, "end_date")
+        period = int(request.GET.get("period", 0))
         techs = request.GET.getlist("tech", [])
 
-        if not (start_date and end_date):
-            # TODO: get current pay period
-            start_date = (datetime.now() - timedelta(days=14)).date()
-            end_date = datetime.now().date()
-
+        start_date, end_date = get_pay_period_dates(period)
         data = Measurement.get_tech_production(start_date, end_date, techs=techs)
 
         for row in data:
@@ -113,15 +105,3 @@ class TechProductionDashboardTableViewSet(viewsets.ViewSet):
                     row[label] = round(row[label], 2)
 
         return Response(data)
-
-    def _get_date(self, request, key):
-        """Get the date query parameter"""
-        value = request.GET.get(key)
-
-        if value is None:
-            return None
-
-        try:
-            return parse_dt(value).date()
-        except ParserError:
-            return None

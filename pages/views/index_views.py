@@ -1,9 +1,11 @@
 import json
+from datetime import date
 
 from django.contrib.auth import get_user_model
 from django.views.generic import TemplateView
 
 from core.models import Territory
+from lib.pay_periods import get_pay_periods
 from repairs.models import Project
 
 User = get_user_model()
@@ -55,4 +57,18 @@ class TechProductionDashboard(TemplateView):
 
     def get_table_filters(self):
         """Return the JSON list of table filter ooptions dictionaries"""
-        return json.dumps([])
+        min_date = date(2024, 1, 1)
+        max_date = date.today()
+        periods = get_pay_periods(min_date, max_date)[::-1]
+
+        return json.dumps(
+            [
+                {
+                    "label": "Pay Period",
+                    "field": "period",
+                    "options": periods,
+                    "multiple": False,
+                    "default": [periods[0]["key"]],
+                },
+            ]
+        )

@@ -99,7 +99,18 @@ class DataGrid {
     this.options.filterOptions.forEach(filterOption => {
       const { field, label, options } = filterOption
       const count = this.filters[field]?.length || 0
-      const menuLabelText = count !== 0 ? `${count} selected` : "---"
+      const multiple = filterOption.multiple === false ? false : true
+
+      let menuLabelText = "---";
+
+      if (count > 0) {
+        if (multiple) {
+          menuLabelText = `${count} selected`
+        } else {
+          const option = options.find(o => o.key === this.filters[field][0])
+          menuLabelText = option.value
+        }
+      }
 
       const formControl = $(`<div class="form-control"></div>`)
       $(formControl).on("click", () => this.openFilter(event, field))
@@ -149,7 +160,11 @@ class DataGrid {
     // and add it to the parent container.
     } else {
       const searchContainer = $(`<div class="table-search"></div>`)
-      this.renderTableActionsSearch(searchContainer)
+
+      if (this.options.searchable !== false) {
+        this.renderTableActionsSearch(searchContainer)
+      }
+
       $(this.dom.actionsContainer).append(searchContainer)
     }
     
@@ -157,7 +172,10 @@ class DataGrid {
     const paginationContainer = $(`<div class="table-pagination"></div>`)
 
     this.renderTableActionsColumns(columnsContainer)
-    this.renderTableActionsPagination(paginationContainer)
+
+    if (this.options.pagination !== false) {
+      this.renderTableActionsPagination(paginationContainer)
+    }
 
     $(this.dom.actionsContainer).append(columnsContainer)
     $(this.dom.actionsContainer).append(paginationContainer)
@@ -397,22 +415,39 @@ class DataGrid {
   toggleFilter(event, field, value) {
     event.stopPropagation()
 
+    const option = this.options.filterOptions.find(o => o.field === field)
+    const multiple = option.multiple === false ? false : true
+
     const isSelected = this.filters[field].indexOf(value) === -1
     const icon = $(event.target).find(`span[class="icon"]`)
     const formControl = $(event.target).parents(`div[class="form-control"]`)
     const menuControlText = $(formControl).find(`div[class="text"]`)
 
-    isSelected
-      ? this.filters[field].push(value)
-      : this.filters[field] = this.filters[field].filter(v => v !== value)
+    if (multiple) {
+      isSelected
+        ? this.filters[field].push(value)
+        : this.filters[field] = this.filters[field].filter(v => v !== value)
 
-    isSelected
-      ? $(icon).text("done")
-      : $(icon).text("")
+      isSelected
+        ? $(icon).text("done")
+        : $(icon).text("")
 
-    isSelected
-      ? $(menuControlText).text(`${this.filters[field].length} selected`)
-      : $(menuControlText).text("---")
+      this.filters[field].length > 0
+        ? $(menuControlText).text(`${this.filters[field].length} selected`)
+        : $(menuControlText).text("---")
+    } else {
+      $(formControl).find(`span[class="icon"]`).text("")
+      const label = option.options.find(o => o.key == value).value
+     
+      if (isSelected) {
+        this.filters[field] = [value]
+        $(icon).text("done")
+        $(menuControlText).text(label)
+      } else {
+        this.filters[field] = []
+        $(menuControlText).text("---")
+      }
+    }
 
     this.fetchData()
   }
