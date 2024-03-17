@@ -6,7 +6,7 @@ from django.views.generic import TemplateView
 
 from core.models import Territory
 from lib.pay_periods import get_pay_periods
-from repairs.models import Project, Measurement
+from repairs.models import Measurement, Project
 
 User = get_user_model()
 
