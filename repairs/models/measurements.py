@@ -1,7 +1,9 @@
 import csv
+from datetime import timedelta
 
+from dateutil.parser import parse as parse_dt
 from django.contrib.gis.db.models.fields import PointField
-from django.db import models, transaction
+from django.db import connection, models, transaction
 
 from repairs.models.constants import (
     SYMBOL_COLORS,
@@ -142,6 +144,84 @@ class Measurement(models.Model):
         writer.writerows(measurements)
         file_obj.seek(0)
 
+    @classmethod
+    def get_tech_production(cls, start_date, end_date, techs=[]):
+        """Get the tech production in the date range"""
+        if isinstance(start_date, str):
+            start_date = parse_dt(start_date).date()
+
+        if isinstance(end_date, str):
+            end_date = parse_dt(end_date).date()
+
+        if not techs:
+            techs = sorted(cls.objects.values_list("tech", flat=True).distinct())
+            filter_techs = ""
+
+        days = (end_date - start_date).days
+        dates = [start_date + timedelta(days=d) for d in range(days)]
+        params = {"start_date": start_date, "end_date": end_date}
+
+        columns = [
+            "tech",
+            "COALESCE(COUNT(id), 0) AS total_records",
+            "COALESCE(COUNT(DISTINCT(DATE(measured_at))), 0) AS total_days",
+            "COALESCE(SUM(inch_feet), 0) AS total_inch_feet",
+        ]
+
+        for i, date in enumerate(dates):
+            column = f"SUM(inch_feet) FILTER (WHERE DATE(measured_at) = '{date}') AS \"{date}\""
+            columns.append(column)
+
+        if techs:
+            selected_techs = ", ".join([f"'{tech}'" for tech in techs])
+            filter_techs = f"AND tech IN ({selected_techs})"
+
+        query = f"""
+            SELECT
+                {", ".join(columns)}
+            FROM repairs_measurement
+            WHERE DATE(measured_at) >= '{start_date}'
+                AND DATE(measured_at) <= '{end_date}'
+                {filter_techs}
+            GROUP BY tech
+            ORDER BY tech
+        """
+
+        with connection.cursor() as cursor:
+            cursor.execute(query, params=params)
+            columns = [column.name for column in cursor.description]
+            results = [dict(zip(columns, row)) for row in cursor.fetchall()]
+
+        index = {}
+
+        for row in results:
+            if row["total_days"]:
+                row["average_per_day"] = row["total_inch_feet"] / row["total_days"]
+            else:
+                row["average_per_day"] = None
+
+            tech = row["tech"]
+            index[tech] = row
+
+        # Ensure that each tech in the list has a row of data. If no data is
+        # available from the query, fill with None.
+        data = []
+
+        for tech in techs:
+            row = index.get(tech)
+
+            if row is None:
+                row = {column: None for column in columns}
+                row["tech"] = tech
+                row["total_records"] = 0
+                row["total_days"] = 0
+                row["total_inch_feet"] = 0
+                row["average_per_day"] = None
+
+            data.append(row)
+
+        return data
+
     def get_symbol(self):
         """Return the symbol to represent the measurement"""
         return SYMBOLS.get(self.special_case, "location_on")
@@ -155,14 +235,3 @@ class Measurement(models.Model):
             return color
 
         return "black"
-
-
-class MeasurementImage(models.Model):
-    """Reference image for a Measurement"""
-
-    measurement = models.ForeignKey(
-        Measurement, on_delete=models.CASCADE, related_name="images"
-    )
-    url = models.URLField()
-    captured_at = models.DateTimeField()
-    created_at = models.DateTimeField(auto_now_add=True)

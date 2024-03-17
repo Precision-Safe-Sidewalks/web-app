@@ -96,5 +96,10 @@ urlpatterns = [
     path(
         "users/<int:pk>/edit/", user_views.UserUpdateView.as_view(), name="user-update"
     ),
+    path(
+        "dashboard/tech-production/",
+        index_views.TechProductionDashboard.as_view(),
+        name="dashboard-tech-production",
+    ),
     path("", index_views.IndexView.as_view(), name="index"),
 ]

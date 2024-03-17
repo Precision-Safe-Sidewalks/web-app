@@ -37,20 +37,22 @@ class DataGrid {
 
   // Initialize the visible columns
   initializeColumns() {
-    const key = `${this.root.id}-columns`
-    const preset = localStorage.getItem(key)
+    if (!this.options.dynamicColumns) {
+      const key = `${this.root.id}-columns`
+      const preset = localStorage.getItem(key)
 
-    if (preset) {
-      this.visibleColumns = JSON.parse(preset)
-    }
-
-    for (const column of this.options.columns) {
-      if (!this.visibleColumns.hasOwnProperty(column)) {
-        this.visibleColumns[column] = true
+      if (preset) {
+        this.visibleColumns = JSON.parse(preset)
       }
-    }
 
-    localStorage.setItem(key, JSON.stringify(this.visibleColumns))
+      for (const column of this.options.columns) {
+        if (!this.visibleColumns.hasOwnProperty(column)) {
+          this.visibleColumns[column] = true
+        }
+      }
+
+      localStorage.setItem(key, JSON.stringify(this.visibleColumns))
+    }
   }
 
   // Initialize the pagination
@@ -97,7 +99,18 @@ class DataGrid {
     this.options.filterOptions.forEach(filterOption => {
       const { field, label, options } = filterOption
       const count = this.filters[field]?.length || 0
-      const menuLabelText = count !== 0 ? `${count} selected` : "---"
+      const multiple = filterOption.multiple === false ? false : true
+
+      let menuLabelText = "---";
+
+      if (count > 0) {
+        if (multiple) {
+          menuLabelText = `${count} selected`
+        } else {
+          const option = options.find(o => o.key === this.filters[field][0])
+          menuLabelText = option.value
+        }
+      }
 
       const formControl = $(`<div class="form-control"></div>`)
       $(formControl).on("click", () => this.openFilter(event, field))
@@ -147,7 +160,11 @@ class DataGrid {
     // and add it to the parent container.
     } else {
       const searchContainer = $(`<div class="table-search"></div>`)
-      this.renderTableActionsSearch(searchContainer)
+
+      if (this.options.searchable !== false) {
+        this.renderTableActionsSearch(searchContainer)
+      }
+
       $(this.dom.actionsContainer).append(searchContainer)
     }
     
@@ -155,7 +172,10 @@ class DataGrid {
     const paginationContainer = $(`<div class="table-pagination"></div>`)
 
     this.renderTableActionsColumns(columnsContainer)
-    this.renderTableActionsPagination(paginationContainer)
+
+    if (this.options.pagination !== false) {
+      this.renderTableActionsPagination(paginationContainer)
+    }
 
     $(this.dom.actionsContainer).append(columnsContainer)
     $(this.dom.actionsContainer).append(paginationContainer)
@@ -181,7 +201,7 @@ class DataGrid {
     const dialogTitle = $(`<div class="dialog-title">Column Visibility</div>`)
     const dialogBody = $(`<div class="dialog-body"></div>`)
 
-    this.options.columns.forEach(column => {
+    this.options.columns?.forEach(column => {
       const container = $(`<div class="mb-1"></div>`)
       const input = $(`<input type="checkbox" class="mr-2">`)
       const label = $(`<label>${column}<label>`)
@@ -240,7 +260,7 @@ class DataGrid {
     const thead = $(`<thead></thead>`)
     const tr = $(`<tr></tr>`)
 
-    this.options.columns.forEach((column, index) => {
+    this.options.columns?.forEach((column, index) => {
       const sortable = this.options.sortOptions?.find(opt => opt.label === column)
       const th = $(`<th data-column=${index}></th>`)
       const div = $(`<div class="flex align-items-center">${column}</div>`)
@@ -278,7 +298,7 @@ class DataGrid {
       const tr = $(`<tr></tr>`)
       const values = Object.keys(row).map(key => row[key])
 
-      this.options.columns.forEach((column, index) => {
+      this.options.columns?.forEach((column, index) => {
         if (this.isColumnVisible(column)) {
           const value = values[index] !== null ? values[index] : "---"
           const td = $(`<td data-column=${index}>${value}</td>`)
@@ -317,10 +337,16 @@ class DataGrid {
     const resp = await fetch(url)
     const data = await resp.json()
 
-    this.data = data.results
-    this.pagination.hasNext = !!data.next
-    this.pagination.hasPrev = !!data.previous
-    this.pagination.count = data.count
+    if (this.options.dynamicColumns) {
+      this.options.columns = Object.keys(data.length > 0 ? data[0] : {})
+      this.visibleColumns = this.options.columns.reduce((acc, cur) => ({...acc, [cur]: true}), {})
+      this.data = data.map(row => this.options.columns.map(column => row[column]))
+    } else {
+      this.data = data.results
+      this.pagination.hasNext = !!data.next
+      this.pagination.hasPrev = !!data.previous
+      this.pagination.count = data.count
+    }
 
     this.render()
   }
@@ -389,22 +415,39 @@ class DataGrid {
   toggleFilter(event, field, value) {
     event.stopPropagation()
 
+    const option = this.options.filterOptions.find(o => o.field === field)
+    const multiple = option.multiple === false ? false : true
+
     const isSelected = this.filters[field].indexOf(value) === -1
     const icon = $(event.target).find(`span[class="icon"]`)
     const formControl = $(event.target).parents(`div[class="form-control"]`)
     const menuControlText = $(formControl).find(`div[class="text"]`)
 
-    isSelected
-      ? this.filters[field].push(value)
-      : this.filters[field] = this.filters[field].filter(v => v !== value)
+    if (multiple) {
+      isSelected
+        ? this.filters[field].push(value)
+        : this.filters[field] = this.filters[field].filter(v => v !== value)
 
-    isSelected
-      ? $(icon).text("done")
-      : $(icon).text("")
+      isSelected
+        ? $(icon).text("done")
+        : $(icon).text("")
 
-    isSelected
-      ? $(menuControlText).text(`${this.filters[field].length} selected`)
-      : $(menuControlText).text("---")
+      this.filters[field].length > 0
+        ? $(menuControlText).text(`${this.filters[field].length} selected`)
+        : $(menuControlText).text("---")
+    } else {
+      $(formControl).find(`span[class="icon"]`).text("")
+      const label = option.options.find(o => o.key == value).value
+     
+      if (isSelected) {
+        this.filters[field] = [value]
+        $(icon).text("done")
+        $(menuControlText).text(label)
+      } else {
+        this.filters[field] = []
+        $(menuControlText).text("---")
+      }
+    }
 
     this.fetchData()
   }

@@ -8,13 +8,11 @@ from repairs.models import (
     InstructionNote,
     InstructionSpecification,
     Measurement,
-    MeasurementImage,
     Project,
     ProjectContact,
 )
 
 admin.site.register(Measurement)
-admin.site.register(MeasurementImage)
 admin.site.register(Project)
 admin.site.register(ProjectContact)
 admin.site.register(Instruction)
