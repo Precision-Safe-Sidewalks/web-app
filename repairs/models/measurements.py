@@ -153,6 +153,10 @@ class Measurement(models.Model):
         if isinstance(end_date, str):
             end_date = parse_dt(end_date).date()
 
+        if not techs:
+            techs = sorted(cls.objects.values_list("tech", flat=True).distinct())
+            filter_techs = ""
+
         days = (end_date - start_date).days
         dates = [start_date + timedelta(days=d) for d in range(days)]
         params = {"start_date": start_date, "end_date": end_date}
@@ -169,12 +173,8 @@ class Measurement(models.Model):
             columns.append(column)
 
         if techs:
-            techs = ", ".join([f"'{tech}'" for tech in techs])
-            filter_techs = f"AND tech IN ({techs})"
-        else:
-            # TODO: improve default tech list
-            techs = sorted(cls.objects.values_list("tech", flat=True).distinct())
-            filter_techs = ""
+            selected_techs = ", ".join([f"'{tech}'" for tech in techs])
+            filter_techs = f"AND tech IN ({selected_techs})"
 
         query = f"""
             SELECT

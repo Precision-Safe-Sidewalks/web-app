@@ -6,7 +6,7 @@ from django.views.generic import TemplateView
 
 from core.models import Territory
 from lib.pay_periods import get_pay_periods
-from repairs.models import Project
+from repairs.models import Project, Measurement
 
 User = get_user_model()
 
@@ -61,6 +61,9 @@ class TechProductionDashboard(TemplateView):
         max_date = date.today()
         periods = get_pay_periods(min_date, max_date)[::-1]
 
+        techs = Measurement.objects.values_list("tech", flat=True).distinct()
+        techs = [{"key": tech, "value": tech} for tech in sorted(techs)]
+
         return json.dumps(
             [
                 {
@@ -69,6 +72,12 @@ class TechProductionDashboard(TemplateView):
                     "options": periods,
                     "multiple": False,
                     "default": [periods[0]["key"]],
+                },
+                {
+                    "label": "Tech",
+                    "field": "tech",
+                    "options": techs,
+                    "multiple": True,
                 },
             ]
         )
