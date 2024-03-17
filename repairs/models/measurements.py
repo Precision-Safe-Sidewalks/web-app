@@ -154,7 +154,12 @@ class Measurement(models.Model):
             end_date = parse_dt(end_date).date()
 
         if not techs:
-            techs = sorted(cls.objects.values_list("tech", flat=True).distinct())
+            techs = (
+                cls.objects.filter(tech__isnull=False)
+                .values_list("tech", flat=True)
+                .distinct()
+            )
+            techs = sorted(techs)
             filter_techs = ""
 
         days = (end_date - start_date).days

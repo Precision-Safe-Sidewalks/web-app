@@ -61,7 +61,11 @@ class TechProductionDashboard(TemplateView):
         max_date = date.today()
         periods = get_pay_periods(min_date, max_date)[::-1]
 
-        techs = Measurement.objects.values_list("tech", flat=True).distinct()
+        techs = (
+            Measurement.objects.filter(tech__isnull=False)
+            .values_list("tech", flat=True)
+            .distinct()
+        )
         techs = [{"key": tech, "value": tech} for tech in sorted(techs)]
 
         return json.dumps(
