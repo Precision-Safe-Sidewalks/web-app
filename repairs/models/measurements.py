@@ -185,7 +185,8 @@ class Measurement(models.Model):
             SELECT
                 {", ".join(columns)}
             FROM repairs_measurement
-            WHERE DATE(measured_at) >= '{start_date}'
+            WHERE stage = 'PRODUCTION'
+                AND DATE(measured_at) >= '{start_date}'
                 AND DATE(measured_at) <= '{end_date}'
                 {filter_techs}
             GROUP BY tech
