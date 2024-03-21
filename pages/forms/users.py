@@ -91,4 +91,11 @@ class UserForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ("first_name", "last_name", "email", "is_active", "is_superuser")
+        fields = (
+            "first_name",
+            "last_name",
+            "email",
+            "arcgis_username",
+            "is_active",
+            "is_superuser",
+        )
