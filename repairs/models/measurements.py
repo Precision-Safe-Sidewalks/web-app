@@ -2,6 +2,7 @@ import csv
 from datetime import timedelta
 
 from dateutil.parser import parse as parse_dt
+from django.contrib.auth import get_user_model
 from django.contrib.gis.db.models.fields import PointField
 from django.db import connection, models, transaction
 
@@ -16,6 +17,8 @@ from repairs.models.constants import (
 from repairs.models.projects import Project
 from repairs.parsers import get_parser_class
 from utils.aws import invoke_lambda_function
+
+User = get_user_model()
 
 
 class Measurement(models.Model):
@@ -154,10 +157,8 @@ class Measurement(models.Model):
             end_date = parse_dt(end_date).date()
 
         if not techs:
-            techs = (
-                cls.objects.filter(tech__isnull=False)
-                .values_list("tech", flat=True)
-                .distinct()
+            techs = User.techs.filter(arcgis_username__isnull=False).values_list(
+                "arcgis_username", flat=True
             )
             techs = sorted(techs)
             filter_techs = ""

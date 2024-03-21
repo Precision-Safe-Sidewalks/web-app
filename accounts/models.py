@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.db import models
 
-from accounts.managers import BDAManager, BDMManager, SurveyorManager
+from accounts.managers import BDAManager, BDMManager, SurveyorManager, TechManager
 from core.models.abstract import AbstractPhoneNumber
 from core.models.constants import PhoneNumberType
 
@@ -16,6 +16,7 @@ class User(AbstractUser):
     bdm = BDMManager()
     bda = BDAManager()
     surveyors = SurveyorManager()
+    techs = TechManager()
 
     def get_initials(self):
         if self.first_name and self.last_name:
