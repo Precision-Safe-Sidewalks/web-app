@@ -61,10 +61,10 @@ class TechProductionDashboard(TemplateView):
         max_date = date.today()
         periods = get_pay_periods(min_date, max_date)[::-1]
 
-        techs = User.techs.filter(arcgis_username__isnull=False).values_list(
-            "arcgis_username", flat=True
-        )
-        techs = [{"key": tech, "value": tech} for tech in sorted(techs)]
+        techs = []
+        for user in User.techs.filter(arcgis_username__isnull=False).order_by("email"):
+            name = f"{user.first_name[0]}. {user.last_name}"
+            techs.append({"key": user.arcgis_username, "value": name})
 
         return json.dumps(
             [

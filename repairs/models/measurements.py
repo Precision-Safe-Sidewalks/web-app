@@ -215,11 +215,16 @@ class Measurement(models.Model):
         data = []
 
         for tech in techs:
-            row = index.get(tech)
+            user = User.objects.filter(arcgis_username=tech).first()
+
+            if user is None:
+                continue
+
+            row = index.get(user.arcgis_username)
 
             if row is None:
                 row = {column: None for column in columns}
-                row["tech"] = tech
+                row["tech"] = f"{user.first_name[0]}. {user.last_name}"
                 row["total_records"] = 0
                 row["total_days"] = 0
                 row["total_inch_feet"] = 0
