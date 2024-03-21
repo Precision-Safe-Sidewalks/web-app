@@ -229,6 +229,8 @@ class Measurement(models.Model):
                 row["total_days"] = 0
                 row["total_inch_feet"] = 0
                 row["average_per_day"] = None
+            else:
+                row["tech"] = f"{user.first_name[0]}. {user.last_name}"
 
             data.append(row)
 
