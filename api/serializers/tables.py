@@ -185,6 +185,7 @@ class UserTableSerializer(serializers.ModelSerializer):
         fields = (
             "name",
             "email",
+            "arcgis_username",
             "is_active",
             "is_admin",
             "phone_work",

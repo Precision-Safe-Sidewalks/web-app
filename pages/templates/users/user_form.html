@@ -24,6 +24,11 @@
         {{ form.email }}
       </div>
       
+      <div class="text-field--filled mt-6">
+        <label for="{{ form.arcgis_username.id_for_label }}">ArcGIS Username</label>
+        {{ form.arcgis_username }}
+      </div>
+      
       <div class="mt-6 grid" style="grid-template-columns: calc(75% - 24px) 25%;">
         <div class="text-field--filled">
           <label for="{{ form.phone_work.id_for_label }}">Work Phone</label>

@@ -31,3 +31,12 @@ class BDAManager(models.Manager):
         from accounts.models import UserRole
 
         return super().get_queryset().filter(roles__role=UserRole.Role.BDA)
+
+
+class TechManager(models.Manager):
+    use_in_migrations = False
+
+    def get_queryset(self):
+        from accounts.models import UserRole
+
+        return super().get_queryset().filter(roles__role=UserRole.Role.TECH)

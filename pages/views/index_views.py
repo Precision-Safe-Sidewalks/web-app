@@ -6,7 +6,7 @@ from django.views.generic import TemplateView
 
 from core.models import Territory
 from lib.pay_periods import get_pay_periods
-from repairs.models import Measurement, Project
+from repairs.models import Project
 
 User = get_user_model()
 
@@ -61,12 +61,10 @@ class TechProductionDashboard(TemplateView):
         max_date = date.today()
         periods = get_pay_periods(min_date, max_date)[::-1]
 
-        techs = (
-            Measurement.objects.filter(tech__isnull=False)
-            .values_list("tech", flat=True)
-            .distinct()
-        )
-        techs = [{"key": tech, "value": tech} for tech in sorted(techs)]
+        techs = []
+        for user in User.techs.filter(arcgis_username__isnull=False).order_by("email"):
+            name = f"{user.first_name[0]}. {user.last_name}"
+            techs.append({"key": user.arcgis_username, "value": name})
 
         return json.dumps(
             [

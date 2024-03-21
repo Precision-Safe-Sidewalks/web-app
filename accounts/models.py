@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.db import models
 
-from accounts.managers import BDAManager, BDMManager, SurveyorManager
+from accounts.managers import BDAManager, BDMManager, SurveyorManager, TechManager
 from core.models.abstract import AbstractPhoneNumber
 from core.models.constants import PhoneNumberType
 
@@ -10,11 +10,13 @@ class User(AbstractUser):
     full_name = models.CharField(max_length=255, blank=True, null=True)
     is_active = models.BooleanField(default=False)
     initials = models.CharField(max_length=2, blank=True, null=True)
+    arcgis_username = models.CharField(max_length=100, blank=True, null=True)
 
     objects = UserManager()
     bdm = BDMManager()
     bda = BDAManager()
     surveyors = SurveyorManager()
+    techs = TechManager()
 
     def get_initials(self):
         if self.first_name and self.last_name:
@@ -51,6 +53,7 @@ class UserRole(models.Model):
         BDM = ("BDM", "Business development manager")
         BDA = ("BDA", "Business development administrator")
         SURVEYOR = ("SURVEYOR", "Surveyor")
+        TECH = ("TECH", "Tech")
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="roles")
     role = models.CharField(max_length=50, choices=Role.choices)
