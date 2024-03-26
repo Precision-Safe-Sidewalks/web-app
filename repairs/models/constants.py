@@ -134,19 +134,17 @@ SYMBOLS = {
     None: "location_on",
     QuickDescription.REPLACE: "square",
     SpecialCase.BOTTOM_HC: "accessible",
-    SpecialCase.GUTTER_PAN: "accessible",
+    SpecialCase.GUTTER_PAN: "hexagon",
     SpecialCase.CURB: "square",
     SpecialCase.CATCH_BASIN: "star",
     SpecialCase.SW2C: "change_history",
     SpecialCase.C2B: "stat_0",
-    # SpecialCase.ASPHALT: None,
+    SpecialCase.ASPHALT: "arrow_downward",
     SpecialCase.DRIVEWAY: "square",
     SpecialCase.APRONS: "crop_9_16",
-    # SpecialCase.LEADWALK: None,
-    SpecialCase.RECUTS: "baseline_circle",
-    # SpecialCase.METERS: None,
-    # TODO: Missed
-    # TODO: Quality
+    SpecialCase.LEADWALK: "door_front",
+    SpecialCase.RECUTS: "circle",
+    SpecialCase.METERS: "support",
 }
 
 SYMBOL_COLORS = {
