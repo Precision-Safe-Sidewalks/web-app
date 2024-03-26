@@ -143,7 +143,7 @@ SYMBOLS = {
     SpecialCase.DRIVEWAY: "square",
     SpecialCase.APRONS: "crop_9_16",
     # SpecialCase.LEADWALK: None,
-    SpecialCase.RECUTS: "radio_button_unchecked",
+    SpecialCase.RECUTS: "baseline_circle",
     # SpecialCase.METERS: None,
     # TODO: Missed
     # TODO: Quality
