@@ -16,7 +16,7 @@ from api import (
 )
 
 LOGGER = logging.getLogger(__name__)
-RE_LAYER_TYPE = re.compile(r"^PSS\s+(?P<layer_type>Survey|Repair)\s+\d{6}$")
+RE_LAYER_TYPE = re.compile(r"^PSS\s+(?P<layer_type>Survey|Repair)")
 
 
 def handler(event, context):
