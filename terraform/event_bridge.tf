@@ -1,7 +1,7 @@
 resource "aws_cloudwatch_event_rule" "periodic" {
   name                = "periodic"
   description         = "Periodic task event rule (every hour, 7AM - 7PM, Mon-Fri)"
-  schedule_expression = "cron(0 7-19 ? * MON-FRI *)"
+  schedule_expression = "cron(0 11-23 ? * MON-FRI *)"
 }
 
 resource "aws_cloudwatch_event_target" "arcgis_sync" {
