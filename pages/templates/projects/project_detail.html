@@ -1,7 +1,9 @@
 {% extends "base.html" %}
+{% load tz %}
 {% load project_tags %}
 
 {% block content %}
+{% localtime on %}
 <div class="pane pane--full-height">
   <div class="flex align-items-center justify-content-between">
     <div>
@@ -684,4 +686,5 @@
     return false
   }
 </script>
+{% endlocaltime %}
 {% endblock %}
